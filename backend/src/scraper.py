@@ -17,10 +17,11 @@ router = APIRouter(prefix="/scrape")
 
 
 @router.post("/bootstrap", status_code=status.HTTP_201_CREATED)
-def bootstrap():
+async def bootstrap():
     RATE_LIMIT_INTERVAL = 60
     BATCH = 500
     TOTAL_TIMES = 4
+
     wallpapers = []
 
     for offset in range(TOTAL_TIMES):
@@ -28,9 +29,7 @@ def bootstrap():
             logging.info("Recovering from rate limit... (60 seconds)")
             sleep(RATE_LIMIT_INTERVAL)
 
-        new_wallpapers = asyncio.run(
-            scrape_unsplash(BATCH, with_tags=True, offset=offset)
-        )
+        new_wallpapers = await scrape_unsplash(BATCH, with_tags=True, offset=offset)
         wallpapers.extend(new_wallpapers)
 
     corpus = [" ".join(wallpaper["tags"]) for wallpaper in wallpapers]
