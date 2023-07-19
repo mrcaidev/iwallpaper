@@ -11,8 +11,8 @@ from .constants import MODEL_DIR
 
 
 class Vectorizer:
-    def __init__(self, vector_length=1000, model_name="vectorizer"):
-        self._vector_length = vector_length
+    def __init__(self, max_features=1000, model_name="vectorizer"):
+        self._max_features = max_features
         self._model_path = os.path.join(MODEL_DIR, f"{model_name}.joblib")
 
         if os.path.exists(self._model_path):
@@ -30,7 +30,7 @@ class Vectorizer:
         return self._postprocess(X)
 
     def _create_model(self):
-        self._vectorizer = TfidfVectorizer(max_features=self._vector_length)
+        self._vectorizer = TfidfVectorizer(max_features=self._max_features)
         logging.info(f"Created vectorizer model")
 
     def _load_model(self):
@@ -44,7 +44,7 @@ class Vectorizer:
     def _postprocess(self, matrix: spmatrix):
         vectors = matrix.toarray()
         vectors = normalize(vectors)
-        vectors = Vectorizer._pad_right(vectors, self._vector_length)
+        vectors = Vectorizer._pad_right(vectors, self._max_features)
         return vectors.tolist()
 
     @staticmethod
@@ -53,4 +53,4 @@ class Vectorizer:
         return np.pad(vectors, ((0, 0), (0, padding)))
 
 
-vectorizer = Vectorizer(vector_length=2000)
+vectorizer = Vectorizer(max_features=2000)
