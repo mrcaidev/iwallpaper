@@ -208,16 +208,3 @@ def add_tags(wallpapers: list[dict], tags_list: list[list[str]]):
         wallpaper["tags"] = tags
 
     return wallpapers
-
-
-if __name__ == "__main__":
-    import json
-
-    with open("temp/wallpapers.json", "r") as file:
-        wallpapers: list[dict] = json.load(file)
-
-    new_wallpapers = asyncio.run(scrape_unsplash(500, with_tags=True, offset=2))
-    wallpapers.extend(new_wallpapers)
-
-    with open("temp/wallpapers.json", "w") as file:
-        json.dump(wallpapers, file)
