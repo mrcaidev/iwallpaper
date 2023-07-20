@@ -176,7 +176,7 @@ def insert_tag_vectors(wallpapers: list[dict], tag_vectors: list[list[float]]):
 
     logging.info(f"Upserted {len(wallpapers)} tag vectors")
 
-    tag_collection.create_index(IndexMeasure.l2_distance)
+    tag_collection.create_index()
 
     logging.info(f"Created index on vecs.tag_vectors")
 
