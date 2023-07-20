@@ -12,6 +12,7 @@ export interface Database {
       histories: {
         Row: {
           id: string;
+          is_downloaded: boolean;
           is_hidden: boolean;
           is_liked: boolean;
           is_scrutinized: boolean;
@@ -20,6 +21,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
+          is_downloaded?: boolean;
           is_hidden?: boolean;
           is_liked?: boolean;
           is_scrutinized?: boolean;
@@ -28,6 +30,7 @@ export interface Database {
         };
         Update: {
           id?: string;
+          is_downloaded?: boolean;
           is_hidden?: boolean;
           is_liked?: boolean;
           is_scrutinized?: boolean;

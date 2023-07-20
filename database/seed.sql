@@ -28,6 +28,7 @@ create table public.histories (
   is_scrutinized boolean default false not null,
   is_liked boolean default false not null,
   is_hidden boolean default false not null,
+  is_downloaded boolean default false not null,
   unique (user_id, wallpaper_id)
 );
 
@@ -130,15 +131,21 @@ begin
   end if;
 
   if old.is_liked = false and new.is_liked = true then
-    weight = weight + 4;
+    weight = weight + 3;
   elsif old.is_liked = true and new.is_liked = false then
-    weight = weight - 4;
+    weight = weight - 3;
+  end if;
+
+  if old.is_downloaded = false and new.is_downloaded = true then
+    weight = weight + 5;
+  elsif old.is_downloaded = true and new.is_downloaded = false then
+    weight = weight - 5;
   end if;
 
   if old.is_hidden = false and new.is_hidden = true then
-    weight = weight - 4;
+    weight = weight - 3;
   elsif old.is_hidden = true and new.is_hidden = false then
-    weight = weight + 4;
+    weight = weight + 3;
   end if;
 
   if weight != 0 then
