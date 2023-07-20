@@ -49,11 +49,20 @@ create policy "User can select his own subscription." on public.subscriptions fo
 create policy "User can insert his own subscription." on public.subscriptions for insert with check (auth.uid() = from_id);
 create policy "User can delete his own subscription." on public.subscriptions for delete using (auth.uid() = from_id);
 
+drop function if exists public.generate_random_preference_vector cascade;
+
+create function public.generate_random_preference_vector()
+returns vector as $$
+begin
+  return array(select random() * 0.1 from generate_series(1, 2000))::vector;
+end;
+$$ language plpgsql security definer;
+
 drop table if exists vecs.preference_vectors cascade;
 
 create table vecs.preference_vectors (
   id uuid primary key references auth.users on delete cascade,
-  vec vector(2000) default array_fill(0, array[2000])::vector not null,
+  vec vector(2000) default public.generate_random_preference_vector() not null,
   metadata jsonb default '{}'::jsonb not null
 );
 
