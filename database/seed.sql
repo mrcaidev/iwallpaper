@@ -1,4 +1,5 @@
 create extension if not exists vector;
+create extension if not exists tsm_system_rows;
 
 create schema if not exists vecs;
 
@@ -170,6 +171,14 @@ returns setof public.wallpapers as $$
 declare
   recommended_wallpaper_ids uuid[];
 begin
+  if auth.uid() is null then
+    return query (
+      select *
+      from public.wallpapers
+      tablesample system_rows(quantity)
+    );
+  end if;
+
   recommended_wallpaper_ids = array(
     select id
     from vecs.tag_vectors
