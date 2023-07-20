@@ -2,12 +2,10 @@ import asyncio
 import logging
 import os
 from time import sleep
-from uuid import uuid4
 
 import aiofiles
 from aiohttp import ClientSession
 from fastapi import APIRouter, status
-from vecs import IndexMeasure
 
 from .constants import IMAGE_DIR
 from .supabase import supabase_client, tag_collection
@@ -69,7 +67,6 @@ def calculate_per_page(quantity: int):
 def build_page_urls(quantity: int, offset: int):
     per_page = calculate_per_page(quantity)
     page_total = quantity // per_page
-
     start_page = offset * page_total + 1
     end_page = (offset + 1) * page_total
 
@@ -102,10 +99,12 @@ async def scrape_wallpaper(session: ClientSession, wallpaper_url: str, with_tags
         wallpaper = await response.json()
 
     return {
-        "id": str(uuid4()),
         "slug": wallpaper["slug"],
         "raw_url": wallpaper["urls"]["raw"],
+        "regular_url": wallpaper["urls"]["regular"],
         "thumbnail_url": wallpaper["urls"]["small"],
+        "width": wallpaper["width"],
+        "height": wallpaper["height"],
         "tags": [tag["title"] for tag in wallpaper["tags"]] if with_tags else [],
     }
 
@@ -146,6 +145,20 @@ async def scrape_unsplash(quantity: int, with_tags=False, offset=0):
 
         logging.info(f"Fetched {len(wallpapers)} wallpapers")
 
+        wallpapers = (
+            supabase_client.table("wallpapers")
+            .upsert(
+                wallpapers,
+                returning="representation",
+                ignore_duplicates=True,
+                on_conflict="slug",
+            )
+            .execute()
+            .data
+        )
+
+        logging.info(f"Upserted {len(wallpapers)} wallpapers")
+
         awaitable_images = [
             scrape_image(session, wallpaper) for wallpaper in wallpapers
         ]
@@ -153,21 +166,7 @@ async def scrape_unsplash(quantity: int, with_tags=False, offset=0):
 
         logging.info(f"Fetched {len(wallpapers)} images")
 
-    upserted_wallpapers = (
-        supabase_client.table("wallpapers")
-        .upsert(
-            wallpapers,
-            returning="representation",
-            ignore_duplicates=True,
-            on_conflict="slug",
-        )
-        .execute()
-        .data
-    )
-
-    logging.info(f"Upserted {len(upserted_wallpapers)}/{len(wallpapers)} wallpapers")
-
-    return upserted_wallpapers
+    return wallpapers
 
 
 def insert_tag_vectors(wallpapers: list[dict], tag_vectors: list[list[float]]):

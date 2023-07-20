@@ -2,52 +2,21 @@ create extension if not exists vector;
 
 create schema if not exists vecs;
 
-drop table if exists vecs.preference_vectors cascade;
-
-create table vecs.preference_vectors (
-  id uuid primary key references auth.users on delete cascade,
-  vec vector(2000) default array_fill(0, array[2000])::vector not null,
-  metadata jsonb default '{}'::jsonb not null
-);
-
-alter table vecs.preference_vectors enable row level security;
-
-drop function if exists auth.insert_preference_after_insert_user cascade;
-
-create function auth.insert_preference_after_insert_user()
-returns trigger as $$
-begin
-  insert into vecs.preference_vectors (id) values (new.id);
-  return new;
-end;
-$$ language plpgsql security definer;
-
-create trigger insert_preference_after_insert_user
-after insert on auth.users
-for each row execute function auth.insert_preference_after_insert_user();
-
 drop table if exists public.wallpapers cascade;
 
 create table public.wallpapers (
   id uuid default gen_random_uuid() primary key,
   slug text not null unique,
   raw_url text not null,
+  regular_url text not null,
   thumbnail_url text not null,
-  tags text[] default '{}'::text[]
+  width integer not null,
+  height integer not null,
+  tags text[] not null
 );
 
 alter table public.wallpapers enable row level security;
 create policy "User can select every wallpaper." on public.wallpapers for select using (true);
-
-drop table if exists vecs.tag_vectors cascade;
-
-create table vecs.tag_vectors (
-  id uuid primary key references public.wallpapers on delete cascade,
-  vec vector(2000) default array_fill(0, array[2000])::vector not null,
-  metadata jsonb default '{}'::jsonb not null
-);
-
-alter table vecs.tag_vectors enable row level security;
 
 drop table if exists public.histories cascade;
 
@@ -63,8 +32,55 @@ create table public.histories (
 
 alter table public.histories enable row level security;
 create policy "User can select every history." on public.histories for select using (true);
-create policy "User can insert his own history." on public.histories for insert with check (auth.uid() = user_id);
 create policy "User can update his own history." on public.histories for delete using (auth.uid() = user_id);
+
+drop table if exists public.subscriptions cascade;
+
+create table public.subscriptions (
+  id uuid default gen_random_uuid() primary key,
+  from_id uuid not null references auth.users on delete cascade,
+  to_id uuid not null references auth.users on delete cascade,
+  unique (from_id, to_id)
+);
+
+alter table public.subscriptions enable row level security;
+create policy "User can select his own subscription." on public.subscriptions for select using (auth.uid() = from_id);
+create policy "User can insert his own subscription." on public.subscriptions for insert with check (auth.uid() = from_id);
+create policy "User can delete his own subscription." on public.subscriptions for delete using (auth.uid() = from_id);
+
+drop table if exists vecs.preference_vectors cascade;
+
+create table vecs.preference_vectors (
+  id uuid primary key references auth.users on delete cascade,
+  vec vector(2000) default array_fill(0, array[2000])::vector not null,
+  metadata jsonb default '{}'::jsonb not null
+);
+
+alter table vecs.preference_vectors enable row level security;
+
+drop table if exists vecs.tag_vectors cascade;
+
+create table vecs.tag_vectors (
+  id uuid primary key references public.wallpapers on delete cascade,
+  vec vector(2000) default array_fill(0, array[2000])::vector not null,
+  metadata jsonb default '{}'::jsonb not null
+);
+
+alter table vecs.tag_vectors enable row level security;
+
+drop function if exists auth.insert_preference_after_insert_user cascade;
+
+create function auth.insert_preference_after_insert_user()
+returns trigger as $$
+begin
+  insert into vecs.preference_vectors (id) values (new.id);
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger insert_preference_after_insert_user
+after insert on auth.users
+for each row execute function auth.insert_preference_after_insert_user();
 
 drop function if exists public.vector_mul cascade;
 
@@ -77,12 +93,8 @@ $$ language plpgsql security definer;
 
 drop function if exists public.update_preference;
 
-create function public.update_preference(uuid, uuid, integer)
+create function public.update_preference(user_id uuid, wallpaper_id uuid, weight integer)
 returns void as $$
-declare
-  user_id alias for $1;
-  wallpaper_id alias for $2;
-  weight alias for $3;
 begin
   update vecs.preference_vectors set vec = (
     select vec from vecs.preference_vectors where id = user_id
@@ -93,20 +105,6 @@ begin
   where id = user_id;
 end;
 $$ language plpgsql security definer;
-
-drop function if exists public.update_preference_after_insert_history cascade;
-
-create function public.update_preference_after_insert_history()
-returns trigger as $$
-begin
-  perform public.update_preference(new.user_id, new.wallpaper_id, -1);
-  return new;
-end;
-$$ language plpgsql security definer;
-
-create trigger update_preference_after_insert_history
-after insert on public.histories
-for each row execute function public.update_preference_after_insert_history();
 
 drop function if exists public.update_preference_after_update_history cascade;
 
@@ -145,18 +143,9 @@ create trigger update_preference_after_update_history
 after update on public.histories
 for each row execute function public.update_preference_after_update_history();
 
-drop table if exists public.subscriptions cascade;
-create table public.subscriptions (
-   id uuid default gen_random_uuid() primary key,
-   from_id uuid not null references auth.users on delete cascade,
-   to_id uuid not null references auth.users on delete cascade
-);
-alter table public.subscriptions enable row level security;
-create policy "User can select his own subscription." on public.subscriptions for select using (auth.uid() = from_id);
-create policy "User can insert his own subscription." on public.subscriptions for insert with check (auth.uid() = from_id);
-create policy "User can delete his own subscription." on public.subscriptions for delete using (auth.uid() = from_id);
+drop function if exists public.search_wallpapers cascade;
 
-create function public.search_wallpapers (query vector, quantity integer default 20)
+create function public.search_wallpapers (query vector, quantity integer)
 returns setof public.wallpapers as $$
 begin
   return query (
@@ -165,11 +154,46 @@ begin
     join unnest(array(
       select id
       from vecs.tag_vectors
-      order by vec <-> query
+      order by vec <=> query
       limit quantity
     ))
     with ordinality t(id, ord) using (id)
     order by t.ord
+  );
+end;
+$$ language plpgsql security definer;
+
+drop function if exists public.recommend_wallpapers cascade;
+
+create function public.recommend_wallpapers(quantity integer default 10)
+returns setof public.wallpapers as $$
+declare
+  recommended_wallpaper_ids uuid[];
+begin
+  recommended_wallpaper_ids = array(
+    select id
+    from vecs.tag_vectors
+    where id not in (
+      select wallpaper_id
+      from public.histories
+      where user_id = auth.uid()
+    )
+    order by vec <=> (
+      select vec
+      from vecs.preference_vectors
+      where id = auth.uid()
+    )
+    limit quantity
+  );
+
+  insert into public.histories (user_id, wallpaper_id)
+  select auth.uid(), id
+  from unnest(recommended_wallpaper_ids) as t(id);
+
+  return query (
+    select *
+    from public.wallpapers
+    where id = any(recommended_wallpaper_ids)
   );
 end;
 $$ language plpgsql security definer;
