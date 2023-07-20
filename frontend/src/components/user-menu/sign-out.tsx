@@ -2,7 +2,7 @@ import { LogOut } from "react-feather";
 import { toast } from "react-toastify";
 import { supabase } from "utils/supabase";
 
-export function SignOutButton() {
+export function SignOut() {
   const handleClick = async () => {
     const { error } = await supabase.auth.signOut();
 

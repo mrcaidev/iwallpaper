@@ -1,19 +1,16 @@
+import { useUser } from "contexts/user";
 import { User } from "react-feather";
 
-type Props = {
-  url: string;
-};
+export function Avatar() {
+  const { avatarUrl } = useUser()!;
 
-export function Avatar({ url }: Props) {
-  if (!url) {
-    return (
-      <User size={20} className="stroke-slate-600 dark:stroke-slate-400" />
-    );
+  if (!avatarUrl) {
+    return <User size={20} className="stroke-slate-500" />;
   }
 
   return (
     <img
-      src={url}
+      src={avatarUrl}
       alt="User avatar."
       width={40}
       height={40}

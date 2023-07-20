@@ -16,7 +16,7 @@ export function Detail({ onClose }: Props) {
 
   return (
     <Backdrop onClose={onClose}>
-      <div className="flex items-center relative rounded-lg bg-slate-100 dark:bg-slate-900 overflow-hidden motion-safe:animate-fade-in motion-safe:animate-duration-200">
+      <div className="flex relative rounded-lg bg-slate-100 dark:bg-slate-900 overflow-hidden motion-safe:animate-fade-in motion-safe:animate-duration-200">
         <Figure />
         <div className="self-stretch flex flex-col justify-between gap-8 max-w-xs p-8 pt-14">
           <div className="space-y-3">

@@ -1,19 +1,17 @@
+import { useUser } from "contexts/user";
 import { Heart, User as UserIcon } from "react-feather";
-import { User } from "utils/types";
 import { UserMenuLink } from "./link";
 import { Separator } from "./separator";
-import { SignOutButton } from "./sign-out-button";
+import { SignOut } from "./sign-out";
 import { ThemeToggler } from "./theme-toggler";
 
-type Props = {
-  user: User;
-};
+export function UserMenuBody() {
+  const { id, email, nickName } = useUser()!;
 
-export function UserMenuBody({ user: { id, email, nickName } }: Props) {
   return (
     <div
       role="menu"
-      className="w-max min-w-[240px] p-2 rounded-md ring ring-slate-300 dark:ring-slate-700 bg-slate-200 dark:bg-slate-800 origin-tr keyframes-menu motion-safe:animate-[menu_0.2s_cubic-bezier(0.24,0.22,0.015,1.56)]"
+      className="w-max min-w-[240px] p-2 rounded-md border border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-800 origin-tr keyframes-menu motion-safe:animate-[menu_0.2s_cubic-bezier(0.24,0.22,0.015,1.56)]"
     >
       <div className="space-y-1 px-4 py-2">
         <p className="font-bold text-lg">
@@ -30,7 +28,7 @@ export function UserMenuBody({ user: { id, email, nickName } }: Props) {
       </UserMenuLink>
       <Separator />
       <ThemeToggler />
-      <SignOutButton />
+      <SignOut />
     </div>
   );
 }

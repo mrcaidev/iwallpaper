@@ -19,7 +19,7 @@ export function Like({ isThumbnail = false }: Props) {
     <button
       type="button"
       onClick={handleClick}
-      className="flex justify-center items-center gap-2 w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-slate-200/90 dark:bg-slate-800/90 font-medium hover:opacity-85 transition-opacity"
+      className="flex justify-center items-center gap-2 px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-slate-200/90 dark:bg-slate-800/90 font-medium hover:opacity-85 transition-opacity"
     >
       <Heart
         size={16}

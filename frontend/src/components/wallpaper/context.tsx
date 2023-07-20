@@ -21,8 +21,12 @@ type State = Wallpaper & {
 
 const defaultState: State = {
   id: "",
-  thumbnailUrl: "",
+  slug: "",
   rawUrl: "",
+  regularUrl: "",
+  thumbnailUrl: "",
+  width: 0,
+  height: 0,
   tags: [],
   status: Status.UNBIASED,
   setStatus: () => 0,

@@ -1,7 +1,7 @@
 import { LogIn } from "react-feather";
 import { Link } from "react-router-dom";
 
-export function SignInLink() {
+export function SignIn() {
   return (
     <Link
       to="/sign-in"

@@ -4,7 +4,7 @@ import { useKeyDown } from "hooks/use-key-down";
 import { useRef, useState } from "react";
 import { Avatar } from "./avatar";
 import { UserMenuBody } from "./body";
-import { SignInLink } from "./sign-in-link";
+import { SignIn } from "./sign-in";
 
 export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +17,7 @@ export function UserMenu() {
   const user = useUser();
 
   if (!user) {
-    return <SignInLink />;
+    return <SignIn />;
   }
 
   return (
@@ -27,16 +27,16 @@ export function UserMenu() {
         onClick={() => setIsOpen((isOpen) => !isOpen)}
         aria-haspopup="true"
         aria-expanded={isOpen}
-        className="grid place-items-center w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800"
+        className="grid place-items-center w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"
       >
-        <Avatar url={user.avatarUrl} />
+        <Avatar />
         <span className="sr-only">
           {isOpen ? "Close user menu" : "Open user menu"}
         </span>
       </button>
       {isOpen && (
         <div className="absolute right-0 -bottom-5 translate-y-full">
-          <UserMenuBody user={user} />
+          <UserMenuBody />
         </div>
       )}
     </div>
