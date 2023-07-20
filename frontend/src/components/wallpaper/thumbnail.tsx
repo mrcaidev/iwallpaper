@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "utils/supabase";
 import { Wallpaper } from "utils/types";
 import { WallpaperProvider } from "./context";
 import { Detail } from "./detail";
@@ -13,13 +14,22 @@ type Props = {
 export function WallpaperThumbnail({ wallpaper }: Props) {
   const [shouldShowDetail, setShouldShowDetail] = useState(false);
 
+  const handleClick = async () => {
+    setShouldShowDetail(true);
+
+    await supabase
+      .from("histories")
+      .update({ is_scrutinized: true })
+      .eq("wallpaper_id", wallpaper.id);
+  };
+
   return (
     <WallpaperProvider wallpaper={wallpaper}>
       <div className="group relative rounded-md overflow-hidden">
         <Figure isThumbnail />
         <button
           type="button"
-          onClick={() => setShouldShowDetail(true)}
+          onClick={handleClick}
           className="absolute left-0 right-0 top-0 bottom-0"
         >
           <span className="sr-only">View wallpaper details</span>

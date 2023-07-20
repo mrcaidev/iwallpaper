@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import { Eye, EyeOff } from "react-feather";
+import { toast } from "react-toastify";
+import { supabase } from "utils/supabase";
 import { Status, useWallpaper } from "./context";
 
 type Props = {
@@ -7,12 +9,24 @@ type Props = {
 };
 
 export function Hide({ isThumbnail = false }: Props) {
-  const { status, setStatus } = useWallpaper();
+  const { id, status, setStatus } = useWallpaper();
 
-  const handleClick = () => {
+  const handleClick = async () => {
+    const previousStatus = status;
+
     setStatus((status) =>
       status === Status.HIDDEN ? Status.UNBIASED : Status.HIDDEN,
     );
+
+    const { error } = await supabase
+      .from("histories")
+      .update({ is_liked: false, is_hidden: previousStatus !== Status.HIDDEN })
+      .eq("wallpaper_id", id);
+
+    if (error) {
+      setStatus(previousStatus);
+      toast.error(error.message);
+    }
   };
 
   return (
