@@ -91,7 +91,7 @@ async def scrape_page(session: ClientSession, page_url: str):
     async with session.get(page_url) as response:
         wallpapers = await response.json()
 
-    return [wallpaper["slug"] for wallpaper in wallpapers]
+    return [wallpaper["slug"] for wallpaper in wallpapers if not wallpaper["plus"]]
 
 
 async def scrape_wallpaper(session: ClientSession, wallpaper_url: str, with_tags: bool):
