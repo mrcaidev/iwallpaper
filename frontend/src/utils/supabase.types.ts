@@ -118,20 +118,9 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
-      get_random_wallpapers: {
-        Args: {
-          quantity?: number;
-        };
-        Returns: {
-          height: number;
-          id: string;
-          raw_url: string;
-          regular_url: string;
-          slug: string;
-          tags: string[];
-          thumbnail_url: string;
-          width: number;
-        }[];
+      generate_random_preference_vector: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
       };
       ivfflathandler: {
         Args: {
