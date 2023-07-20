@@ -113,25 +113,30 @@ drop function if exists public.update_preference_after_update_history cascade;
 create function public.update_preference_after_update_history()
 returns trigger as $$
 declare
-  weight integer;
+  weight integer := 0;
 begin
   if old.is_scrutinized = false and new.is_scrutinized = true then
-    weight = 1;
+    weight = weight + 1;
   elsif old.is_scrutinized = true and new.is_scrutinized = false then
-    weight = -1;
-  elsif old.is_liked = false and new.is_liked = true then
-    weight = 4;
-  elsif old.is_liked = true and new.is_liked = false then
-    weight = -4;
-  elsif old.is_hidden = false and new.is_hidden = true then
-    weight = -4;
-  elsif old.is_hidden = true and new.is_hidden = false then
-    weight = 4;
-  else
-    return new;
+    weight = weight - 1;
   end if;
 
-  perform public.update_preference(new.user_id, new.wallpaper_id, weight);
+  if old.is_liked = false and new.is_liked = true then
+    weight = weight + 4;
+  elsif old.is_liked = true and new.is_liked = false then
+    weight = weight - 4;
+  end if;
+
+  if old.is_hidden = false and new.is_hidden = true then
+    weight = weight - 4;
+  elsif old.is_hidden = true and new.is_hidden = false then
+    weight = weight + 4;
+  end if;
+
+  if weight != 0 then
+    perform public.update_preference(new.user_id, new.wallpaper_id, weight);
+  end if;
+
   return new;
 end;
 $$ language plpgsql security definer;
