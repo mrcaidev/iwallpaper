@@ -1,20 +1,15 @@
-type SnakeToCamel<S extends string> = S extends `${infer First}_${infer Rest}`
-  ? `${First}${Capitalize<SnakeToCamel<Rest>>}`
+type SnakeToCamelString<S> = S extends `${infer First}_${infer Rest}`
+  ? `${Lowercase<First>}${Capitalize<SnakeToCamelString<Rest>>}`
   : S;
 
-type SnakeToCamelObject<O> = {
-  [Key in keyof O as SnakeToCamel<Key & string>]: O[Key] extends Record<
-    string,
-    unknown
-  >
-    ? SnakeToCamelObject<O[Key]>
-    : O[Key];
-} & {
-  // To prettify the type hints.
-};
+type SnakeToCamel<T> = T extends (infer Item)[]
+  ? SnakeToCamel<Item>[]
+  : T extends object
+  ? { [Key in keyof T as SnakeToCamelString<Key>]: SnakeToCamel<T[Key]> }
+  : T;
 
-export function snakeToCamel(str: string) {
-  const [first, ...rest] = str.split("_").filter((word) => word.length > 0);
+function snakeToCamelString(text: string) {
+  const [first, ...rest] = text.split("_").filter((word) => word.length > 0);
 
   if (!first) {
     return "";
@@ -29,20 +24,20 @@ export function snakeToCamel(str: string) {
   return camelWords.join("");
 }
 
-export function snakeToCamelObject<T>(obj: T): SnakeToCamelObject<T> {
-  if (!isObject(obj)) {
-    return obj as SnakeToCamelObject<T>;
+export function snakeToCamel<T>(target: T): SnakeToCamel<T> {
+  if (Array.isArray(target)) {
+    return target.map((item) => snakeToCamel(item)) as SnakeToCamel<T>;
   }
 
-  const camelObj: Record<string, unknown> = {};
-
-  for (const key in obj) {
-    camelObj[snakeToCamel(key)] = snakeToCamelObject(obj[key]);
+  if (isObject(target)) {
+    return Object.entries(target).reduce((acc, [key, value]) => {
+      return { ...acc, [snakeToCamelString(key)]: snakeToCamel(value) };
+    }, {} as SnakeToCamel<T>);
   }
 
-  return camelObj as SnakeToCamelObject<T>;
+  return target as SnakeToCamel<T>;
 }
 
-function isObject(obj: unknown): obj is Record<string, unknown> {
-  return Object.prototype.toString.call(obj) === "[object Object]";
+function isObject(target: unknown): target is Record<string, unknown> {
+  return Object.prototype.toString.call(target) === "[object Object]";
 }

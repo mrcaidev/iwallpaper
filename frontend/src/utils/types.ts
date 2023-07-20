@@ -7,7 +7,11 @@ export type User = {
 
 export type Wallpaper = {
   id: string;
-  thumbnailUrl: string;
+  slug: string;
   rawUrl: string;
+  regularUrl: string;
+  thumbnailUrl: string;
+  width: number;
+  height: number;
   tags: string[];
 };

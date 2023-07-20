@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { snakeToCamelObject } from "utils/case";
+import { snakeToCamel } from "utils/case";
 import { supabase } from "utils/supabase";
 import { User } from "utils/types";
 
@@ -38,7 +38,7 @@ function extractUserFromSession(session: Session | null) {
     return undefined;
   }
 
-  const { id, email, userMetadata } = snakeToCamelObject(session.user);
+  const { id, email, userMetadata } = snakeToCamel(session.user);
   return { id, email, ...userMetadata } as User;
 }
 
