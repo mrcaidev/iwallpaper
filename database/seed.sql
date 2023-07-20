@@ -155,3 +155,21 @@ alter table public.subscriptions enable row level security;
 create policy "User can select his own subscription." on public.subscriptions for select using (auth.uid() = from_id);
 create policy "User can insert his own subscription." on public.subscriptions for insert with check (auth.uid() = from_id);
 create policy "User can delete his own subscription." on public.subscriptions for delete using (auth.uid() = from_id);
+
+create function public.search_wallpapers (query vector, quantity integer default 20)
+returns setof public.wallpapers as $$
+begin
+  return query (
+    select w.*
+    from public.wallpapers w
+    join unnest(array(
+      select id
+      from vecs.tag_vectors
+      order by vec <-> query
+      limit quantity
+    ))
+    with ordinality t(id, ord) using (id)
+    order by t.ord
+  );
+end;
+$$ language plpgsql security definer;
