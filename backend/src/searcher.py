@@ -11,7 +11,7 @@ router = APIRouter(prefix="/search")
 
 @router.get("/")
 def search(query: Annotated[str, Query(min_length=1, max_length=50)]):
-    query_vector = vectorizer.predict([query])[0]
+    query_vector = vectorizer.transform([query])[0]
 
     wallpapers = (
         supabase_client.rpc("search_wallpapers", {"query": query_vector}).execute().data

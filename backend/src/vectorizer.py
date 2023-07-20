@@ -2,10 +2,7 @@ import logging
 import os
 
 import joblib
-import numpy as np
-from scipy.sparse import spmatrix
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import normalize
 
 from .constants import MODEL_DIR
 
@@ -15,19 +12,22 @@ class Vectorizer:
         self._max_features = max_features
         self._model_path = os.path.join(MODEL_DIR, f"{model_name}.joblib")
 
-        if os.path.exists(self._model_path):
+        if self._has_model():
             self._load_model()
         else:
             self._create_model()
 
-    def train(self, corpus: list[str]):
+    def fit_transform(self, corpus: list[str]):
         X = self._vectorizer.fit_transform(corpus)
         self._save_model()
-        return self._postprocess(X)
+        return X.toarray().tolist()
 
-    def predict(self, corpus: list[str]):
+    def transform(self, corpus: list[str]):
         X = self._vectorizer.transform(corpus)
-        return self._postprocess(X)
+        return X.toarray().tolist()
+
+    def _has_model(self):
+        return os.path.exists(self._model_path)
 
     def _create_model(self):
         self._vectorizer = TfidfVectorizer(max_features=self._max_features)
@@ -40,17 +40,6 @@ class Vectorizer:
     def _save_model(self):
         joblib.dump(self._vectorizer, self._model_path)
         logging.info(f"Saved vectorizer model to {self._model_path}")
-
-    def _postprocess(self, matrix: spmatrix):
-        vectors = matrix.toarray()
-        vectors = normalize(vectors)
-        vectors = Vectorizer._pad_right(vectors, self._max_features)
-        return vectors.tolist()
-
-    @staticmethod
-    def _pad_right(vectors: np.ndarray, length: int):
-        padding = max(0, length - vectors.shape[1])
-        return np.pad(vectors, ((0, 0), (0, padding)))
 
 
 vectorizer = Vectorizer(max_features=2000)

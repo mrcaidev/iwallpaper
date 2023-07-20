@@ -33,7 +33,7 @@ async def bootstrap():
         wallpapers.extend(new_wallpapers)
 
     corpus = [" ".join(wallpaper["tags"]) for wallpaper in wallpapers]
-    tag_vectors = vectorizer.train(corpus)
+    tag_vectors = vectorizer.fit_transform(corpus)
     insert_tag_vectors(wallpapers, tag_vectors)
 
 
