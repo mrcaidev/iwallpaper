@@ -101,7 +101,7 @@ begin
 end;
 $$ language plpgsql security definer;
 
-drop function if exists public.update_preference;
+drop function if exists public.update_preference cascade;
 
 create function public.update_preference(user_id uuid, wallpaper_id uuid, weight integer)
 returns void as $$
