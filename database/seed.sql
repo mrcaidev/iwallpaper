@@ -34,7 +34,7 @@ create table public.histories (
 
 alter table public.histories enable row level security;
 create policy "User can select every history." on public.histories for select using (true);
-create policy "User can update his own history." on public.histories for delete using (auth.uid() = user_id);
+create policy "User can update his own history." on public.histories for update using (auth.uid() = user_id);
 
 drop table if exists public.subscriptions cascade;
 
