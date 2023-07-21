@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { supabase } from "utils/supabase";
 
 export function Form() {
-  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
@@ -15,8 +14,17 @@ export function Form() {
 
     setIsSubmitting(true);
 
+    const formData = new FormData(e.target as HTMLFormElement);
+    const { email } = Object.fromEntries(formData);
+
+    if (!email) {
+      toast.error("Please enter your email address.");
+      setIsSubmitting(false);
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: email.toString(),
       options: {
         data: {
           nick_name: null,
@@ -41,8 +49,7 @@ export function Form() {
       <Input
         label="Email address"
         type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        name="email"
         required
         disabled={isSubmitting || isSent}
         placeholder="you@example.com"
