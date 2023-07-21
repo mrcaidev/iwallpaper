@@ -1,5 +1,6 @@
 import { useUser } from "contexts/user";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { supabase } from "utils/supabase";
 import { Wallpaper } from "utils/types";
 import { WallpaperProvider } from "./context";
@@ -14,6 +15,9 @@ type Props = {
 
 export function WallpaperThumbnail({ wallpaper }: Props) {
   const [shouldShowDetail, setShouldShowDetail] = useState(false);
+
+  const location = useLocation();
+  useEffect(() => setShouldShowDetail(false), [location]);
 
   const user = useUser();
 
