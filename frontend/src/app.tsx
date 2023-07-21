@@ -3,6 +3,7 @@ import { RootLayout } from "layouts/root";
 import { Friend } from "pages/friend";
 import { Home } from "pages/home";
 import { NotFound } from "pages/not-found";
+import { Search } from "pages/search";
 import { SignIn } from "pages/sign-in";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <Home />,
+          },
+          {
+            path: "search",
+            element: <Search />,
           },
           {
             path: "friend",

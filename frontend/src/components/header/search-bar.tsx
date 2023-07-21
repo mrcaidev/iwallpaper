@@ -1,7 +1,7 @@
 import { useKeyDown } from "hooks/use-key-down";
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Search } from "react-feather";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 export function SearchBar() {
   const id = useId();
@@ -12,7 +12,26 @@ export function SearchBar() {
   useKeyDown("/", () => ref.current?.focus());
 
   const navigate = useNavigate();
-  useKeyDown("Enter", () => navigate("/search?q=" + encodeURIComponent(query)));
+  useKeyDown("Enter", () => {
+    if (query) {
+      navigate("/search?query=" + encodeURIComponent(query));
+    }
+  });
+
+  const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
+  const queryParam = searchParams.get("query");
+
+  useEffect(() => {
+    if (pathname !== "/search") {
+      setQuery("");
+      return;
+    }
+
+    if (queryParam) {
+      setQuery(queryParam);
+    }
+  }, [pathname, queryParam]);
 
   return (
     <div className="relative w-full">
