@@ -46,7 +46,7 @@ export function SearchBar() {
         onChange={(e) => setQuery(e.target.value)}
         placeholder='Type "/" to search'
         id={id}
-        className="min-w-[180px] w-full max-w-sm pl-9 pr-3 py-2 rounded border border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 text-sm placeholder:text-slate-500"
+        className="min-w-[180px] w-full max-w-sm pl-9 pr-3 py-2 rounded border border-slate-200 dark:border-slate-800 focus:outline outline-2 outline-slate-400 dark:outline-slate-600 bg-slate-100/90 dark:bg-slate-900/90 text-sm placeholder:text-slate-500"
       />
     </div>
   );
