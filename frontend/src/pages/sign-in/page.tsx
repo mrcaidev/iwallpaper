@@ -1,9 +1,12 @@
 import { UnauthGuard } from "components/guards";
+import { useTitle } from "hooks/use-title";
 import { Form } from "./form";
 import { GoBack } from "./go-back";
 import { Google } from "./google";
 
 export function Page() {
+  useTitle("Sign in");
+
   return (
     <UnauthGuard>
       <main className="grid place-items-center min-h-screen">

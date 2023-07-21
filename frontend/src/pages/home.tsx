@@ -1,5 +1,6 @@
 import { Masonry } from "components/masonry";
 import { useInfiniteScroll } from "hooks/use-infinite-scroll";
+import { useTitle } from "hooks/use-title";
 import mockWallpapers from "mocks/wallpapers.json";
 import { useRef, useState } from "react";
 import { Loader } from "react-feather";
@@ -9,6 +10,8 @@ import { supabase } from "utils/supabase";
 import { Wallpaper } from "utils/types";
 
 export function Home() {
+  useTitle("Home");
+
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
 
   const bottomRef = useRef<HTMLParagraphElement>(null);

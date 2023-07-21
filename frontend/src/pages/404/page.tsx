@@ -1,6 +1,9 @@
+import { useTitle } from "hooks/use-title";
 import { Link } from "react-router-dom";
 
 export function Page() {
+  useTitle("Page not found");
+
   return (
     <div className="grid place-content-center place-items-center gap-3 min-h-screen p-8">
       <h1 className="font-bold text-3xl">Page not found</h1>
