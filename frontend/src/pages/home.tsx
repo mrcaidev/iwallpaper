@@ -1,5 +1,6 @@
 import { Masonry } from "components/masonry";
 import { useBottomDetection } from "hooks/use-bottom-detection";
+import mockWallpapers from "mock/wallpapers.json";
 import { useRef, useState } from "react";
 import { Loader } from "react-feather";
 import { toast } from "react-toastify";
@@ -12,6 +13,11 @@ export function Home() {
 
   const bottomRef = useRef<HTMLDivElement>(null);
   useBottomDetection(bottomRef, () => {
+    if (import.meta.env.DEV) {
+      setWallpapers((wallpapers) => [...wallpapers, ...mockWallpapers]);
+      return;
+    }
+
     supabase.rpc("recommend_wallpapers").then(({ data, error }) => {
       if (error) {
         toast.error(error.message);
