@@ -1,6 +1,6 @@
 import { Masonry } from "components/masonry";
 import { useBottomDetection } from "hooks/use-bottom-detection";
-import mockWallpapers from "mock/wallpapers.json";
+import mockWallpapers from "mocks/wallpapers.json";
 import { useRef, useState } from "react";
 import { Loader } from "react-feather";
 import { toast } from "react-toastify";
