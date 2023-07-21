@@ -14,6 +14,8 @@ export function Avatar() {
       alt="User avatar."
       width={40}
       height={40}
+      loading="lazy"
+      decoding="async"
       className="w-10 h-10"
     />
   );
