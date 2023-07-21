@@ -1,5 +1,7 @@
 import clsx from "clsx";
+import { useUser } from "contexts/user";
 import { Eye, EyeOff } from "react-feather";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { supabase } from "utils/supabase";
 import { Status, useWallpaper } from "./context";
@@ -11,7 +13,15 @@ type Props = {
 export function Hide({ isThumbnail = false }: Props) {
   const { id, status, setStatus } = useWallpaper();
 
+  const user = useUser();
+  const navigate = useNavigate();
+
   const handleClick = async () => {
+    if (!user) {
+      navigate("/sign-in");
+      return;
+    }
+
     const previousStatus = status;
 
     setStatus((status) =>

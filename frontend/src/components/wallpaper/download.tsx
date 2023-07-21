@@ -1,3 +1,4 @@
+import { useUser } from "contexts/user";
 import download from "downloadjs";
 import { Download as DownloadIcon } from "react-feather";
 import { supabase } from "utils/supabase";
@@ -6,8 +7,14 @@ import { useWallpaper } from "./context";
 export function Download() {
   const { id, rawUrl } = useWallpaper();
 
+  const user = useUser();
+
   const handleClick = async () => {
     download(rawUrl);
+
+    if (!user) {
+      return;
+    }
 
     await supabase
       .from("histories")

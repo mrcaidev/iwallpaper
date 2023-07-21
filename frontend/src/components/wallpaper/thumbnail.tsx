@@ -1,3 +1,4 @@
+import { useUser } from "contexts/user";
 import { useState } from "react";
 import { supabase } from "utils/supabase";
 import { Wallpaper } from "utils/types";
@@ -14,8 +15,14 @@ type Props = {
 export function WallpaperThumbnail({ wallpaper }: Props) {
   const [shouldShowDetail, setShouldShowDetail] = useState(false);
 
+  const user = useUser();
+
   const handleClick = async () => {
     setShouldShowDetail(true);
+
+    if (!user) {
+      return;
+    }
 
     await supabase
       .from("histories")
