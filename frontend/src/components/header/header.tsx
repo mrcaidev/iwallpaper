@@ -1,6 +1,5 @@
 import { UserMenu } from "components/user-menu";
 import { Logo } from "./logo";
-import { NavigationLink } from "./navigation-link";
 import { SearchBar } from "./search-bar";
 
 export function Header() {
@@ -11,10 +10,6 @@ export function Header() {
       </div>
       <SearchBar />
       <div className="grow" />
-      <nav className="shrink-0">
-        <NavigationLink to="/square">Square</NavigationLink>
-        <NavigationLink to="/friends">Friends</NavigationLink>
-      </nav>
       <div className="shrink-0">
         <UserMenu />
       </div>

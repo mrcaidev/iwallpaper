@@ -1,5 +1,5 @@
 import { useUser } from "contexts/user";
-import { Heart, User as UserIcon } from "react-feather";
+import { Heart, User, Users } from "react-feather";
 import { UserMenuLink } from "./link";
 import { Separator } from "./separator";
 import { SignOut } from "./sign-out";
@@ -20,11 +20,14 @@ export function UserMenuBody() {
         <p className="text-xs text-slate-600 dark:text-slate-400">{email}</p>
       </div>
       <Separator />
-      <UserMenuLink to="/me" icon={UserIcon}>
+      <UserMenuLink to="/me" icon={User}>
         Account
       </UserMenuLink>
       <UserMenuLink to="/like" icon={Heart}>
         Likes
+      </UserMenuLink>
+      <UserMenuLink to="/friend" icon={Users}>
+        Friends
       </UserMenuLink>
       <Separator />
       <ThemeToggler />
