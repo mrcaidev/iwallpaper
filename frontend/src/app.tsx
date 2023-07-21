@@ -1,6 +1,5 @@
 import { AppLayout } from "layouts/app";
 import { RootLayout } from "layouts/root";
-import { Friend } from "pages/friend";
 import { Home } from "pages/home";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -26,8 +25,8 @@ const router = createBrowserRouter([
             lazy: () => import("pages/search"),
           },
           {
-            path: "friend",
-            element: <Friend />,
+            path: "friends",
+            lazy: () => import("pages/friends"),
           },
           {
             path: "*",

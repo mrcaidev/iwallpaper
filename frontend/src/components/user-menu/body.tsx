@@ -26,7 +26,7 @@ export function UserMenuBody() {
       <UserMenuLink to="/like" icon={Heart}>
         Likes
       </UserMenuLink>
-      <UserMenuLink to="/friend" icon={Users}>
+      <UserMenuLink to="/friends" icon={Users}>
         Friends
       </UserMenuLink>
       <Separator />
