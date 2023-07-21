@@ -13,8 +13,11 @@ export function Masonry({ wallpapers }: Props) {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {masonry.map((wallpapers, index) => (
         <div key={index} className="flex flex-col gap-4">
-          {wallpapers.map((wallpaper) => (
-            <WallpaperThumbnail key={wallpaper.id} wallpaper={wallpaper} />
+          {wallpapers.map((wallpaper, index) => (
+            <WallpaperThumbnail
+              key={wallpaper.id + index}
+              wallpaper={wallpaper}
+            />
           ))}
         </div>
       ))}
