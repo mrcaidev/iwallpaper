@@ -11,7 +11,7 @@ import { snakeToCamel } from "utils/case";
 import { supabase } from "utils/supabase";
 import { User } from "utils/types";
 
-const UserContext = createContext<User | undefined>(undefined);
+const UserContext = createContext<User | null>(null);
 
 export function UserProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
@@ -35,7 +35,7 @@ export function UserProvider({ children }: PropsWithChildren) {
 
 function extractUserFromSession(session: Session | null) {
   if (!session) {
-    return undefined;
+    return null;
   }
 
   const { id, email, userMetadata } = snakeToCamel(session.user);
