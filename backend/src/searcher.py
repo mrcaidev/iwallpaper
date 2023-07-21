@@ -28,4 +28,4 @@ def search(
 
     logging.info(f"Found {len(wallpapers)} search results")
 
-    return {"message": "", "data": wallpapers}
+    return {"data": wallpapers}

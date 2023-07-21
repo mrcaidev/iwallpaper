@@ -34,6 +34,8 @@ async def bootstrap():
     tag_vectors = vectorizer.fit_transform(corpus)
     insert_tag_vectors(wallpapers, tag_vectors)
 
+    return {"data": len(wallpapers)}
+
 
 @router.post("/cron", status_code=status.HTTP_201_CREATED)
 async def cron():
@@ -47,7 +49,7 @@ async def cron():
 
     supabase_client.table("wallpapers").upsert(tagged_wallpapers).execute()
 
-    return {"message": f"Scraped {len(wallpapers)} wallpapers"}
+    return {"data": len(wallpapers)}
 
 
 def calculate_per_page(quantity: int):
