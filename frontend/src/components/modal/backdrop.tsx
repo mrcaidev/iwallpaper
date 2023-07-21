@@ -1,5 +1,5 @@
 import { useKeyDown } from "hooks/use-key-down";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { createPortal } from "react-dom";
 
 type Props = PropsWithChildren<{
@@ -8,6 +8,11 @@ type Props = PropsWithChildren<{
 
 export function Backdrop({ onClose, children }: Props) {
   useKeyDown("Escape", onClose);
+
+  useEffect(() => {
+    document.body.classList.add("overflow-hidden");
+    return () => document.body.classList.remove("overflow-hidden");
+  }, []);
 
   return createPortal(
     <>
