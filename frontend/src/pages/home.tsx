@@ -1,5 +1,5 @@
 import { Masonry } from "components/masonry";
-import { useBottomDetection } from "hooks/use-bottom-detection";
+import { useInfiniteScroll } from "hooks/use-infinite-scroll";
 import mockWallpapers from "mocks/wallpapers.json";
 import { useRef, useState } from "react";
 import { Loader } from "react-feather";
@@ -11,34 +11,38 @@ import { Wallpaper } from "utils/types";
 export function Home() {
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
 
-  const bottomRef = useRef<HTMLDivElement>(null);
-  useBottomDetection(bottomRef, () => {
-    if (import.meta.env.DEV) {
-      setWallpapers((wallpapers) => [...wallpapers, ...mockWallpapers]);
-      return;
-    }
-
-    supabase.rpc("recommend_wallpapers").then(({ data, error }) => {
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      const newWallpapers = snakeToCamel(data);
-      setWallpapers((wallpapers) => [...wallpapers, ...newWallpapers]);
+  const bottomRef = useRef<HTMLParagraphElement>(null);
+  useInfiniteScroll(bottomRef, () => {
+    recommendWallpapers().then((wallpapers) => {
+      setWallpapers((prevWallpapers) => [...prevWallpapers, ...wallpapers]);
     });
   });
 
   return (
     <div className="mt-20 px-8 py-4">
       <Masonry wallpapers={wallpapers} />
-      <div
+      <p
         ref={bottomRef}
         className="flex justify-center items-center gap-2 my-8 text-slate-600 dark:text-slate-400"
       >
         <Loader size={16} className="animate-spin" />
         More wallpapers on the way...
-      </div>
+      </p>
     </div>
   );
+}
+
+async function recommendWallpapers() {
+  if (import.meta.env.DEV) {
+    return mockWallpapers;
+  }
+
+  const { data, error } = await supabase.rpc("recommend_wallpapers");
+
+  if (error) {
+    toast.error(error.message);
+    return [];
+  }
+
+  return snakeToCamel(data);
 }

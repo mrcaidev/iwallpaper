@@ -2,10 +2,10 @@ import { UnauthGuard } from "components/guards";
 import { Form } from "./form";
 import { Google } from "./google";
 
-export function SignIn() {
+export function Page() {
   return (
     <UnauthGuard>
-      <main className="min-h-screen grid place-items-center">
+      <main className="grid place-items-center min-h-screen">
         <div className="w-full max-w-xs -translate-y-1/10">
           <img
             src="/favicon.svg"

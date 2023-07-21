@@ -2,24 +2,19 @@ import { AppLayout } from "layouts/app";
 import { RootLayout } from "layouts/root";
 import { Friend } from "pages/friend";
 import { Home } from "pages/home";
-import { NotFound } from "pages/not-found";
-import { Search } from "pages/search";
-import { SignIn } from "pages/sign-in";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const router = createBrowserRouter([
   {
-    path: "/",
     element: <RootLayout />,
     children: [
       {
         path: "sign-in",
-        element: <SignIn />,
+        lazy: () => import("pages/sign-in"),
       },
       {
-        path: "/",
         element: <AppLayout />,
         children: [
           {
@@ -28,7 +23,7 @@ const router = createBrowserRouter([
           },
           {
             path: "search",
-            element: <Search />,
+            lazy: () => import("pages/search"),
           },
           {
             path: "friend",
@@ -36,7 +31,7 @@ const router = createBrowserRouter([
           },
           {
             path: "*",
-            element: <NotFound />,
+            lazy: () => import("pages/404"),
           },
         ],
       },

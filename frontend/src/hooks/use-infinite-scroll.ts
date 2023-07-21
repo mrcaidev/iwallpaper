@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useRef } from "react";
 
-export function useBottomDetection(
+export function useInfiniteScroll(
   bottomRef: RefObject<HTMLElement>,
   callback: () => void,
 ) {
@@ -16,11 +16,7 @@ export function useBottomDetection(
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry) {
-          return;
-        }
-
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           callbackRef.current();
         }
       },

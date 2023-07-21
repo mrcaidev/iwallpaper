@@ -1,7 +1,13 @@
-import { toast } from "react-toastify";
 import { snakeToCamel } from "./case";
 
-export async function fetcher<T>(url: string, config?: RequestInit) {
+export type FetcherResponse<T> =
+  | { data: T; error: null }
+  | { data: null; error: Error };
+
+export async function fetcher<T>(
+  url: string,
+  config?: RequestInit,
+): Promise<FetcherResponse<T>> {
   const input = new URL(url, import.meta.env.VITE_API_BASE_URL);
   const init = {
     ...config,
@@ -15,28 +21,24 @@ export async function fetcher<T>(url: string, config?: RequestInit) {
     const response = await fetch(input, init);
 
     if (response.status === 204) {
-      return null;
+      return { data: null as T, error: null };
     }
 
     const { message, data } = await response.json();
 
     if (!response.ok) {
-      toast.error(message);
-      return null;
+      return { data: null, error: new Error(message) };
     }
 
-    if (message) {
-      toast.success(message);
-    }
-
-    return snakeToCamel(data) as T;
+    return { data: snakeToCamel(data) as T, error: null };
   } catch (error) {
     if (error instanceof Error) {
-      toast.error(error.message);
-    } else {
-      toast.error("Unknown network issue. Please try again later.");
+      return { data: null, error };
     }
 
-    return null;
+    return {
+      data: null,
+      error: new Error("Unknown network issue. Please try again later."),
+    };
   }
 }
