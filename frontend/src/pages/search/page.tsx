@@ -18,6 +18,7 @@ export function Page() {
 
   return (
     <div className="mt-20 px-8 py-4">
+      <h1 className="mb-8 font-bold text-2xl">Search results for {query}</h1>
       <Masonry wallpapers={data} />
       <p className="my-8 text-center text-slate-600 dark:text-slate-400">
         End of search results
