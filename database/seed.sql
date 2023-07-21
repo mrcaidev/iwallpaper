@@ -193,6 +193,7 @@ begin
       from public.wallpapers
       tablesample system_rows(quantity)
     );
+    return;
   end if;
 
   recommended_wallpaper_ids = array(
