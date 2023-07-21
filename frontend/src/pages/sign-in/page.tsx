@@ -1,5 +1,6 @@
 import { UnauthGuard } from "components/guards";
 import { Form } from "./form";
+import { GoBack } from "./go-back";
 import { Google } from "./google";
 
 export function Page() {
@@ -22,6 +23,9 @@ export function Page() {
           <Form />
         </div>
       </main>
+      <div className="fixed top-8 left-10">
+        <GoBack />
+      </div>
     </UnauthGuard>
   );
 }
