@@ -5,7 +5,7 @@ export function AppLayout() {
   return (
     <>
       <Header />
-      <main className="mt-20 px-8 py-4">
+      <main>
         <Outlet />
       </main>
     </>

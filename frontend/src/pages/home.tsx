@@ -30,7 +30,7 @@ export function Home() {
   });
 
   return (
-    <>
+    <div className="mt-20 px-8 py-4">
       <Masonry wallpapers={wallpapers} />
       <div
         ref={bottomRef}
@@ -39,6 +39,6 @@ export function Home() {
         <Loader size={16} className="animate-spin" />
         More wallpapers on the way...
       </div>
-    </>
+    </div>
   );
 }

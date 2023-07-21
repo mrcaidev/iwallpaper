@@ -53,7 +53,7 @@ export function Search() {
 
   if (isSearching) {
     return (
-      <div className="grid place-items-center fixed left-0 right-0 top-0 bottom-0">
+      <div className="grid place-items-center min-h-screen px-8 py-4">
         <p className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
           <Loader size={16} className="animate-spin" />
           Wait a second. We are searching wallpapers for you...
@@ -64,27 +64,29 @@ export function Search() {
 
   if (wallpapers.length === 0) {
     return (
-      <div className="flex flex-col justify-center items-center gap-1 fixed left-0 right-0 top-0 bottom-0">
-        <p className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-          <Frown size={16} />
-          We did not find any similar wallpapers
-        </p>
-        <Link
-          to="/"
-          className="text-slate-600 dark:text-slate-400 hover:text-slate-800 hover:text-slate-200 transition-colors underline underline-offset-4"
-        >
-          Back to homepage
-        </Link>
+      <div className="grid place-items-center min-h-screen px-8 py-4">
+        <div className="space-y-1">
+          <p className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+            <Frown size={16} />
+            We did not find any similar wallpapers
+          </p>
+          <Link
+            to="/"
+            className="block text-center text-slate-600 dark:text-slate-400 hover:text-slate-800 hover:text-slate-200 transition-colors underline underline-offset-4"
+          >
+            Back to homepage
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
+    <div className="mt-20 px-8 py-4">
       <Masonry wallpapers={wallpapers} />
       <div className="my-8 text-center text-slate-600 dark:text-slate-400">
         End of search results
       </div>
-    </>
+    </div>
   );
 }
