@@ -23,7 +23,7 @@ export function UserMenuBody() {
       <UserMenuLink to="/me" icon={User}>
         Account
       </UserMenuLink>
-      <UserMenuLink to="/like" icon={Heart}>
+      <UserMenuLink to="/likes" icon={Heart}>
         Likes
       </UserMenuLink>
       <UserMenuLink to="/friends" icon={Users}>

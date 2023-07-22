@@ -25,6 +25,10 @@ const router = createBrowserRouter([
             lazy: () => import("pages/search"),
           },
           {
+            path: "likes",
+            lazy: () => import("pages/likes"),
+          },
+          {
             path: "friends",
             lazy: () => import("pages/friends"),
           },
