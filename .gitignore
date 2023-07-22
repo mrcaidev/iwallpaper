@@ -55,4 +55,4 @@ __pycache__
 
 # project
 images
-models
+tagger.joblib
