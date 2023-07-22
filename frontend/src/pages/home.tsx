@@ -22,7 +22,7 @@ export function Home() {
   });
 
   return (
-    <div className="mt-20 px-8 py-4">
+    <div className="px-8 py-4 mt-20">
       <Masonry wallpapers={wallpapers} />
       <p
         ref={bottomRef}
