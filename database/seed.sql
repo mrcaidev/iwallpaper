@@ -3,6 +3,17 @@ create extension if not exists tsm_system_rows;
 
 create schema if not exists vecs;
 
+drop table if exists public.profiles cascade;
+
+create table public.profiles (
+  id uuid primary key references auth.users on delete cascade,
+  nick_name text default null,
+  avatar_url text default null
+);
+
+alter table public.profiles enable row level security;
+create policy "User can select every profile." on public.profiles for select using (true);
+
 drop table if exists public.wallpapers cascade;
 
 create table public.wallpapers (
@@ -79,19 +90,32 @@ create table vecs.tag_vectors (
 
 alter table vecs.tag_vectors enable row level security;
 
-drop function if exists auth.insert_preference_after_insert_user cascade;
+drop function if exists auth.sync_user cascade;
 
-create function auth.insert_preference_after_insert_user()
+create function auth.sync_user()
 returns trigger as $$
 begin
-  insert into vecs.preference_vectors (id) values (new.id);
+  if tg_op = 'INSERT' then
+    insert into public.profiles (id, nick_name, avatar_url)
+    values (new.id, new.raw_user_meta_data->>'nick_name', new.raw_user_meta_data->>'avatar_url');
+    insert into vecs.preference_vectors (id)
+    values (new.id);
+
+  elsif tg_op = 'UPDATE' then
+    update public.profiles
+    set nick_name = new.raw_user_meta_data->>'nick_name',
+      avatar_url = new.raw_user_meta_data->>'avatar_url'
+    where id = new.id;
+
+  end if;
+
   return new;
 end;
 $$ language plpgsql security definer;
 
-create trigger insert_preference_after_insert_user
-after insert on auth.users
-for each row execute function auth.insert_preference_after_insert_user();
+create trigger sync_user
+after insert or update of raw_user_meta_data on auth.users
+for each row execute function auth.sync_user();
 
 drop function if exists public.vector_mul cascade;
 
