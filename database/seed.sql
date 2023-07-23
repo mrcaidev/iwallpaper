@@ -131,9 +131,8 @@ drop function if exists public.update_preference cascade;
 create function public.update_preference(user_id uuid, wallpaper_id uuid, weight integer)
 returns void as $$
 begin
-  update vecs.preference_vectors set vec = (
-    select vec from vecs.preference_vectors where id = user_id
-  ) + vector_mul(
+  update vecs.preference_vectors
+  set vec = vec + vector_mul(
     (select vec from vecs.tag_vectors where id = wallpaper_id),
     weight
   )
