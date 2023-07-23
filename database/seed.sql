@@ -209,6 +209,7 @@ drop function if exists public.recommend_wallpapers cascade;
 create function public.recommend_wallpapers(quantity integer default 10)
 returns setof public.wallpapers as $$
 declare
+  preferred_count integer := floor(quantity * 0.7);
   recommended_wallpaper_ids uuid[];
 begin
   if auth.uid() is null then
@@ -221,24 +222,33 @@ begin
   end if;
 
   recommended_wallpaper_ids = array(
-    select id
-    from vecs.tag_vectors
-    where id not in (
-      select wallpaper_id
-      from public.histories
-      where user_id = auth.uid()
+    (
+      select id
+      from vecs.tag_vectors
+      where id not in (
+        select wallpaper_id
+        from public.histories
+        where user_id = auth.uid()
+      )
+      order by vec <=> (
+        select vec
+        from vecs.preference_vectors
+        where id = auth.uid()
+      )
+      limit preferred_count
     )
-    order by vec <=> (
-      select vec
-      from vecs.preference_vectors
-      where id = auth.uid()
+    union
+    (
+      select id
+      from public.wallpapers
+      tablesample system_rows(quantity - preferred_count)
     )
-    limit quantity
   );
 
   insert into public.histories (user_id, wallpaper_id)
   select auth.uid(), id
-  from unnest(recommended_wallpaper_ids) as t(id);
+  from unnest(recommended_wallpaper_ids) as t(id)
+  on conflict do nothing;
 
   return query (
     select *
