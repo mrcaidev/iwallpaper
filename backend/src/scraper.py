@@ -39,6 +39,8 @@ async def bootstrap():
 
 @router.post("/cron", status_code=status.HTTP_201_CREATED)
 async def cron():
+    return {"data": "OK"}
+
     wallpapers = await scrape_unsplash(50)
 
     tag_vectors = ...  # TODO: Use CNN to predict tag vectors.
