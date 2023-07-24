@@ -208,8 +208,14 @@ drop function if exists public.recommend_wallpapers cascade;
 create function public.recommend_wallpapers(quantity integer default 10)
 returns setof public.wallpapers as $$
 declare
-  preferred_count integer := floor(quantity * 0.7);
-  recommended_wallpaper_ids uuid[];
+  preference_vector vector;
+  seen_ids uuid[];
+
+  content_based_ids uuid[];
+  user_based_ids uuid[];
+  random_ids uuid[];
+
+  recommended_ids uuid[];
 begin
   if auth.uid() is null then
     return query (
@@ -220,39 +226,55 @@ begin
     return;
   end if;
 
-  recommended_wallpaper_ids = array(
-    (
-      select id
-      from vecs.tag_vectors
-      where id not in (
-        select wallpaper_id
-        from public.histories
-        where user_id = auth.uid()
-      )
-      order by vec <=> (
-        select vec
-        from vecs.preference_vectors
-        where id = auth.uid()
-      )
-      limit preferred_count
-    )
-    union
-    (
-      select id
-      from public.wallpapers
-      tablesample system_rows(quantity - preferred_count)
-    )
+  select vec
+  into preference_vector
+  from vecs.preference_vectors
+  where id = auth.uid();
+
+  seen_ids := array(
+    select wallpaper_id
+    from public.histories
+    where user_id = auth.uid()
   );
+
+  content_based_ids := array(
+    select id
+    from vecs.tag_vectors
+    where id != any(seen_ids)
+    order by vec <=> preference_vector
+    limit floor(quantity * 0.5)
+  );
+
+  user_based_ids := array(
+    select wallpaper_id
+    from public.histories
+    where user_id in (
+      select id
+      from vecs.preference_vectors
+      order by vec <=> preference_vector
+      limit 3
+    )
+    and is_liked = true
+    limit floor(quantity * 0.3)
+  );
+
+  random_ids := array(
+    select id
+    from public.wallpapers
+    tablesample system_rows(quantity - cardinality(content_based_ids) - cardinality(user_based_ids))
+  );
+
+  recommended_ids := content_based_ids || user_based_ids || random_ids;
 
   insert into public.histories (user_id, wallpaper_id)
   select auth.uid(), id
-  from unnest(recommended_wallpaper_ids) as t(id)
+  from unnest(recommended_ids) as t(id)
   on conflict do nothing;
 
   return query (
     select *
     from public.wallpapers
-    where id = any(recommended_wallpaper_ids)
+    where id = any(recommended_ids)
   );
 end;
 $$ language plpgsql security definer;
