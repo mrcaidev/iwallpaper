@@ -2,10 +2,10 @@ type SnakeToCamelString<S> = S extends `${infer First}_${infer Rest}`
   ? `${Lowercase<First>}${Capitalize<SnakeToCamelString<Rest>>}`
   : S;
 
-type SnakeToCamel<T> = T extends (infer Item)[]
-  ? SnakeToCamel<Item>[]
+type SnakeToCamelJson<T> = T extends (infer Item)[]
+  ? SnakeToCamelJson<Item>[]
   : T extends object
-  ? { [Key in keyof T as SnakeToCamelString<Key>]: SnakeToCamel<T[Key]> }
+  ? { [Key in keyof T as SnakeToCamelString<Key>]: SnakeToCamelJson<T[Key]> }
   : T;
 
 function snakeToCamelString(text: string) {
@@ -24,18 +24,18 @@ function snakeToCamelString(text: string) {
   return camelWords.join("");
 }
 
-export function snakeToCamel<T>(target: T): SnakeToCamel<T> {
+export function snakeToCamelJson<T>(target: T): SnakeToCamelJson<T> {
   if (Array.isArray(target)) {
-    return target.map((item) => snakeToCamel(item)) as SnakeToCamel<T>;
+    return target.map((item) => snakeToCamelJson(item)) as SnakeToCamelJson<T>;
   }
 
   if (isObject(target)) {
     return Object.entries(target).reduce((acc, [key, value]) => {
-      return { ...acc, [snakeToCamelString(key)]: snakeToCamel(value) };
-    }, {} as SnakeToCamel<T>);
+      return { ...acc, [snakeToCamelString(key)]: snakeToCamelJson(value) };
+    }, {} as SnakeToCamelJson<T>);
   }
 
-  return target as SnakeToCamel<T>;
+  return target as SnakeToCamelJson<T>;
 }
 
 function isObject(target: unknown): target is Record<string, unknown> {

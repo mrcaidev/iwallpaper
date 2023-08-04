@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 import { supabaseClient } from "supabase/client";
-import { snakeToCamel } from "utils/case";
+import { snakeToCamelJson } from "utils/case";
 import { User } from "utils/types";
 
 const UserContext = createContext<User | null>(null);
@@ -42,7 +42,7 @@ function extractUserFromSession(session: Session | null) {
     return null;
   }
 
-  const { id, email, userMetadata } = snakeToCamel(session.user);
+  const { id, email, userMetadata } = snakeToCamelJson(session.user);
   return { id, email, ...userMetadata } as User;
 }
 
