@@ -15,10 +15,10 @@ export const metadata = {
   },
   description:
     "iWallpaper is a wallpaper exploring platform, featured with AI-powered recommendation, search engine, user subscription, and so much more!",
+  applicationName: "iWallpaper",
   authors: [{ name: "Yuwang Cai", url: "https://mrcai.dev" }],
   creator: "Yuwang Cai",
   publisher: "Yuwang Cai",
-  applicationName: "iWallpaper",
   robots: "index,follow",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <body className="bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-200">
         <UserProvider>
           <Sidebar />
-          {children}
+          <main className="min-h-screen ml-17 lg:ml-80">{children}</main>
         </UserProvider>
       </body>
     </html>
