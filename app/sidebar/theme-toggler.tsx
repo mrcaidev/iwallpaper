@@ -52,5 +52,5 @@ function detectTheme() {
     return isDarkUser;
   }
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return matchMedia("(prefers-color-scheme: dark)").matches;
 }
