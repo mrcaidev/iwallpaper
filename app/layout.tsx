@@ -1,10 +1,12 @@
 import "@unocss/reset/tailwind.css";
+import { UserProvider } from "auth/context";
 import clsx from "clsx";
-import { Rubik } from "next/font/google";
+import { Mulish as Font } from "next/font/google";
 import { PropsWithChildren } from "react";
+import { Sidebar } from "sidebar";
 import "uno.css";
 
-const font = Rubik({ subsets: ["latin"], variable: "--font-sans" });
+const font = Font({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata = {
   title: {
@@ -26,9 +28,12 @@ export const metadata = {
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html lang="en" className={clsx(font.className, font.variable)}>
+    <html lang="en" className={clsx(font.className, font.variable, "dark")}>
       <body className="bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-200">
-        {children}
+        <UserProvider>
+          <Sidebar />
+          {children}
+        </UserProvider>
       </body>
     </html>
   );

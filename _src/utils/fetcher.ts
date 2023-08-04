@@ -1,4 +1,4 @@
-import { snakeToCamel } from "./case";
+import { snakeToCamel } from "../../app/utils/case";
 
 export type FetcherResponse<T> =
   | { data: T; error: null }
