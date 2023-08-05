@@ -3,6 +3,8 @@ import { UserProvider } from "auth/context";
 import clsx from "clsx";
 import { Mulish as Font } from "next/font/google";
 import { PropsWithChildren } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/ReactToastify.min.css";
 import { Sidebar } from "sidebar";
 import "uno.css";
 
@@ -34,6 +36,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <Sidebar />
           <main className="min-h-screen ml-17 lg:ml-80">{children}</main>
         </UserProvider>
+        <ToastContainer autoClose={3000} theme="colored" />
       </body>
     </html>
   );
