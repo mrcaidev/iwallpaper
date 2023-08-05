@@ -5,7 +5,7 @@ import { Input } from "components/input";
 import icon from "icon.svg";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
-import { LogIn, RotateCw } from "react-feather";
+import { FiLogIn, FiRotateCw } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { supabaseClient } from "supabase/client";
 import google from "./google.svg";
@@ -44,11 +44,11 @@ export function Form() {
         />
         {isCoolingDown ? (
           <div className="flex justify-center items-center gap-3 px-4 py-3 border border-slate-400 dark:border-slate-600 rounded-md font-600 text-slate-600 dark:text-slate-400">
-            <RotateCw size={20} />
+            <FiRotateCw size={20} />
             Try again in {countdown} seconds
           </div>
         ) : (
-          <Button icon={LogIn} isLoading={isSubmitting} type="submit">
+          <Button icon={FiLogIn} isLoading={isSubmitting} type="submit">
             Sign in
           </Button>
         )}

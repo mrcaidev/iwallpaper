@@ -1,6 +1,6 @@
 import { Route } from "next";
 import { ReactNode } from "react";
-import { Aperture, Heart, Home, Search, Users } from "react-feather";
+import { FiAperture, FiHeart, FiHome, FiSearch, FiUsers } from "react-icons/fi";
 import { NavLink } from "./nav-link";
 
 const navLinks: {
@@ -11,32 +11,32 @@ const navLinks: {
 }[] = [
   {
     href: "/",
-    icon: <Home size={20} />,
-    activeIcon: <Home size={20} className="stroke-3" />,
+    icon: <FiHome size={20} />,
+    activeIcon: <FiHome size={20} className="stroke-3" />,
     text: "Home",
   },
   {
     href: "/search",
-    icon: <Search size={20} />,
-    activeIcon: <Search size={20} className="stroke-3" />,
+    icon: <FiSearch size={20} />,
+    activeIcon: <FiSearch size={20} className="stroke-3" />,
     text: "Search",
   },
   {
     href: "/favorites",
-    icon: <Heart size={20} />,
-    activeIcon: <Heart size={20} className="fill-slate-200" />,
+    icon: <FiHeart size={20} />,
+    activeIcon: <FiHeart size={20} className="fill-slate-200" />,
     text: "Favorites",
   },
   {
     href: "/activities",
-    icon: <Aperture size={20} />,
-    activeIcon: <Aperture size={20} className="stroke-3" />,
+    icon: <FiAperture size={20} />,
+    activeIcon: <FiAperture size={20} className="stroke-3" />,
     text: "Activities",
   },
   {
     href: "/friends",
-    icon: <Users size={20} />,
-    activeIcon: <Users size={20} className="fill-slate-200" />,
+    icon: <FiUsers size={20} />,
+    activeIcon: <FiUsers size={20} className="fill-slate-200" />,
     text: "Friends",
   },
 ];

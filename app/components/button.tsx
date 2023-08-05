@@ -2,7 +2,8 @@
 
 import clsx from "clsx";
 import { ComponentProps } from "react";
-import { Icon, Loader } from "react-feather";
+import { IconType } from "react-icons";
+import { FiLoader } from "react-icons/fi";
 
 type ColorScheme = "slate" | "red";
 type Variant = "solid" | "outline" | "ghost" | "link";
@@ -12,7 +13,7 @@ type Props = ComponentProps<"button"> & {
   colorScheme?: ColorScheme;
   variant?: Variant;
   size?: Size;
-  icon?: Icon;
+  icon?: IconType;
   isLoading?: boolean;
 };
 
@@ -44,7 +45,9 @@ export function Button({
         className,
       )}
     >
-      {Icon && isLoading && <Loader size={iconSize} className="animate-spin" />}
+      {Icon && isLoading && (
+        <FiLoader size={iconSize} className="animate-spin" />
+      )}
       {Icon && !isLoading && <Icon size={iconSize} />}
       {children}
     </button>

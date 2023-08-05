@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "react-feather";
+import { FiMoon, FiSun } from "react-icons/fi";
 import { getLocalStorage, setLocalStorage } from "utils/storage";
 
 export function ThemeToggler() {
@@ -32,12 +32,12 @@ export function ThemeToggler() {
     >
       {isDark ? (
         <>
-          <Sun size={20} />
+          <FiSun size={20} />
           <span className="sr-only lg:not-sr-only">Light mode</span>
         </>
       ) : (
         <>
-          <Moon size={20} />
+          <FiMoon size={20} />
           <span className="sr-only lg:not-sr-only">Dark mode</span>
         </>
       )}

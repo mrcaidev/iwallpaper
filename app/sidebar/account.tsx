@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { User as UserIcon } from "react-feather";
+import { FiUser } from "react-icons/fi";
 import { User } from "utils/types";
 
 type Props = {
@@ -14,7 +14,7 @@ export function Account({ user: { id, email, nickName, avatarUrl } }: Props) {
         {avatarUrl ? (
           <Image src={avatarUrl} alt="User avatar." width={40} height={40} />
         ) : (
-          <UserIcon size={20} className="stroke-slate-200" />
+          <FiUser size={20} className="stroke-slate-200" />
         )}
       </div>
       <div className="self-stretch flex flex-col justify-evenly sr-only lg:not-sr-only">
