@@ -12,7 +12,7 @@
     "strict": true,
     "baseUrl": "app",
     "module": "ESNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "noEmit": true,
     "allowJs": true,

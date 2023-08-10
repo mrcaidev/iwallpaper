@@ -1,7 +1,6 @@
-import { HfInference } from "@huggingface/inference";
+import { pipeline } from "@xenova/transformers";
 
-const inference = new HfInference(process.env.HF_TOKEN);
-const model = "obrizum/all-MiniLM-L6-v2";
+const pipe = await pipeline("feature-extraction", "Supabase/gte-small");
 
 type Wallpaper = {
   tags: string[];
@@ -9,6 +8,6 @@ type Wallpaper = {
 
 export async function createEmbeddings(wallpapers: Wallpaper[]) {
   const inputs = wallpapers.map(({ tags }) => tags.join(" "));
-  const vectors = await inference.featureExtraction({ inputs, model });
-  return vectors as number[][];
+  const output = await pipe(inputs, { pooling: "mean", normalize: true });
+  return Array.from(output.data) as number[][];
 }

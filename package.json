@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@huggingface/inference": "^2.6.1",
     "@supabase/supabase-js": "^2.32.0",
+    "@xenova/transformers": "^2.5.0",
     "clsx": "^2.0.0",
     "downloadjs": "^1.4.7",
     "next": "^13.4.13",
