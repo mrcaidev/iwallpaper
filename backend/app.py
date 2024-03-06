@@ -1,11 +1,18 @@
 import logging
 
+from src import env
+
+logging.basicConfig(
+    filename="app.log",
+    format="[%(asctime)s] %(levelname)s (%(name)s): %(message)s",
+    level=logging.DEBUG,
+)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from src import scraper, searcher
-
-logging.getLogger().setLevel(logging.INFO)
+from src.root import router as root_router
+from src.scraper import router as scraper_router
 
 app = FastAPI()
 
@@ -18,10 +25,5 @@ app.add_middleware(
 )
 app.add_middleware(GZipMiddleware)
 
-app.include_router(scraper.router)
-app.include_router(searcher.router)
-
-
-@app.get("/healthz")
-def check_health():
-    return
+app.include_router(root_router)
+app.include_router(scraper_router)

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Query
 from pydantic import PositiveInt
 
 from .supabase import supabase_client
-from .vectorizer import vectorizer
+from .vectorize import vectorizer
 
 router = APIRouter(prefix="/search")
 

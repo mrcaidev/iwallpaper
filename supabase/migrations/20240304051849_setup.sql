@@ -26,6 +26,7 @@ for each row execute function auth.sync_profile();
 create table public.wallpapers (
   id uuid default gen_random_uuid() primary key,
   slug text not null unique,
+  description text,
   raw_url text not null,
   regular_url text not null,
   thumbnail_url text not null,
