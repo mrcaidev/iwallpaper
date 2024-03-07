@@ -76,8 +76,6 @@ async def scrape_page(session: ClientSession, params: dict):
     """
     爬取一页壁纸，从中提取出每张壁纸的 slug。
     """
-    logger.debug(f"Fetching page {params['page']}.")
-
     async with session.get("/napi/topics/wallpapers/photos", params=params) as response:
         wallpapers = await response.json()
 
@@ -90,8 +88,6 @@ async def scrape_wallpaper(session: ClientSession, slug: str):
     """
     爬取一张壁纸，从中提取出有用的信息。
     """
-    logger.debug(f"Fetching wallpaper {slug}.")
-
     async with session.get("/napi/photos/" + slug) as response:
         wallpaper = await response.json()
 
