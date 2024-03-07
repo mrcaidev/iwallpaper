@@ -1,7 +1,5 @@
 """
 向量搜索引擎。
-
-将用户输入的搜索词转换为向量，然后使用向量相似度搜索壁纸。
 """
 
 import logging
@@ -25,7 +23,7 @@ def search(
     quantity: PositiveInt = 20,
 ):
     """
-    根据向量相似度搜索壁纸。
+    将用户输入的搜索词转换为向量，然后根据向量相似度搜索壁纸。
     """
     query_embedding = transformer.encode(query).tolist()
 

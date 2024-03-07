@@ -1,5 +1,5 @@
 """
-爬取 Unsplash 上的壁纸信息。
+爬取壁纸数据。
 """
 
 import asyncio

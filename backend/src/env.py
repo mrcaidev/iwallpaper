@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 def load_env():
+    """
+    加载 .env 文件中的环境变量。
+    """
     success = dotenv.load_dotenv(verbose=True)
 
     if success:
