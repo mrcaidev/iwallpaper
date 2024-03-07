@@ -9,8 +9,9 @@ from aiohttp import ClientSession, TCPConnector
 from fastapi import APIRouter, status
 from postgrest.types import ReturnMethod
 from pydantic import BaseModel, PositiveInt
+from sentence_transformers import SentenceTransformer
 
-from .supabase import supabase_client
+from .supabase import supabase_client, vecs_client
 
 __all__ = ["router"]
 
@@ -32,6 +33,11 @@ async def scrape(demand: Demand):
     爬取 Unsplash 上的壁纸信息。
     """
     wallpapers = await scrape_unsplash(demand.quantity)
+    wallpapers = upsert_wallpapers(wallpapers)
+
+    embeddings = create_wallpaper_embeddings(wallpapers)
+    upsert_wallpaper_embeddings(wallpapers, embeddings)
+
     return {"data": len(wallpapers)}
 
 
@@ -135,18 +141,51 @@ async def scrape_unsplash(quantity: int):
 
         logger.info(f"Fetched {len(wallpapers)} wallpapers.")
 
-        wallpapers = (
-            supabase_client.table("wallpapers")
-            .upsert(
-                wallpapers,
-                returning=ReturnMethod.representation,
-                ignore_duplicates=True,
-                on_conflict="slug",
-            )
-            .execute()
-            .data
-        )
-
-        logger.info(f"Upserted {len(wallpapers)} wallpapers.")
-
     return wallpapers
+
+
+def upsert_wallpapers(wallpapers: list[dict]):
+    """
+    落库壁纸。
+    """
+    upserted_wallpapers = (
+        supabase_client.table("wallpapers")
+        .upsert(
+            wallpapers,
+            returning=ReturnMethod.representation,
+            ignore_duplicates=True,
+            on_conflict="slug",
+        )
+        .execute()
+        .data
+    )
+
+    logger.info(f"Upserted {len(wallpapers)} wallpapers.")
+
+    return upserted_wallpapers
+
+
+def create_wallpaper_embeddings(wallpapers: list[dict]):
+    """
+    向量化壁纸。
+    """
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+    sentences = [" ".join(wallpaper["tags"]) for wallpaper in wallpapers]
+    embeddings = model.encode(sentences)
+
+    logger.info(f"Created {len(embeddings)} wallpaper embeddings.")
+
+    return embeddings
+
+
+def upsert_wallpaper_embeddings(wallpapers: list[dict], embeddings: list[list[float]]):
+    """
+    落库壁纸向量。
+    """
+    wallpaper_ids = [wallpaper["id"] for wallpaper in wallpapers]
+    metadatas = [{}] * len(wallpapers)
+
+    collection = vecs_client.get_or_create_collection("wallpapers", dimension=384)
+    collection.upsert(zip(wallpaper_ids, embeddings, metadatas))
+
+    logger.info(f"Upserted {len(embeddings)} wallpaper embeddings.")
