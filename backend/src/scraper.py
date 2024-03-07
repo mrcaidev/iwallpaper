@@ -5,7 +5,7 @@
 import asyncio
 import logging
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, TCPConnector
 from fastapi import APIRouter, status
 from postgrest.types import ReturnMethod
 from pydantic import BaseModel, PositiveInt
@@ -107,7 +107,10 @@ async def scrape_unsplash(quantity: int):
     """
     从 Unsplash 爬取指定数量的壁纸。
     """
-    async with ClientSession(base_url="https://unsplash.com") as session:
+    async with ClientSession(
+        base_url="https://unsplash.com",
+        connector=TCPConnector(limit=10),
+    ) as session:
         page_params = build_page_params(quantity)
 
         logger.info(f"Paginated into {len(page_params)} pages.")
