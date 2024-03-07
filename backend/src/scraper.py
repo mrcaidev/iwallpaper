@@ -9,9 +9,9 @@ from aiohttp import ClientSession, TCPConnector
 from fastapi import APIRouter, status
 from postgrest.types import ReturnMethod
 from pydantic import BaseModel, PositiveInt
-from sentence_transformers import SentenceTransformer
 
 from .supabase import supabase_client, vecs_client
+from .transformer import transformer
 
 __all__ = ["router"]
 
@@ -165,9 +165,8 @@ def create_wallpaper_embeddings(wallpapers: list[dict]):
     """
     向量化壁纸。
     """
-    model = SentenceTransformer("all-MiniLM-L6-v2")
     sentences = [" ".join(wallpaper["tags"]) for wallpaper in wallpapers]
-    embeddings = model.encode(sentences)
+    embeddings = transformer.encode(sentences)
 
     logger.info(f"Created {len(embeddings)} wallpaper embeddings.")
 

@@ -12,6 +12,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from src import env
 from src.root import router as root_router
 from src.scraper import router as scraper_router
+from src.searcher import router as searcher_router
 
 app = FastAPI()
 
@@ -26,3 +27,4 @@ app.add_middleware(GZipMiddleware)
 
 app.include_router(root_router)
 app.include_router(scraper_router)
+app.include_router(searcher_router)
