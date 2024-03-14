@@ -9,12 +9,10 @@ from fastapi import APIRouter, Query
 from pydantic import PositiveInt
 
 from .supabase import supabase_client
-from .transformer import transformer
+from .vectorizer import vectorizer
 
-__all__ = ["router"]
-
-router = APIRouter(prefix="/search")
 logger = logging.getLogger(__name__)
+router = APIRouter(prefix="/search")
 
 
 @router.get("/")
@@ -25,7 +23,7 @@ def search(
     """
     将用户输入的搜索词转换为向量，然后根据向量相似度搜索壁纸。
     """
-    query_embedding = transformer.encode(query).tolist()
+    query_embedding = vectorizer.encode(query).tolist()
 
     wallpapers = (
         supabase_client.rpc(

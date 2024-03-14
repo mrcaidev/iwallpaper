@@ -11,12 +11,10 @@ from postgrest.types import ReturnMethod
 from pydantic import BaseModel, PositiveInt
 
 from .supabase import supabase_client, vecs_client
-from .transformer import transformer
+from .vectorizer import vectorizer
 
-__all__ = ["router"]
-
-router = APIRouter(prefix="/scrape")
 logger = logging.getLogger(__name__)
+router = APIRouter(prefix="/scrape")
 
 
 class Demand(BaseModel):
@@ -166,7 +164,7 @@ def create_wallpaper_embeddings(wallpapers: list[dict]):
     向量化壁纸。
     """
     sentences = [" ".join(wallpaper["tags"]) for wallpaper in wallpapers]
-    embeddings = transformer.encode(sentences)
+    embeddings = vectorizer.encode(sentences)
 
     logger.info(f"Created {len(embeddings)} wallpaper embeddings.")
 
