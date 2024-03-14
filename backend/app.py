@@ -9,7 +9,6 @@ logging.basicConfig(
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from src import env
 from src.root import router as root_router
 from src.scraper import router as scraper_router
 from src.searcher import router as searcher_router

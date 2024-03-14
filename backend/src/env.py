@@ -1,28 +1,33 @@
 """
 加载 .env 文件中的环境变量。
-
-该模块应该在项目的其他模块之前被导入，以确保环境变量在其他模块中可用。
 """
 
 import logging
+import os
 
 import dotenv
 
-__all__ = []
+__all__ = [
+    "SUPABASE_URL",
+    "SUPABASE_KEY",
+    "SUPABASE_CONNECTION",
+    "TRANSFORMER_MODEL_NAME",
+    "TRANSFORMER_MODEL_PATH",
+]
 
 logger = logging.getLogger(__name__)
 
 
-def load_env():
-    """
-    加载 .env 文件中的环境变量。
-    """
-    success = dotenv.load_dotenv(verbose=True)
+success = dotenv.load_dotenv(verbose=True)
 
-    if success:
-        logger.info("Loaded environment variables.")
-    else:
-        logger.warning("No environment variable found.")
+if success:
+    logger.info("Loaded environment variables.")
+else:
+    logger.warning("No environment variable found.")
 
 
-load_env()
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
+SUPABASE_CONNECTION = os.getenv("SUPABASE_CONNECTION", "")
+TRANSFORMER_MODEL_NAME = os.getenv("TRANSFORMER_MODEL_NAME", "all-MiniLM-L6-v2")
+TRANSFORMER_MODEL_PATH = os.getenv("TRANSFORMER_MODEL_PATH", "./model")
