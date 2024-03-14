@@ -42,8 +42,9 @@ create table public.histories (
   id uuid default gen_random_uuid() primary key,
   user_id uuid not null references auth.users on delete cascade,
   wallpaper_id uuid not null references public.wallpapers on delete cascade,
-  is_liked boolean default false not null,
   rating smallint check (rating between 0 and 5),
+  is_implicitly_liked boolean generated always as (rating >= 3) stored not null,
+  is_explicitly_liked boolean default false not null,
   unique (user_id, wallpaper_id)
 );
 
@@ -88,5 +89,93 @@ begin
     with ordinality t(id, ord) using (id)
     order by t.ord
   );
+end;
+$$ language plpgsql security definer;
+
+create function public.calculate_unpopular_wallpapers_similarity(
+  first_id uuid,
+  second_id uuid
+)
+returns float as $$
+begin
+  return 1 - ((
+    select vec
+    from vecs.wallpapers
+    where id = first_id
+  ) <=> (
+    select vec
+    from vecs.wallpapers
+    where id = second_id
+  ));
+end;
+$$ language plpgsql security definer;
+
+create function public.calculate_popular_wallpapers_similarity(
+  first_id uuid,
+  second_id uuid,
+  first_popularity integer,
+  second_popularity integer
+)
+returns float as $$
+declare
+  both_popularity integer;
+begin
+  both_popularity := (
+    select count(*)
+    from public.histories
+    where (wallpaper_id = first_id or wallpaper_id = second_id)
+      and is_implicitly_liked = true
+    group by user_id
+    having count(distinct wallpaper_id) = 2
+  );
+  return both_popularity / sqrt(first_popularity * second_popularity);
+end;
+$$ language plpgsql security definer;
+
+create function calculate_wallpapers_similarity(first_id uuid, second_id uuid)
+returns float as $$
+declare
+  popularity_threshold integer;
+  first_popularity integer;
+  second_popularity integer;
+begin
+  popularity_threshold := (
+    select count(*)
+    from auth.users
+  ) * 0.3;
+
+  if popularity_threshold < 10 then
+    popularity_threshold := 10;
+  end if;
+
+  first_popularity := (
+    select count(*)
+    from public.histories
+    where wallpaper_id = first_id
+      and is_implicitly_liked = true
+  );
+
+  second_popularity := (
+    select count(*)
+    from public.histories
+    where wallpaper_id = second_id
+      and is_implicitly_liked = true
+  );
+
+  if first_popularity >= popularity_threshold
+    and second_popularity >= popularity_threshold
+  then
+    return public.calculate_popular_wallpapers_similarity(
+      first_id,
+      second_id,
+      first_popularity,
+      second_popularity
+    );
+  else
+    return public.calculate_unpopular_wallpapers_similarity(
+      first_id,
+      second_id
+    );
+  end if;
 end;
 $$ language plpgsql security definer;
