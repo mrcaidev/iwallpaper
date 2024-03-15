@@ -43,8 +43,8 @@ create table public.histories (
   user_id uuid not null references auth.users on delete cascade,
   wallpaper_id uuid not null references public.wallpapers on delete cascade,
   rating smallint check (rating between 0 and 5),
-  is_implicitly_liked boolean generated always as (rating >= 3) stored not null,
-  is_explicitly_liked boolean default false not null,
+  is_positive boolean generated always as (rating >= 3) stored not null,
+  liked_at timestamptz default now() not null,
   unique (user_id, wallpaper_id)
 );
 
@@ -97,7 +97,7 @@ returns trigger as $$
 declare
   difference integer;
 begin
-  if new.is_implicitly_liked = true then
+  if new.is_positive = true then
     difference := 1;
   else
     difference := -1;
@@ -146,7 +146,7 @@ begin
       select count(*)
       from public.histories
       where (wallpaper_id = first_id or wallpaper_id = second_id)
-        and is_implicitly_liked = true
+        and is_positive = true
       group by user_id
       having count(*) = 2
     );
