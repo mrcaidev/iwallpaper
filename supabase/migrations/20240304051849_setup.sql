@@ -1,5 +1,6 @@
-create extension if not exists vector;
-create extension if not exists tsm_system_rows;
+create extension pg_cron with schema extensions cascade;
+create extension tsm_system_rows with schema extensions cascade;
+create extension vector with schema extensions cascade;
 
 create table public.profiles (
   id uuid primary key references auth.users on delete cascade,
@@ -32,7 +33,8 @@ create table public.wallpapers (
   width integer not null,
   height integer not null,
   tags text[] not null,
-  popularity integer default 0 not null
+  popularity integer default 0 not null,
+  most_similar_wallpapers jsonb[] default '{}' not null
 );
 
 alter table public.wallpapers enable row level security;
@@ -167,3 +169,31 @@ begin
   end if;
 end;
 $$ language plpgsql security definer;
+
+create function public.find_most_similar_wallpapers()
+returns void as $$
+declare
+  quantity constant integer := 10;
+begin
+  update public.wallpapers w
+  set most_similar_wallpapers = (
+    select array_agg(
+      jsonb_build_object(
+        'id',
+        s.id,
+        'similarity',
+        s.similarity
+      )
+    )
+    from (
+      select id, public.calculate_wallpaper_similarity(w.id, id) similarity
+      from public.wallpapers
+      where id != w.id
+      order by similarity desc
+      limit quantity
+    ) s
+  );
+end;
+$$ language plpgsql security definer;
+
+select cron.schedule('0 0 * * *', $$select public.find_most_similar_wallpapers()$$);
