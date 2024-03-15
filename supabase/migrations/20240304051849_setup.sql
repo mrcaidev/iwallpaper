@@ -32,7 +32,7 @@ create table public.wallpapers (
   width integer not null,
   height integer not null,
   tags text[] not null,
-  popularity interger default 0 not null
+  popularity integer default 0 not null
 );
 
 alter table public.wallpapers enable row level security;
