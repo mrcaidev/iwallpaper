@@ -68,7 +68,7 @@ create schema vecs;
 
 create table vecs.wallpapers (
   id uuid primary key references public.wallpapers on delete cascade,
-  vec vector(384) default array_fill(0, array[384])::vector not null,
+  vec vector(384) not null,
   metadata jsonb default '{}'::jsonb not null
 );
 
