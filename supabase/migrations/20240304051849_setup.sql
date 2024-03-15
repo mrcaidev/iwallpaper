@@ -107,8 +107,11 @@ begin
   set popularity = popularity + difference
   where id = new.wallpaper_id;
 end;
-
 $$ language plpgsql security definer;
+
+create trigger update_wallpaper_popularity
+after update of is_positive on public.histories
+for each row execute function public.update_wallpaper_popularity();
 
 create function public.calculate_wallpaper_similarity()
 returns float as $$
