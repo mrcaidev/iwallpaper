@@ -4,8 +4,8 @@ create extension vector with schema extensions cascade;
 
 create table public.profiles (
   id uuid primary key references auth.users on delete cascade,
-  nick_name text default null,
-  avatar_url text default null
+  nick_name text,
+  avatar_url text
 );
 
 alter table public.profiles enable row level security;
@@ -197,3 +197,52 @@ end;
 $$ language plpgsql security definer;
 
 select cron.schedule('0 0 * * *', $$select public.find_most_similar_wallpapers()$$);
+
+create function public.recommend_wallpapers()
+returns setof public.wallpapers as $$
+declare
+  quantity constant integer := 10;
+  itemcf_ids uuid[];
+  random_ids uuid[];
+  recommended_ids uuid[];
+begin
+  itemcf_ids = array(
+    with scores as (
+      select jsonb_array_elements(w.most_similar_wallpapers)->>'id' as id,
+        rating * (jsonb_array_elements(w.most_similar_wallpapers)->>'similarity') as score
+      from public.histories h
+      left outer join public.wallpapers w on h.wallpaper_id = w.id
+      where h.user_id = auth.uid()
+        and h.rating is not null
+    )
+    select id
+    from scores
+    where id not in (
+      select id
+      from public.histories
+      where user_id = auth.uid()
+    )
+    order by score desc
+    limit quantity
+  );
+
+  random_ids = array(
+    select id
+    from public.wallpapers
+    tablesample system_rows(quantity - cardinality(itemcf_ids))
+  );
+
+  recommended_ids = itemcf_ids || random_ids;
+
+  insert into public.histories (user_id, wallpaper_id)
+  select auth.uid(), id
+  from unnest(recommended_ids) as t(id)
+  on conflict do nothing;
+
+  return query (
+    select *
+    from public.wallpapers
+    where id = any(recommended_ids)
+  );
+end;
+$$ language plpgsql security definer;
