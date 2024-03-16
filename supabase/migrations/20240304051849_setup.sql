@@ -46,7 +46,7 @@ create table public.histories (
   wallpaper_id uuid not null references public.wallpapers on delete cascade,
   rating smallint check (rating between 0 and 5),
   is_positive boolean generated always as (rating >= 3) stored not null,
-  liked_at timestamptz default now() not null,
+  liked_at timestamptz,
   unique (user_id, wallpaper_id)
 );
 
