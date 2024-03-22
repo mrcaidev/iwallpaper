@@ -1,14 +1,10 @@
-"""
-爬取壁纸数据。
-"""
-
 import asyncio
 import logging
 import uuid
 
 from aiohttp import ClientSession, TCPConnector
 from fastapi import APIRouter, status
-from postgrest.types import CountMethod, ReturnMethod
+from postgrest.types import CountMethod
 from pydantic import BaseModel, PositiveInt
 
 from .supabase import supabase_client
@@ -18,35 +14,23 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/scrape")
 
 
-class Demand(BaseModel):
-    """
-    爬虫接口的请求体的数据类型。
-    """
-
+class Body(BaseModel):
     quantity: PositiveInt
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def scrape(demand: Demand):
-    """
-    爬取 Unsplash 上的壁纸信息。
-    """
-    wallpapers = await scrape_wallpapers(demand.quantity)
+async def scrape(body: Body):
+    wallpapers = await scrape_wallpapers(body.quantity)
     embeddings = create_embeddings(wallpapers)
-
     wallpapers = [
         {**wallpaper, "embedding": embedding}
         for wallpaper, embedding in zip(wallpapers, embeddings)
     ]
-    upserted_num = upsert_wallpapers(wallpapers)
-
-    return {"data": upserted_num}
+    upserted_count = upsert_wallpapers(wallpapers)
+    return {"data": upserted_count}
 
 
 def calculate_per_page(quantity: int):
-    """
-    在给定的总需求量下，计算最合适的页容量。
-    """
     # Unsplash API 限制了最大页容量为 30。
     MAX_PER_PAGE = 30
 
@@ -63,9 +47,6 @@ def calculate_per_page(quantity: int):
 
 
 def build_page_params(quantity: int):
-    """
-    构建要爬取的各页的 URL 参数。
-    """
     per_page = calculate_per_page(quantity)
     page_num = quantity // per_page
 
@@ -75,9 +56,6 @@ def build_page_params(quantity: int):
 
 
 async def scrape_page(session: ClientSession, params: dict):
-    """
-    爬取一页壁纸，从中提取出每张壁纸的 slug。
-    """
     async with session.get("/napi/topics/wallpapers/photos", params=params) as response:
         wallpapers = await response.json()
 
@@ -87,9 +65,6 @@ async def scrape_page(session: ClientSession, params: dict):
 
 
 async def scrape_wallpaper(session: ClientSession, slug: str):
-    """
-    爬取一张壁纸，从中提取出有用的信息。
-    """
     async with session.get("/napi/photos/" + slug) as response:
         wallpaper = await response.json()
 
@@ -109,9 +84,6 @@ async def scrape_wallpaper(session: ClientSession, slug: str):
 
 
 async def scrape_wallpapers(quantity: int):
-    """
-    爬取指定数量的壁纸。
-    """
     async with ClientSession(
         base_url="https://unsplash.com",
         connector=TCPConnector(limit=10),
@@ -144,9 +116,6 @@ async def scrape_wallpapers(quantity: int):
 
 
 def create_embeddings(wallpapers: list[dict]):
-    """
-    向量化壁纸。
-    """
     sentences = [" ".join(wallpaper["tags"]) for wallpaper in wallpapers]
     embeddings = vectorizer.encode(sentences, normalize_embeddings=True).tolist()
 
@@ -156,10 +125,7 @@ def create_embeddings(wallpapers: list[dict]):
 
 
 def upsert_wallpapers(wallpapers: list[dict]):
-    """
-    落库壁纸。
-    """
-    upserted_num = (
+    upserted_count = (
         supabase_client.table("wallpapers")
         .upsert(
             wallpapers,
@@ -171,6 +137,6 @@ def upsert_wallpapers(wallpapers: list[dict]):
         .count
     )
 
-    logger.info(f"Upserted {upserted_num} wallpapers.")
+    logger.info(f"Upserted {upserted_count} wallpapers.")
 
-    return upserted_num
+    return upserted_count

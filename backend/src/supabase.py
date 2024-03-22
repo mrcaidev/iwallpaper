@@ -1,7 +1,3 @@
-"""
-连接到 Supabase 数据库。
-"""
-
 import logging
 
 import supabase

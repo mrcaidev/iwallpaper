@@ -1,7 +1,3 @@
-"""
-加载向量化模型。
-"""
-
 import logging
 import os
 

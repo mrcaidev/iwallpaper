@@ -1,7 +1,3 @@
-"""
-将 .env 文件中的环境变量作为常量导出。
-"""
-
 import logging
 import os
 

@@ -1,7 +1,3 @@
-"""
-向量搜索引擎。
-"""
-
 import logging
 from typing import Annotated
 
@@ -15,14 +11,11 @@ router = APIRouter(prefix="/search")
 
 
 @router.get("/")
-def search(
+def semantic_search_wallpapers(
     query: Annotated[str, Query(min_length=1, max_length=50)],
     threshold: Annotated[float, Query(gt=0, lt=1)] = 0.6,
-    quantity: Annotated[int, Query(gt=0, lt=100)] = 20,
+    quantity: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
-    """
-    将用户输入的搜索词转换为向量，然后根据向量相似度搜索壁纸。
-    """
     query_embedding = vectorizer.encode(query, normalize_embeddings=True).tolist()
 
     wallpapers = (
