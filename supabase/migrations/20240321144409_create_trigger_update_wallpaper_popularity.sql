@@ -7,6 +7,8 @@ BEGIN
   UPDATE wallpapers
   SET popularity = popularity + (CASE WHEN NEW.is_positive = TRUE THEN 1 ELSE -1 END)
   WHERE id = NEW.wallpaper_id;
+
+  RETURN NEW;
 END;
 $$;
 

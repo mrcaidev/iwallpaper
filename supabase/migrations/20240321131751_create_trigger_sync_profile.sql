@@ -5,6 +5,7 @@ SECURITY DEFINER SET search_path = public, extensions, pg_temp
 AS $$
 BEGIN
   INSERT INTO profiles (id) VALUES (NEW.id);
+  RETURN NEW;
 END;
 $$;
 
