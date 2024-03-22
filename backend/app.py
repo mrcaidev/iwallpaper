@@ -2,8 +2,9 @@ import logging
 
 logging.basicConfig(
     filename="app.log",
+    filemode="w",
+    level=logging.INFO,
     format="[%(asctime)s] %(levelname)s (%(name)s): %(message)s",
-    level=logging.DEBUG,
 )
 
 from fastapi import FastAPI

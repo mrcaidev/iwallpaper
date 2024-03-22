@@ -15,7 +15,11 @@ def hybrid_search_wallpapers(
     query: Annotated[str, Query(min_length=1, max_length=50)],
     quantity: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
-    query_embedding = vectorizer.encode(query, normalize_embeddings=True).tolist()
+    query_embedding = vectorizer.encode(
+        query,
+        normalize_embeddings=True,
+        show_progress_bar=False,
+    ).tolist()
 
     wallpapers = (
         supabase_client.rpc(
