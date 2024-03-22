@@ -40,7 +40,7 @@ BEGIN
   FROM unnest(recommended_ids) AS t(id);
 
   RETURN QUERY (
-    SELECT *
+    SELECT id, slug, description, raw_url, regular_url, thumbnail_url, width, height, tags
     FROM wallpapers
     WHERE id = ANY(recommended_ids)
   );

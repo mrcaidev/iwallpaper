@@ -6,7 +6,7 @@ CREATE FUNCTION search_wallpapers(
 RETURNS SETOF wallpapers
 LANGUAGE sql
 AS $$
-  SELECT *
+  SELECT id, slug, description, raw_url, regular_url, thumbnail_url, width, height, tags
   FROM wallpapers
   WHERE embedding <#> query_embedding < -threshold
   ORDER BY embedding <#> query_embedding
