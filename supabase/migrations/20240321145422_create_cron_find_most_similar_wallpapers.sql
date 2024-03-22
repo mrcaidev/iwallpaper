@@ -1,4 +1,4 @@
-CREATE FUNCTION calculate_wallpaper_similarity()
+CREATE FUNCTION calculate_wallpaper_similarity(first_id UUID, second_id UUID)
 RETURNS FLOAT
 LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public, pg_temp
