@@ -14,7 +14,6 @@ uvicorn = "^0.27.1"
 python-dotenv = "^1.0.1"
 supabase = "^2.4.0"
 postgrest = "^0.16.1"
-vecs = "^0.4.3"
 sentence-transformers = "^2.5.1"
 
 [build-system]

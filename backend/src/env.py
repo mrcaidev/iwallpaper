@@ -23,6 +23,5 @@ load_environment_variables()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
-SUPABASE_CONNECTION = os.getenv("SUPABASE_CONNECTION", "")
 VECTORIZER_MODEL_NAME = os.getenv("VECTORIZER_MODEL_NAME", "all-MiniLM-L6-v2")
 VECTORIZER_MODEL_PATH = os.getenv("VECTORIZER_MODEL_PATH", "./model")
