@@ -12,7 +12,7 @@ BEGIN
   popularity_threshold = (
     SELECT COUNT(*)
     FROM auth.users
-  ) * 0.3;
+  ) * 0.1;
   popularity_threshold = GREATEST(popularity_threshold, 10);
 
   first_popularity = (
