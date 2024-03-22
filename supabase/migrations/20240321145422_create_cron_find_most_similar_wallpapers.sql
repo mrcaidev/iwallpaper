@@ -1,7 +1,7 @@
 CREATE FUNCTION calculate_wallpaper_similarity(first_id UUID, second_id UUID)
 RETURNS FLOAT
 LANGUAGE plpgsql
-SECURITY DEFINER SET search_path = public, pg_temp
+SECURITY DEFINER SET search_path = public, extensions, pg_temp
 AS $$
 DECLARE
   popularity_threshold INTEGER;
@@ -58,7 +58,7 @@ $$;
 CREATE FUNCTION find_most_similar_wallpapers()
 RETURNS VOID
 LANGUAGE plpgsql
-SECURITY DEFINER SET search_path = public, pg_temp
+SECURITY DEFINER SET search_path = public, extensions, pg_temp
 AS $$
 DECLARE
   quantity CONSTANT INTEGER := 10;
