@@ -1,7 +1,7 @@
 CREATE FUNCTION search_wallpapers(
   query_embedding VECTOR(384),
-  threshold FLOAT = 0.8,
-  quantity INTEGER = 10
+  threshold FLOAT,
+  quantity INTEGER
 )
 RETURNS SETOF wallpapers
 LANGUAGE sql

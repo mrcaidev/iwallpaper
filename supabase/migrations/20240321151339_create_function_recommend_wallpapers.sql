@@ -1,4 +1,4 @@
-CREATE FUNCTION recommend_wallpapers(quantity INTEGER = 10)
+CREATE FUNCTION recommend_wallpapers(quantity INTEGER)
 RETURNS SETOF wallpapers
 LANGUAGE plpgsql
 AS $$
