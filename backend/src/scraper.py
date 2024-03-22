@@ -4,13 +4,14 @@
 
 import asyncio
 import logging
+import uuid
 
 from aiohttp import ClientSession, TCPConnector
 from fastapi import APIRouter, status
-from postgrest.types import ReturnMethod
+from postgrest.types import CountMethod, ReturnMethod
 from pydantic import BaseModel, PositiveInt
 
-from .supabase import supabase_client, vecs_client
+from .supabase import supabase_client
 from .vectorizer import vectorizer
 
 logger = logging.getLogger(__name__)
@@ -30,13 +31,16 @@ async def scrape(demand: Demand):
     """
     爬取 Unsplash 上的壁纸信息。
     """
-    wallpapers = await scrape_unsplash(demand.quantity)
-    wallpapers = upsert_wallpapers(wallpapers)
+    wallpapers = await scrape_wallpapers(demand.quantity)
+    embeddings = create_embeddings(wallpapers)
 
-    embeddings = create_wallpaper_embeddings(wallpapers)
-    upsert_wallpaper_embeddings(wallpapers, embeddings)
+    wallpapers = [
+        {**wallpaper, "embedding": embedding}
+        for wallpaper, embedding in zip(wallpapers, embeddings)
+    ]
+    upserted_num = upsert_wallpapers(wallpapers)
 
-    return {"data": len(wallpapers)}
+    return {"data": upserted_num}
 
 
 def calculate_per_page(quantity: int):
@@ -92,6 +96,7 @@ async def scrape_wallpaper(session: ClientSession, slug: str):
     logger.debug(f"Fetched wallpaper {slug}.")
 
     return {
+        "id": str(uuid.uuid4()),
         "slug": wallpaper["slug"],
         "description": wallpaper["alt_description"],
         "raw_url": wallpaper["urls"]["raw"],
@@ -103,9 +108,9 @@ async def scrape_wallpaper(session: ClientSession, slug: str):
     }
 
 
-async def scrape_unsplash(quantity: int):
+async def scrape_wallpapers(quantity: int):
     """
-    从 Unsplash 爬取指定数量的壁纸。
+    爬取指定数量的壁纸。
     """
     async with ClientSession(
         base_url="https://unsplash.com",
@@ -138,47 +143,34 @@ async def scrape_unsplash(quantity: int):
     return wallpapers
 
 
-def upsert_wallpapers(wallpapers: list[dict]):
-    """
-    落库壁纸。
-    """
-    upserted_wallpapers = (
-        supabase_client.table("wallpapers")
-        .upsert(
-            wallpapers,
-            returning=ReturnMethod.representation,
-            ignore_duplicates=True,
-            on_conflict="slug",
-        )
-        .execute()
-        .data
-    )
-
-    logger.info(f"Upserted {len(wallpapers)} wallpapers.")
-
-    return upserted_wallpapers
-
-
-def create_wallpaper_embeddings(wallpapers: list[dict]):
+def create_embeddings(wallpapers: list[dict]):
     """
     向量化壁纸。
     """
     sentences = [" ".join(wallpaper["tags"]) for wallpaper in wallpapers]
-    embeddings = vectorizer.encode(sentences)
+    embeddings = vectorizer.encode(sentences, normalize_embeddings=True).tolist()
 
     logger.info(f"Created {len(embeddings)} wallpaper embeddings.")
 
     return embeddings
 
 
-def upsert_wallpaper_embeddings(wallpapers: list[dict], embeddings: list[list[float]]):
+def upsert_wallpapers(wallpapers: list[dict]):
     """
-    落库壁纸向量。
+    落库壁纸。
     """
-    wallpaper_ids = [wallpaper["id"] for wallpaper in wallpapers]
-    metadatas = [{}] * len(wallpapers)
+    upserted_num = (
+        supabase_client.table("wallpapers")
+        .upsert(
+            wallpapers,
+            count=CountMethod.exact,
+            ignore_duplicates=True,
+            on_conflict="slug",
+        )
+        .execute()
+        .count
+    )
 
-    collection = vecs_client.get_or_create_collection("wallpapers", dimension=384)
-    collection.upsert(zip(wallpaper_ids, embeddings, metadatas))
+    logger.info(f"Upserted {upserted_num} wallpapers.")
 
-    logger.info(f"Upserted {len(embeddings)} wallpaper embeddings.")
+    return upserted_num
