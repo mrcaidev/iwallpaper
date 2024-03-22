@@ -38,7 +38,7 @@ BEGIN
       GROUP BY user_id
       HAVING COUNT(*) = 2
     );
-    RETURN both_popularity / sqrt(first_popularity * second_popularity);
+    RETURN both_popularity / SQRT(first_popularity * second_popularity);
   ELSE
     RETURN -(
       (

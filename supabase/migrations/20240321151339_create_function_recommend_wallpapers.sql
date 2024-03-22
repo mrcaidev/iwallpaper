@@ -42,14 +42,14 @@ BEGIN
   random_ids = ARRAY(
     SELECT id
     FROM wallpapers
-    TABLESAMPLE system_rows(quantity - CARDINALITY(itemcf_ids))
+    TABLESAMPLE SYSTEM_ROWS(quantity - CARDINALITY(itemcf_ids))
   );
 
   recommended_ids = itemcf_ids || random_ids;
 
   INSERT INTO histories (user_id, wallpaper_id)
   SELECT auth.uid(), id
-  FROM unnest(recommended_ids) AS t(id);
+  FROM UNNEST(recommended_ids) AS t(id);
 
   RETURN QUERY (
     SELECT id, slug, description, raw_url, regular_url, thumbnail_url, width, height, tags
