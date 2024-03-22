@@ -60,8 +60,6 @@ RETURNS VOID
 LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public, extensions, pg_temp
 AS $$
-DECLARE
-  quantity CONSTANT INTEGER := 10;
 BEGIN
   UPDATE wallpapers w
   SET most_similar_wallpapers = (
@@ -78,7 +76,7 @@ BEGIN
       FROM wallpapers
       WHERE id != w.id
       ORDER BY similarity DESC
-      LIMIT quantity
+      LIMIT 10
     ) s
   );
 END;
