@@ -19,37 +19,40 @@ DECLARE
   random_ids UUID[];
   recommended_ids UUID[];
 BEGIN
-  itemcf_ids = ARRAY(
-    WITH scores AS (
-      SELECT JSONB_ARRAY_ELEMENTS(w.most_similar_wallpapers)->>'id' AS id,
-        rating * (JSONB_ARRAY_ELEMENTS(w.most_similar_wallpapers)->>'similarity') AS score
-      FROM histories h
-      LEFT OUTER JOIN wallpapers w on h.wallpaper_id = w.id
-      WHERE h.user_id = auth.uid()
-        AND h.rating IS NOT NULL
+  recommended_ids = ARRAY(
+    (
+      SELECT (candidates->>'id')::UUID
+      FROM (
+        SELECT UNNEST(most_similar_wallpapers) AS candidates, rating
+        FROM (
+          SELECT w.*, h.rating
+          FROM wallpapers w
+          RIGHT OUTER JOIN histories h on w.id = h.wallpaper_id
+          WHERE h.user_id = auth.uid()
+            AND h.rating IS NOT NULL
+        ) AS rated_wallpapers
+      ) AS scores
+      WHERE (candidates->>'id')::UUID NOT IN (
+        SELECT wallpaper_id
+        FROM histories
+        WHERE user_id = auth.uid()
+      )
+      ORDER BY rating * (candidates->>'similarity')::FLOAT DESC
+      LIMIT quantity
     )
-    SELECT id
-    FROM scores
-    WHERE id NOT IN (
+    UNION ALL
+    (
       SELECT id
-      FROM histories
-      WHERE user_id = auth.uid()
+      FROM wallpapers
+      TABLESAMPLE SYSTEM_ROWS(quantity)
     )
-    ORDER BY score DESC
     LIMIT quantity
   );
 
-  random_ids = ARRAY(
-    SELECT id
-    FROM wallpapers
-    TABLESAMPLE SYSTEM_ROWS(quantity - CARDINALITY(itemcf_ids))
-  );
-
-  recommended_ids = itemcf_ids || random_ids;
-
   INSERT INTO histories (user_id, wallpaper_id)
   SELECT auth.uid(), id
-  FROM UNNEST(recommended_ids) AS t(id);
+  FROM UNNEST(recommended_ids) AS t(id)
+  ON CONFLICT DO NOTHING;
 
   RETURN QUERY (
     SELECT id, slug, description, raw_url, regular_url, thumbnail_url, width, height, tags
