@@ -15,8 +15,6 @@ RETURNS SETOF recommend_wallpapers_returns
 LANGUAGE plpgsql
 AS $$
 DECLARE
-  itemcf_ids UUID[];
-  random_ids UUID[];
   recommended_ids UUID[];
 BEGIN
   recommended_ids = ARRAY(
