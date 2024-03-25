@@ -61,16 +61,16 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public, extensions, pg_temp
 AS $$
 BEGIN
-  UPDATE wallpapers w
+  UPDATE wallpapers
   SET most_similar_wallpapers = (
     SELECT ARRAY_AGG(ROW_TO_JSONB(subquery))
     FROM (
-      SELECT id, calculate_wallpaper_similarity(id, w.id) AS similarity
+      SELECT id, calculate_wallpaper_similarity(id, wallpapers.id) AS similarity
       FROM wallpapers
-      WHERE id != w.id
+      WHERE id != wallpapers.id
       ORDER BY similarity DESC
       LIMIT 10
-    ) subquery
+    ) AS subquery
   );
 END;
 $$;

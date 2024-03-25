@@ -21,25 +21,38 @@ CREATE FUNCTION search_wallpapers(
 RETURNS SETOF search_wallpapers_returns
 LANGUAGE sql
 AS $$
-  WITH full_text AS (
-    SELECT id, ROW_NUMBER() OVER (ORDER BY TS_RANK_CD(fts, websearch_to_tsquery('english', query)) DESC) AS rank
-    FROM wallpapers
-    ORDER BY rank ASC
-    LIMIT LEAST(quantity, 100)
-  ),
-  semantic AS (
-    SELECT id, ROW_NUMBER() OVER (ORDER BY embedding <#> query_embedding ASC) AS rank
-    FROM wallpapers
-    ORDER BY rank ASC
-    LIMIT LEAST(quantity, 100)
-  )
-  SELECT wallpapers.id, slug, description, raw_url, regular_url, thumbnail_url, width, height, tags
-  FROM full_text
-  FULL OUTER JOIN semantic ON full_text.id = semantic.id
-  JOIN wallpapers ON wallpapers.id = COALESCE(full_text.id, semantic.id)
-  ORDER BY
-    COALESCE(1.0 / (rrf_k + full_text.rank), 0.0) * full_text_weight +
-    COALESCE(1.0 / (rrf_k + semantic.rank), 0.0) * semantic_weight
-    DESC
+WITH full_text AS (
+  SELECT id, ROW_NUMBER() OVER (
+    ORDER BY TS_RANK_CD(fts, websearch_to_tsquery('english', query)) DESC
+  ) AS rank
+  FROM wallpapers
+  ORDER BY rank ASC
   LIMIT LEAST(quantity, 100)
+),
+semantic AS (
+  SELECT id, ROW_NUMBER() OVER (
+    ORDER BY embedding <#> query_embedding ASC
+  ) AS rank
+  FROM wallpapers
+  ORDER BY rank ASC
+  LIMIT LEAST(quantity, 100)
+)
+SELECT
+  wallpapers.id,
+  wallpapers.slug,
+  wallpapers.description,
+  wallpapers.raw_url,
+  wallpapers.regular_url,
+  wallpapers.thumbnail_url,
+  wallpapers.width,
+  wallpapers.height,
+  wallpapers.tags
+FROM full_text
+FULL OUTER JOIN semantic ON full_text.id = semantic.id
+LEFT OUTER JOIN wallpapers ON wallpapers.id = COALESCE(full_text.id, semantic.id)
+ORDER BY
+  COALESCE(1.0 / (rrf_k + full_text.rank), 0.0) * full_text_weight +
+  COALESCE(1.0 / (rrf_k + semantic.rank), 0.0) * semantic_weight
+  DESC
+LIMIT LEAST(quantity, 100)
 $$;
