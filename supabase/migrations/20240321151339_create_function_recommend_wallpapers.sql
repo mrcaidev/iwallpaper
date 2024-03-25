@@ -21,15 +21,12 @@ BEGIN
     (
       SELECT (candidates->>'id')::UUID
       FROM (
-        SELECT UNNEST(most_similar_wallpapers) AS candidates, rating
-        FROM (
-          SELECT w.*, h.rating
-          FROM wallpapers w
-          RIGHT OUTER JOIN histories h on w.id = h.wallpaper_id
-          WHERE h.user_id = auth.uid()
-            AND h.rating IS NOT NULL
-        ) AS rated_wallpapers
-      ) AS scores
+        SELECT UNNEST(w.most_similar_wallpapers) AS candidates, h.rating
+        FROM wallpapers w
+        RIGHT OUTER JOIN histories h on w.id = h.wallpaper_id
+        WHERE h.user_id = auth.uid()
+          AND h.rating IS NOT NULL
+      ) AS subquery
       WHERE (candidates->>'id')::UUID NOT IN (
         SELECT wallpaper_id
         FROM histories

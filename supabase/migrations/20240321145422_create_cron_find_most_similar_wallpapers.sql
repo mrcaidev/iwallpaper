@@ -63,21 +63,14 @@ AS $$
 BEGIN
   UPDATE wallpapers w
   SET most_similar_wallpapers = (
-    SELECT ARRAY_AGG(
-      JSONB_BUILD_OBJECT(
-        'id',
-        s.id,
-        'similarity',
-        s.similarity
-      )
-    )
+    SELECT ARRAY_AGG(ROW_TO_JSONB(subquery))
     FROM (
-      SELECT id, calculate_wallpaper_similarity(w.id, id) AS similarity
+      SELECT id, calculate_wallpaper_similarity(id, w.id) AS similarity
       FROM wallpapers
       WHERE id != w.id
       ORDER BY similarity DESC
       LIMIT 10
-    ) s
+    ) subquery
   );
 END;
 $$;
