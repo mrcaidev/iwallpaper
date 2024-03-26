@@ -27,8 +27,7 @@ BEGIN
     WHERE id = second_id
   );
 
-  IF first_popularity >= popularity_threshold
-    AND second_popularity >= popularity_threshold
+  IF first_popularity >= popularity_threshold AND second_popularity >= popularity_threshold
   THEN
     both_popularity = (
       SELECT COUNT(*)
@@ -45,7 +44,9 @@ BEGIN
         SELECT embedding
         FROM wallpapers
         WHERE id = first_id
-      ) <#> (
+      )
+      <#>
+      (
         SELECT embedding
         FROM wallpapers
         WHERE id = second_id
@@ -61,13 +62,13 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public, extensions, pg_temp
 AS $$
 BEGIN
-  UPDATE wallpapers
+  UPDATE wallpapers AS targets
   SET most_similar_wallpapers = (
-    SELECT ARRAY_AGG(ROW_TO_JSONB(subquery))
+    SELECT ARRAY_AGG(ROW_TO_JSON(subquery))
     FROM (
-      SELECT id, calculate_wallpaper_similarity(id, wallpapers.id) AS similarity
+      SELECT id, calculate_wallpaper_similarity(id, targets.id) AS similarity
       FROM wallpapers
-      WHERE id != wallpapers.id
+      WHERE id != targets.id
       ORDER BY similarity DESC
       LIMIT 10
     ) AS subquery
