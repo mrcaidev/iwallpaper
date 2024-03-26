@@ -71,7 +71,7 @@ async def scrape_wallpaper(session: ClientSession, slug: str):
 
     return {
         "slug": wallpaper["slug"],
-        "description": wallpaper["alt_description"],
+        "description": wallpaper["alt_description"] or "",
         "raw_url": wallpaper["urls"]["raw"],
         "regular_url": wallpaper["urls"]["regular"],
         "thumbnail_url": wallpaper["urls"]["small"],
