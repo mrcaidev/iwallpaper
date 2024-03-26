@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import uuid
 
 from aiohttp import ClientSession, TCPConnector
 from fastapi import APIRouter, status
@@ -71,7 +70,6 @@ async def scrape_wallpaper(session: ClientSession, slug: str):
     logger.debug(f"Fetched wallpaper {slug}.")
 
     return {
-        "id": str(uuid.uuid4()),
         "slug": wallpaper["slug"],
         "description": wallpaper["alt_description"],
         "raw_url": wallpaper["urls"]["raw"],

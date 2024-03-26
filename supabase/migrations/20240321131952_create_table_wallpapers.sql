@@ -7,7 +7,7 @@ AS $$
 $$;
 
 CREATE TABLE wallpapers (
-  id UUID PRIMARY KEY,
+  id UUID DEFAULT GEN_RANDOM_UUID() PRIMARY KEY,
   slug TEXT NOT NULL UNIQUE,
   description TEXT,
   raw_url TEXT NOT NULL,
