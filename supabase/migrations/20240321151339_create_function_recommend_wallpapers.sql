@@ -2,9 +2,7 @@ CREATE TYPE recommend_wallpapers_returns AS (
   id UUID,
   slug TEXT,
   description TEXT,
-  raw_url TEXT,
-  regular_url TEXT,
-  thumbnail_url TEXT,
+  pathname TEXT,
   width INTEGER,
   height INTEGER,
   tags TEXT[]

@@ -2,9 +2,7 @@ CREATE TYPE search_wallpapers_returns AS (
   id UUID,
   slug TEXT,
   description TEXT,
-  raw_url TEXT,
-  regular_url TEXT,
-  thumbnail_url TEXT,
+  pathname TEXT,
   width INTEGER,
   height INTEGER,
   tags TEXT[]
@@ -41,9 +39,7 @@ SELECT
   wallpapers.id,
   wallpapers.slug,
   wallpapers.description,
-  wallpapers.raw_url,
-  wallpapers.regular_url,
-  wallpapers.thumbnail_url,
+  wallpapers.pathname,
   wallpapers.width,
   wallpapers.height,
   wallpapers.tags
