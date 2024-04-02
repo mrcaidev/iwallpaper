@@ -1,7 +1,0 @@
-{
-  "imports": {
-    "@huggingface/inference": "npm:@huggingface/inference",
-    "@supabase/supabase-js": "npm:@supabase/supabase-js",
-    "zod": "npm:zod"
-  }
-}
