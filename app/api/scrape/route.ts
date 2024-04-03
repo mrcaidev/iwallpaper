@@ -17,6 +17,17 @@ const bodySchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    const authorization = request.headers.get("Authorization");
+    const accessToken = authorization?.replace("Bearer ", "");
+
+    if (!accessToken) {
+      return NextResponse.json({ message: "找不到 Token" }, { status: 401 });
+    }
+
+    if (accessToken !== process.env.SCRAPER_API_ACCESS_TOKEN) {
+      return NextResponse.json({ message: "Token 错误" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { quantity } = await bodySchema.parseAsync(body);
 
