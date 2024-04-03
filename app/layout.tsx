@@ -1,9 +1,13 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { ThemeProvider } from "next-themes";
+import { Inter as FontSans } from "next/font/google";
 import type { PropsWithChildren } from "react";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://iwallpaper.mrcai.dev"),
@@ -22,6 +26,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+};
+
+export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
     { media: "(prefers-color-scheme: dark)", color: "#020617" },
@@ -30,8 +37,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning className={fontSans.variable}>
+      <body className="font-sans antialiased">
+        <ThemeProvider attribute="class" disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
