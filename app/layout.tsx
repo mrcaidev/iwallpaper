@@ -1,7 +1,11 @@
+import { UserProvider } from "auth/context";
+import { Header } from "components/header/header";
+import { PcSidebar } from "components/sidebar";
 import type { Metadata, Viewport } from "next";
-import { ThemeProvider } from "next-themes";
 import { Inter as FontSans } from "next/font/google";
 import type { PropsWithChildren } from "react";
+import { ThemeProvider } from "theme/context";
+import { ThemeInitializer } from "theme/initializer";
 import "./globals.css";
 
 const fontSans = FontSans({
@@ -38,9 +42,22 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning className={fontSans.variable}>
-      <body className="font-sans antialiased">
-        <ThemeProvider attribute="class" disableTransitionOnChange>
-          {children}
+      <head>
+        <ThemeInitializer />
+      </head>
+      <body className="min-h-screen bg-background text-foreground antialiased">
+        <ThemeProvider>
+          <UserProvider>
+            <div className="hidden md:block fixed left-0 top-0 bottom-0 w-56 lg:w-72">
+              <PcSidebar />
+            </div>
+            <div className="fixed left-0 md:left-56 lg:left-72 right-0 top-0">
+              <Header />
+            </div>
+            <div className="grid min-h-screen pl-0 md:pl-56 lg:pl-72 pt-14 lg:pt-16">
+              {children}
+            </div>
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>
