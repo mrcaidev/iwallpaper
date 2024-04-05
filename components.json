@@ -11,8 +11,8 @@
   "rsc": true,
   "tsx": true,
   "aliases": {
-    "utils": "@/components/ui/utils",
-    "components": "@/components",
-    "ui": "@/components/ui"
+    "utils": "components/ui/utils",
+    "components": "components",
+    "ui": "components/ui"
   }
 }

@@ -11,7 +11,7 @@ export default function WithFrameworkLayout({ children }: PropsWithChildren) {
       <header className="fixed left-0 md:left-56 lg:left-72 right-0 top-0">
         <Header />
       </header>
-      <main className="grid min-h-screen pl-0 md:pl-56 lg:pl-72 pt-14 lg:pt-16">
+      <main className="min-h-screen pl-0 md:pl-56 lg:pl-72 pt-14 lg:pt-16">
         {children}
       </main>
     </>

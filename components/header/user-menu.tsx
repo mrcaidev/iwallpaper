@@ -7,7 +7,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
-import { CircleUserIcon, SettingsIcon } from "lucide-react";
+import {
+  CircleUserIcon,
+  LogInIcon,
+  PlusIcon,
+  SettingsIcon,
+} from "lucide-react";
 import Link from "next/link";
 
 export function UserMenu() {
@@ -15,9 +20,20 @@ export function UserMenu() {
 
   if (!user) {
     return (
-      <Button asChild>
-        <Link href="/sign-in">Sign in</Link>
-      </Button>
+      <div className="flex gap-3">
+        <Button variant="outline" asChild className="gap-1">
+          <Link href="/sign-in">
+            <LogInIcon size={16} />
+            Sign in
+          </Link>
+        </Button>
+        <Button asChild className="gap-1">
+          <Link href="/sign-up">
+            <PlusIcon size={16} />
+            Sign up
+          </Link>
+        </Button>
+      </div>
     );
   }
 
