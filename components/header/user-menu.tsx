@@ -1,6 +1,3 @@
-"use client";
-
-import { useUser } from "auth/context";
 import { Button } from "components/ui/button";
 import {
   DropdownMenu,
@@ -14,7 +11,7 @@ import { CircleUserIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 
 export function UserMenu() {
-  const user = useUser();
+  const user = null;
 
   if (!user) {
     return (

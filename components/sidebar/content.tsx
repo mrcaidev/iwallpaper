@@ -1,4 +1,4 @@
-import icon from "icon.svg";
+import icon from "app/icon.svg";
 import { HeartIcon, HomeIcon, SearchIcon } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";

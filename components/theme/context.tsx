@@ -10,12 +10,12 @@ import { setLocalStorage } from "utils/storage";
 
 type Theme = "light" | "dark";
 
-type ContextState = {
+type ThemeContextState = {
   theme: Theme;
   toggleTheme: () => void;
 };
 
-const ThemeContext = createContext<ContextState>({
+const ThemeContext = createContext<ThemeContextState>({
   theme: "dark",
   toggleTheme: () => {},
 });
