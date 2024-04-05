@@ -6,4 +6,3 @@ CREATE TABLE profiles (
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can select all profiles." ON profiles FOR SELECT USING (TRUE);
-CREATE POLICY "Users can update their own profile." ON profiles FOR UPDATE USING (auth.uid() = id);
