@@ -1,8 +1,8 @@
 CREATE TYPE recommend_wallpapers_returns AS (
   id UUID,
   slug TEXT,
-  description TEXT,
   pathname TEXT,
+  description TEXT,
   width INTEGER,
   height INTEGER,
   tags TEXT[]
@@ -51,7 +51,7 @@ BEGIN
   ON CONFLICT DO NOTHING;
 
   RETURN QUERY (
-    SELECT id, slug, description, raw_url, regular_url, thumbnail_url, width, height, tags
+    SELECT id, slug, pathname, description, width, height, tags
     FROM wallpapers
     WHERE id = ANY(recommended_ids)
   );

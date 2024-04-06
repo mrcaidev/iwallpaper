@@ -1,8 +1,8 @@
 CREATE TYPE search_wallpapers_returns AS (
   id UUID,
   slug TEXT,
-  description TEXT,
   pathname TEXT,
+  description TEXT,
   width INTEGER,
   height INTEGER,
   tags TEXT[]
@@ -38,8 +38,8 @@ semantic AS (
 SELECT
   wallpapers.id,
   wallpapers.slug,
-  wallpapers.description,
   wallpapers.pathname,
+  wallpapers.description,
   wallpapers.width,
   wallpapers.height,
   wallpapers.tags
