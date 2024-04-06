@@ -164,7 +164,7 @@ export type Database = {
         Args: {
           quantity: number;
         };
-        Returns: Database["public"]["CompositeTypes"]["recommend_wallpapers_returns"][];
+        Returns: Database["public"]["CompositeTypes"]["frontend_wallpaper"][];
       };
       search_wallpapers: {
         Args: {
@@ -175,7 +175,7 @@ export type Database = {
           semantic_weight?: number;
           rrf_k?: number;
         };
-        Returns: Database["public"]["CompositeTypes"]["search_wallpapers_returns"][];
+        Returns: Database["public"]["CompositeTypes"]["frontend_wallpaper"][];
       };
       tags_to_fts: {
         Args: {
@@ -188,23 +188,15 @@ export type Database = {
       [_ in never]: never;
     };
     CompositeTypes: {
-      recommend_wallpapers_returns: {
+      frontend_wallpaper: {
         id: string | null;
         slug: string | null;
-        description: string | null;
         pathname: string | null;
+        description: string | null;
         width: number | null;
         height: number | null;
         tags: string[] | null;
-      };
-      search_wallpapers_returns: {
-        id: string | null;
-        slug: string | null;
-        description: string | null;
-        pathname: string | null;
-        width: number | null;
-        height: number | null;
-        tags: string[] | null;
+        liked_at: string | null;
       };
     };
   };
