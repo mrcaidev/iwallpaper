@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import background from "./background.webp";
 import { SignUpForm } from "./form";
+
+export const metadata: Metadata = {
+  title: "Sign up",
+  description: "Enter your information to create an account",
+};
 
 export default function SignUpPage() {
   return (

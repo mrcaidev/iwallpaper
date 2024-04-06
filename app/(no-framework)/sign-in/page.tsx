@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import background from "./background.webp";
 import { SignInForm } from "./form";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  description: "Sign in to enjoy all features of iWallpaper",
+};
 
 export default function SignInPage() {
   return (
