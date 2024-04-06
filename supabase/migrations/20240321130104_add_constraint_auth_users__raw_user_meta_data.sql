@@ -3,7 +3,7 @@ ALTER TABLE auth.users ADD CONSTRAINT users_raw_user_meta_data_check CHECK (
     '{
       "type": "object",
       "properties": {
-        "nick_name": {
+        "nickname": {
           "type": ["string", "null"],
           "maxLength": 20,
           "minLength": 2
@@ -14,7 +14,7 @@ ALTER TABLE auth.users ADD CONSTRAINT users_raw_user_meta_data_check CHECK (
         }
       },
       "required": [
-        "nick_name",
+        "nickname",
         "avatar_url"
       ]
     }',

@@ -20,7 +20,7 @@ export async function signUp(_: unknown, formData: FormData) {
     password,
     options: {
       data: {
-        nick_name: null,
+        nickname: null,
         avatar_url: null,
       },
     },

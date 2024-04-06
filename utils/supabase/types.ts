@@ -80,17 +80,17 @@ export type Database = {
         Row: {
           avatar_url: string | null;
           id: string;
-          nick_name: string | null;
+          nickname: string | null;
         };
         Insert: {
           avatar_url?: string | null;
           id: string;
-          nick_name?: string | null;
+          nickname?: string | null;
         };
         Update: {
           avatar_url?: string | null;
           id?: string;
-          nick_name?: string | null;
+          nickname?: string | null;
         };
         Relationships: [
           {

@@ -9,7 +9,7 @@ BEGIN
 
   ELSIF TG_OP = 'UPDATE' THEN
     UPDATE profiles
-    SET nick_name = NEW.raw_user_meta_data->>'nick_name',
+    SET nickname = NEW.raw_user_meta_data->>'nickname',
         avatar_url = NEW.raw_user_meta_data->>'avatar_url'
     WHERE id = NEW.id;
 

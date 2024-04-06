@@ -1,6 +1,6 @@
 CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users ON DELETE CASCADE,
-  nick_name TEXT,
+  nickname TEXT,
   avatar_url TEXT
 );
 
