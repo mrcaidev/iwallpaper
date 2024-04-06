@@ -1,6 +1,10 @@
-export type User = {
+export type Wallpaper = {
   id: string;
-  email: string;
-  nickName: string | null;
-  avatarUrl: string | null;
+  slug: string;
+  pathname: string;
+  description: string;
+  width: number;
+  height: number;
+  tags: string[];
+  liked_at: string | null;
 };
