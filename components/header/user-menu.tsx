@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar";
 import { Button } from "components/ui/button";
 import {
   DropdownMenu,
@@ -8,28 +9,39 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 import {
-  CircleUserIcon,
+  GithubIcon,
+  LifeBuoyIcon,
   LogInIcon,
+  LogOutIcon,
   PlusIcon,
   SettingsIcon,
+  UserCircleIcon,
+  UserIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createServerSupabaseClient } from "utils/supabase/server";
 
-export function UserMenu() {
-  const user = null;
+export async function UserMenu() {
+  const supabase = createServerSupabaseClient();
 
-  if (!user) {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
     return (
-      <div className="flex gap-3">
-        <Button variant="outline" asChild className="gap-1">
+      <div className="space-x-3">
+        <Button variant="outline" asChild>
           <Link href="/sign-in">
-            <LogInIcon size={16} />
+            <LogInIcon size={16} className="mr-1" />
             Sign in
           </Link>
         </Button>
-        <Button asChild className="gap-1">
+        <Button asChild>
           <Link href="/sign-up">
-            <PlusIcon size={16} />
+            <PlusIcon size={16} className="mr-1" />
             Sign up
           </Link>
         </Button>
@@ -41,21 +53,66 @@ export function UserMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="secondary" size="icon" className="rounded-full">
-          <CircleUserIcon size={20} />
+          <Avatar>
+            <AvatarImage
+              src={user.user_metadata.avatar_url}
+              alt="Your avatar"
+            />
+            <AvatarFallback>
+              <UserCircleIcon size={20} />
+            </AvatarFallback>
+          </Avatar>
           <span className="sr-only">Toggle user menu</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>
+          {user.user_metadata.nick_name ?? "My Account"}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <SettingsIcon size={16} />
-          Settings
+        <DropdownMenuItem asChild>
+          <Link href={`/users/${user.id}`}>
+            <UserIcon size={16} className="mr-2" />
+            Profile
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>Support</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/setting">
+            <SettingsIcon size={16} className="mr-2" />
+            Settings
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/support">
+            <LifeBuoyIcon size={16} className="mr-2" />
+            Support
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="https://github.com/mrcaidev/iwallpaper">
+            <GithubIcon size={16} className="mr-2" />
+            Source code
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <form action={signOut}>
+            <button type="submit" className="flex items-center">
+              <LogOutIcon size={16} className="mr-2" />
+              Sign out
+            </button>
+          </form>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+
+async function signOut() {
+  "use server";
+
+  const supabase = createServerSupabaseClient();
+  await supabase.auth.signOut();
+  redirect("/sign-in");
 }
