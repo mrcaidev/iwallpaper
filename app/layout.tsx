@@ -1,5 +1,6 @@
 import { ThemeProvider } from "components/theme/context";
 import { ThemeInitializer } from "components/theme/initializer";
+import { Toaster } from "components/ui/toaster";
 import type { Metadata, Viewport } from "next";
 import { Inter as FontSans } from "next/font/google";
 import type { PropsWithChildren } from "react";
@@ -43,7 +44,10 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <ThemeInitializer />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
