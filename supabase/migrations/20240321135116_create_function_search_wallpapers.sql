@@ -1,14 +1,3 @@
-CREATE TYPE search_wallpapers_returns AS (
-  id UUID,
-  slug TEXT,
-  pathname TEXT,
-  description TEXT,
-  width INTEGER,
-  height INTEGER,
-  tags TEXT[],
-  liked_at TIMESTAMPTZ
-);
-
 CREATE FUNCTION search_wallpapers(
   query TEXT,
   query_embedding VECTOR(384),
@@ -17,7 +6,7 @@ CREATE FUNCTION search_wallpapers(
   semantic_weight FLOAT = 1.0,
   rrf_k INTEGER = 1
 )
-RETURNS SETOF search_wallpapers_returns
+RETURNS SETOF frontend_wallpaper
 LANGUAGE sql
 AS $$
 WITH full_text AS (

@@ -1,15 +1,5 @@
-CREATE TYPE recommend_wallpapers_returns AS (
-  id UUID,
-  slug TEXT,
-  pathname TEXT,
-  description TEXT,
-  width INTEGER,
-  height INTEGER,
-  tags TEXT[]
-);
-
 CREATE FUNCTION recommend_wallpapers(quantity INTEGER)
-RETURNS SETOF recommend_wallpapers_returns
+RETURNS SETOF frontend_wallpaper
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -51,7 +41,15 @@ BEGIN
   ON CONFLICT DO NOTHING;
 
   RETURN QUERY (
-    SELECT id, slug, pathname, description, width, height, tags
+    SELECT
+      id,
+      slug,
+      pathname,
+      description,
+      width,
+      height,
+      tags,
+      NULL AS liked_at
     FROM wallpapers
     WHERE id = ANY(recommended_ids)
   );
