@@ -5,7 +5,8 @@ CREATE TYPE search_wallpapers_returns AS (
   description TEXT,
   width INTEGER,
   height INTEGER,
-  tags TEXT[]
+  tags TEXT[],
+  liked_at TIMESTAMPTZ
 );
 
 CREATE FUNCTION search_wallpapers(
@@ -34,6 +35,11 @@ semantic AS (
   FROM wallpapers
   ORDER BY rank ASC
   LIMIT LEAST(quantity, 100)
+),
+dedicated_histories AS (
+  SELECT *
+  FROM histories
+  WHERE user_id = auth.uid()
 )
 SELECT
   wallpapers.id,
@@ -42,10 +48,12 @@ SELECT
   wallpapers.description,
   wallpapers.width,
   wallpapers.height,
-  wallpapers.tags
+  wallpapers.tags,
+  dedicated_histories.liked_at
 FROM full_text
 FULL OUTER JOIN semantic ON full_text.id = semantic.id
 LEFT OUTER JOIN wallpapers ON wallpapers.id = COALESCE(full_text.id, semantic.id)
+LEFT OUTER JOIN dedicated_histories ON wallpapers.id = dedicated_histories.wallpaper_id
 ORDER BY
   COALESCE(1.0 / (rrf_k + full_text.rank), 0.0) * full_text_weight +
   COALESCE(1.0 / (rrf_k + semantic.rank), 0.0) * semantic_weight
