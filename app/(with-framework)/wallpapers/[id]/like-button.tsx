@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { createBrowserSupabaseClient } from "utils/supabase/browser";
-import { like } from "./actions";
+import { react } from "./actions";
 
 type Props = {
   wallpaperId: string;
@@ -66,11 +66,13 @@ export function LikeButton({ wallpaperId }: Props) {
   }
 
   const action = async () => {
-    const error = await like.bind(null, wallpaperId, !isLiked)();
+    const error = await react(wallpaperId, isLiked ? "normal" : "like");
+
     if (error) {
       toast({ variant: "destructive", description: error });
       return;
     }
+
     setIsLiked((isLiked) => !isLiked);
   };
 

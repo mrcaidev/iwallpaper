@@ -2,7 +2,9 @@
 
 import { createServerSupabaseClient } from "utils/supabase/server";
 
-export async function like(wallpaperId: string, isLiked: boolean) {
+type Reaction = "normal" | "like" | "hide";
+
+export async function react(wallpaperId: string, reaction: Reaction) {
   const supabase = createServerSupabaseClient();
 
   const {
@@ -22,8 +24,8 @@ export async function like(wallpaperId: string, isLiked: boolean) {
     {
       user_id: user.id,
       wallpaper_id: wallpaperId,
-      rating: 4,
-      liked_at: isLiked ? new Date().toISOString() : null,
+      rating: convertReactionToRating(reaction),
+      liked_at: reaction === "like" ? new Date().toISOString() : null,
     },
     { onConflict: "user_id, wallpaper_id" },
   );
@@ -33,4 +35,15 @@ export async function like(wallpaperId: string, isLiked: boolean) {
   }
 
   return "";
+}
+
+function convertReactionToRating(reaction: Reaction) {
+  switch (reaction) {
+    case "normal":
+      return null;
+    case "like":
+      return 4;
+    case "hide":
+      return 1;
+  }
 }
