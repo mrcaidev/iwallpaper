@@ -44,10 +44,8 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <ThemeInitializer />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <ThemeProvider>
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );
