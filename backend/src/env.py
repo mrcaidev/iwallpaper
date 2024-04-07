@@ -18,6 +18,6 @@ def load_environment_variables():
 load_environment_variables()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
-VECTORIZER_MODEL_NAME = os.getenv("VECTORIZER_MODEL_NAME", "all-MiniLM-L6-v2")
-VECTORIZER_MODEL_PATH = os.getenv("VECTORIZER_MODEL_PATH", "./model")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+GTE_MODEL_NAME = os.getenv("GTE_MODEL_NAME", "all-MiniLM-L6-v2")
+GTE_MODEL_PATH = os.getenv("GTE_MODEL_PATH", "")

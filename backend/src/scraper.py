@@ -1,47 +1,47 @@
 import asyncio
 import logging
+import urllib.parse
+from typing import Annotated
 
 from aiohttp import ClientSession, TCPConnector
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Query, status
 from postgrest.types import CountMethod
-from pydantic import BaseModel, PositiveInt
+from pydantic import BaseModel
 
+from .embedding import create_embedding
 from .supabase import supabase_client
-from .vectorizer import vectorizer
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/scrape")
 
 
 class Body(BaseModel):
-    quantity: PositiveInt
+    quantity: Annotated[int, Query(ge=1, le=5000)] = 30
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def scrape(body: Body):
-    wallpapers = await scrape_wallpapers(body.quantity)
+async def scrape_wallpapers(body: Body):
+    wallpapers = await scrape_unsplash(body.quantity)
     embeddings = create_embeddings(wallpapers)
     wallpapers = [
         {**wallpaper, "embedding": embedding}
         for wallpaper, embedding in zip(wallpapers, embeddings)
     ]
     upserted_count = upsert_wallpapers(wallpapers)
-    return {"data": upserted_count}
+    return {"count": upserted_count}
 
 
 def calculate_per_page(quantity: int):
-    # Unsplash API 限制了最大页容量为 30。
     MAX_PER_PAGE = 30
-
-    # 页容量太小会导致请求过多，浪费资源。
     MIN_PER_PAGE = 5
 
-    # 找到尽可能大的页容量，并且使得总需求量能够被整除。
+    if quantity <= MAX_PER_PAGE:
+        return quantity
+
     for per_page in range(MAX_PER_PAGE, MIN_PER_PAGE - 1, -1):
         if quantity % per_page == 0:
             return per_page
 
-    # 如果找不到能整除的页容量，就使用最大页容量。
     return MAX_PER_PAGE
 
 
@@ -71,17 +71,15 @@ async def scrape_wallpaper(session: ClientSession, slug: str):
 
     return {
         "slug": wallpaper["slug"],
-        "description": wallpaper["alt_description"] or "",
-        "raw_url": wallpaper["urls"]["raw"],
-        "regular_url": wallpaper["urls"]["regular"],
-        "thumbnail_url": wallpaper["urls"]["small"],
+        "pathname": urllib.parse.urlparse(wallpaper["urls"]["raw"]).path[1:],
+        "description": wallpaper["description"] or wallpaper["alt_description"] or "",
         "width": wallpaper["width"],
         "height": wallpaper["height"],
         "tags": [tag["title"] for tag in wallpaper["tags"]],
     }
 
 
-async def scrape_wallpapers(quantity: int):
+async def scrape_unsplash(quantity: int):
     async with ClientSession(
         base_url="https://unsplash.com",
         connector=TCPConnector(limit=10),
@@ -115,7 +113,7 @@ async def scrape_wallpapers(quantity: int):
 
 def create_embeddings(wallpapers: list[dict]):
     sentences = [" ".join(wallpaper["tags"]) for wallpaper in wallpapers]
-    embeddings = vectorizer.encode(sentences, normalize_embeddings=True).tolist()
+    embeddings = create_embedding(sentences)
 
     logger.info(f"Created {len(embeddings)} wallpaper embeddings.")
 
