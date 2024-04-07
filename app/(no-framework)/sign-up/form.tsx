@@ -1,15 +1,24 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "components/ui/alert";
 import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
-import { AlertCircleIcon } from "lucide-react";
+import { useToast } from "components/ui/use-toast";
+import { useEffect } from "react";
 import { useFormState } from "react-dom";
 import { signUp } from "./actions";
 import { SignUpButton } from "./button";
 
 export function SignUpForm() {
   const [error, action] = useFormState(signUp, "");
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+    const { dismiss } = toast({ variant: "destructive", description: error });
+    return dismiss;
+  }, [error, toast]);
 
   return (
     <form action={action} className="space-y-4">
@@ -46,13 +55,6 @@ export function SignUpForm() {
         />
       </div>
       <SignUpButton />
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircleIcon size={16} />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
     </form>
   );
 }
