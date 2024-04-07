@@ -40,6 +40,7 @@ export function SignUpForm() {
           required
           minLength={8}
           maxLength={20}
+          placeholder="8-20 characters"
           id="password"
         />
       </div>
@@ -51,6 +52,7 @@ export function SignUpForm() {
           required
           minLength={8}
           maxLength={20}
+          placeholder="Type your password again"
           id="confirmation"
         />
       </div>
