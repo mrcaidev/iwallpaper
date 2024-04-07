@@ -39,7 +39,7 @@ export async function UserMenu() {
             Sign in
           </Link>
         </Button>
-        <Button asChild>
+        <Button asChild className="hidden md:inline-flex">
           <Link href="/sign-up">
             <PlusIcon size={16} className="mr-1" />
             Sign up
