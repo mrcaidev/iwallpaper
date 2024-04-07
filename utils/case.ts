@@ -13,18 +13,16 @@ export type SnakeToCamelJson<T> = T extends (infer Item)[]
       }
     : T;
 
+export function capitalize(input: string): string {
+  return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
+}
+
 export function snakeToCamelString<S extends string>(
   input: S,
 ): SnakeToCamelString<S> {
   return input
     .split("_")
-    .map((word, index) => {
-      if (index === 0) {
-        return word.toLowerCase();
-      } else {
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-      }
-    })
+    .map((word, index) => (index === 0 ? word.toLowerCase() : capitalize(word)))
     .join("") as SnakeToCamelString<S>;
 }
 

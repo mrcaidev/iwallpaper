@@ -1,14 +1,10 @@
 import { Button } from "components/ui/button";
 import { Skeleton } from "components/ui/skeleton";
 import { DownloadIcon, EyeOffIcon } from "lucide-react";
-import type { Metadata } from "next";
 import Image from "next/image";
+import { capitalize } from "utils/case";
 import { createServerSupabaseClient } from "utils/supabase/server";
 import { LikeButton } from "./like-button";
-
-export const metadata: Metadata = {
-  title: "Wallpaper",
-};
 
 type Props = {
   params: {
@@ -16,16 +12,23 @@ type Props = {
   };
 };
 
+export async function generateMetadata({ params: { id } }: Props) {
+  const wallpaper = await fetchWallpaper(id);
+
+  if (!wallpaper) {
+    return { title: "Error" };
+  }
+
+  return {
+    title: capitalize(wallpaper.description),
+    description: wallpaper.tags.join(", "),
+  };
+}
+
 export default async function Page({ params: { id } }: Props) {
-  const supabase = createServerSupabaseClient();
+  const wallpaper = await fetchWallpaper(id);
 
-  const { data: wallpaper, error } = await supabase
-    .from("wallpapers")
-    .select("id, slug, pathname, description, width, height, tags")
-    .eq("id", id)
-    .single();
-
-  if (error) {
+  if (!wallpaper) {
     return null;
   }
 
@@ -66,4 +69,20 @@ export default async function Page({ params: { id } }: Props) {
       </div>
     </div>
   );
+}
+
+async function fetchWallpaper(id: string) {
+  const supabase = createServerSupabaseClient();
+
+  const { data: wallpaper, error } = await supabase
+    .from("wallpapers")
+    .select("id, slug, pathname, description, width, height, tags")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    return null;
+  }
+
+  return wallpaper;
 }
