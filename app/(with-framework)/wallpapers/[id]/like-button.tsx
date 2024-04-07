@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "components/ui/button";
+import { useToast } from "components/ui/use-toast";
 import { cn } from "components/ui/utils";
 import { HeartIcon } from "lucide-react";
 import Link from "next/link";
@@ -17,9 +18,10 @@ export function LikeButton({ wallpaperId }: Props) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const { pending } = useFormStatus();
+  const { toast } = useToast();
 
   useEffect(() => {
-    async function syncLikedAt(wallpaperId: string) {
+    async function fetchLikedAt(wallpaperId: string) {
       const supabase = createBrowserSupabaseClient();
 
       const {
@@ -49,7 +51,7 @@ export function LikeButton({ wallpaperId }: Props) {
       setIsLiked(data.liked_at !== null);
     }
 
-    syncLikedAt(wallpaperId);
+    fetchLikedAt(wallpaperId);
   }, [wallpaperId]);
 
   if (!isAuthenticated) {
@@ -64,10 +66,12 @@ export function LikeButton({ wallpaperId }: Props) {
   }
 
   const action = async () => {
-    const success = await like.bind(null, wallpaperId, !isLiked)();
-    if (success) {
-      setIsLiked((isLiked) => !isLiked);
+    const error = await like.bind(null, wallpaperId, !isLiked)();
+    if (error) {
+      toast({ variant: "destructive", description: error });
+      return;
     }
+    setIsLiked((isLiked) => !isLiked);
   };
 
   return (

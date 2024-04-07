@@ -10,8 +10,12 @@ export async function like(wallpaperId: string, isLiked: boolean) {
     error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError || !user) {
-    return false;
+  if (authError) {
+    return authError.message;
+  }
+
+  if (!user) {
+    return "User not found";
   }
 
   const { error: upsertError } = await supabase.from("histories").upsert(
@@ -25,8 +29,8 @@ export async function like(wallpaperId: string, isLiked: boolean) {
   );
 
   if (upsertError) {
-    return false;
+    return upsertError.message;
   }
 
-  return true;
+  return "";
 }
