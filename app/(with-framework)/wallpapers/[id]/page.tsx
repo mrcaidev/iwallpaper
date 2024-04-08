@@ -1,10 +1,11 @@
 import { Button } from "components/ui/button";
 import { Skeleton } from "components/ui/skeleton";
-import { DownloadIcon, EyeOffIcon, HeartIcon } from "lucide-react";
+import { DownloadIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { notFound } from "next/navigation";
 import { capitalize } from "utils/case";
 import { createServerSupabaseClient } from "utils/supabase/server";
+import { HideButton } from "./hide-button";
 import { LikeButton } from "./like-button";
 
 type Props = {
@@ -27,13 +28,13 @@ export async function generateMetadata({ params: { id } }: Props) {
 }
 
 export default async function Page({ params: { id } }: Props) {
-  const [wallpaper, { userId, history }] = await Promise.all([
+  const [wallpaper, history] = await Promise.all([
     fetchWallpaper(id),
     fetchHistory(id),
   ]);
 
   if (!wallpaper) {
-    return null;
+    notFound();
   }
 
   return (
@@ -58,23 +59,14 @@ export default async function Page({ params: { id } }: Props) {
       </div>
       <div className="flex flex-col sm:flex-row justify-between gap-2">
         <form className="grid grid-cols-2 gap-2">
-          {userId ? (
-            <LikeButton
-              wallpaperId={wallpaper.id}
-              initialIsLiked={history?.liked_at !== null}
-            />
-          ) : (
-            <Button variant="outline" asChild>
-              <Link href="/sign-in">
-                <HeartIcon size={16} className="mr-2" />
-                Like
-              </Link>
-            </Button>
-          )}
-          <Button variant="outline">
-            <EyeOffIcon size={16} className="mr-2" />
-            Hide
-          </Button>
+          <LikeButton
+            wallpaperId={wallpaper.id}
+            initialIsLiked={!!history?.liked_at}
+          />
+          <HideButton
+            wallpaperId={wallpaper.id}
+            initialIsHidden={!!history?.hidden_at}
+          />
         </form>
         <div>
           <Button className="w-full">
@@ -94,7 +86,7 @@ async function fetchWallpaper(id: string) {
     .from("wallpapers")
     .select("id, slug, pathname, description, width, height, tags")
     .eq("id", id)
-    .single();
+    .maybeSingle();
 
   return wallpaper;
 }
@@ -108,7 +100,7 @@ async function fetchHistory(wallpaperId: string) {
   const userId = user?.id ?? null;
 
   if (!userId) {
-    return { userId: null, history: null };
+    return null;
   }
 
   const { data: history } = await supabase
@@ -118,5 +110,5 @@ async function fetchHistory(wallpaperId: string) {
     .eq("wallpaper_id", wallpaperId)
     .maybeSingle();
 
-  return { userId, history };
+  return history;
 }

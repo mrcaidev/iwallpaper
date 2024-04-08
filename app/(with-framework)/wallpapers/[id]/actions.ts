@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
 
 type Reaction =
@@ -19,12 +20,8 @@ export async function react(wallpaperId: string, reaction: Reaction) {
     error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError) {
-    return authError.message;
-  }
-
-  if (!user) {
-    return "User not found";
+  if (authError || !user) {
+    redirect("/sign-in");
   }
 
   const { error: upsertError } = await supabase.from("histories").upsert(
