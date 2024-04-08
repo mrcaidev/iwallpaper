@@ -2,7 +2,14 @@
 
 import { createServerSupabaseClient } from "utils/supabase/server";
 
-type Reaction = "normal" | "like" | "hide";
+type Reaction =
+  | {
+      type: "normal" | "like" | "hide" | "download";
+    }
+  | {
+      type: "rate";
+      payload: number;
+    };
 
 export async function react(wallpaperId: string, reaction: Reaction) {
   const supabase = createServerSupabaseClient();
@@ -24,8 +31,10 @@ export async function react(wallpaperId: string, reaction: Reaction) {
     {
       user_id: user.id,
       wallpaper_id: wallpaperId,
-      rating: convertReactionToRating(reaction),
-      liked_at: reaction === "like" ? new Date().toISOString() : null,
+      ...getLikedAt(reaction),
+      ...getHiddenAt(reaction),
+      ...getDownloadedAt(reaction),
+      ...getRating(reaction),
     },
     { onConflict: "user_id, wallpaper_id" },
   );
@@ -37,13 +46,44 @@ export async function react(wallpaperId: string, reaction: Reaction) {
   return "";
 }
 
-function convertReactionToRating(reaction: Reaction) {
-  switch (reaction) {
-    case "normal":
-      return null;
+function getLikedAt(reaction: Reaction) {
+  switch (reaction.type) {
     case "like":
-      return 4;
+      return { liked_at: new Date().toISOString() };
+    case "normal":
     case "hide":
-      return 1;
+      return { liked_at: null };
+    default:
+      return {};
+  }
+}
+
+function getHiddenAt(reaction: Reaction) {
+  switch (reaction.type) {
+    case "hide":
+      return { hidden_at: new Date().toISOString() };
+    case "normal":
+    case "like":
+      return { hidden_at: null };
+    default:
+      return {};
+  }
+}
+
+function getDownloadedAt(reaction: Reaction) {
+  switch (reaction.type) {
+    case "download":
+      return { downloaded_at: new Date().toISOString() };
+    default:
+      return {};
+  }
+}
+
+function getRating(reaction: Reaction) {
+  switch (reaction.type) {
+    case "rate":
+      return { rating: reaction.payload };
+    default:
+      return {};
   }
 }

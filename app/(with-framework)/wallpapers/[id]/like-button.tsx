@@ -66,7 +66,9 @@ export function LikeButton({ wallpaperId }: Props) {
   }
 
   const action = async () => {
-    const error = await react(wallpaperId, isLiked ? "normal" : "like");
+    const error = await react(wallpaperId, {
+      type: isLiked ? "normal" : "like",
+    });
 
     if (error) {
       toast({ variant: "destructive", description: error });
