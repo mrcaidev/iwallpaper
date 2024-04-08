@@ -25,7 +25,7 @@ export async function generateMetadata({ params: { id } }: Props) {
   };
 }
 
-export default async function Page({ params: { id } }: Props) {
+export default async function WallpaperPage({ params: { id } }: Props) {
   const [wallpaper, history] = await Promise.all([
     fetchWallpaper(id),
     fetchHistory(id),
