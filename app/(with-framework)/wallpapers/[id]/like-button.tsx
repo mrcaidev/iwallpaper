@@ -1,35 +1,15 @@
-"use client";
-
 import { Button } from "components/ui/button";
-import { useToast } from "components/ui/use-toast";
 import { cn } from "components/ui/utils";
 import { HeartIcon } from "lucide-react";
-import { useState } from "react";
 import { useFormStatus } from "react-dom";
-import { react } from "./actions";
 
 type Props = {
-  wallpaperId: string;
-  initialIsLiked: boolean;
+  isLiked: boolean;
+  action: () => void;
 };
 
-export function LikeButton({ wallpaperId, initialIsLiked }: Props) {
-  const [isLiked, setIsLiked] = useState(initialIsLiked);
+export function LikeButton({ isLiked, action }: Props) {
   const { pending } = useFormStatus();
-  const { toast } = useToast();
-
-  const action = async () => {
-    const error = await react(wallpaperId, {
-      type: isLiked ? "normal" : "like",
-    });
-
-    if (error) {
-      toast({ variant: "destructive", description: error });
-      return;
-    }
-
-    setIsLiked((isLiked) => !isLiked);
-  };
 
   return (
     <Button variant="outline" formAction={action} disabled={pending}>

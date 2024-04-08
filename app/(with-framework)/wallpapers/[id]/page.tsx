@@ -5,8 +5,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { capitalize } from "utils/case";
 import { createServerSupabaseClient } from "utils/supabase/server";
-import { HideButton } from "./hide-button";
-import { LikeButton } from "./like-button";
+import { LikeHideButtonGroup } from "./like-hide-button-group";
 
 type Props = {
   params: {
@@ -58,16 +57,12 @@ export default async function Page({ params: { id } }: Props) {
         />
       </div>
       <div className="flex flex-col sm:flex-row justify-between gap-2">
-        <form className="grid grid-cols-2 gap-2">
-          <LikeButton
-            wallpaperId={wallpaper.id}
-            initialIsLiked={!!history?.liked_at}
-          />
-          <HideButton
-            wallpaperId={wallpaper.id}
-            initialIsHidden={!!history?.hidden_at}
-          />
-        </form>
+        <LikeHideButtonGroup
+          wallpaperId={wallpaper.id}
+          initialStatus={
+            history?.liked_at ? "like" : history?.hidden_at ? "hide" : "normal"
+          }
+        />
         <div>
           <Button className="w-full">
             <DownloadIcon size={16} className="mr-2" />
