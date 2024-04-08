@@ -9,7 +9,7 @@ const config = {
     ],
   },
   experimental: {
-    // typedRoutes: true,
+    typedRoutes: true,
   },
 };
 
