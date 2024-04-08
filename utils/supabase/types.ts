@@ -36,25 +36,34 @@ export type Database = {
     Tables: {
       histories: {
         Row: {
+          created_at: string;
+          downloaded_at: string | null;
+          hidden_at: string | null;
           id: string;
-          is_positive: boolean | null;
           liked_at: string | null;
+          preference: number | null;
           rating: number | null;
           user_id: string;
           wallpaper_id: string;
         };
         Insert: {
+          created_at?: string;
+          downloaded_at?: string | null;
+          hidden_at?: string | null;
           id?: string;
-          is_positive?: boolean | null;
           liked_at?: string | null;
+          preference?: number | null;
           rating?: number | null;
           user_id: string;
           wallpaper_id: string;
         };
         Update: {
+          created_at?: string;
+          downloaded_at?: string | null;
+          hidden_at?: string | null;
           id?: string;
-          is_positive?: boolean | null;
           liked_at?: string | null;
+          preference?: number | null;
           rating?: number | null;
           user_id?: string;
           wallpaper_id?: string;
