@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createServerSupabaseClient } from "utils/supabase/server";
 import background from "./background.webp";
 import { SignUpForm } from "./form";
 
@@ -9,7 +11,17 @@ export const metadata: Metadata = {
   description: "Enter your information to create an account",
 };
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  const supabase = createServerSupabaseClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/");
+  }
+
   return (
     <div className="grid lg:grid-cols-2 h-full">
       <div className="hidden lg:block relative bg-muted">
