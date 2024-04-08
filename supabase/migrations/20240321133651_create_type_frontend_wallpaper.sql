@@ -6,5 +6,5 @@ CREATE TYPE frontend_wallpaper AS (
   width INTEGER,
   height INTEGER,
   tags TEXT[],
-  liked_at TIMESTAMPTZ
+  attitude ATTITUDE
 );

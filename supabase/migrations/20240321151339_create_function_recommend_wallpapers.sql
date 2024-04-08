@@ -49,7 +49,7 @@ BEGIN
       width,
       height,
       tags,
-      NULL AS liked_at
+      NULL AS attitude
     FROM wallpapers
     WHERE id = ANY(recommended_ids)
   );

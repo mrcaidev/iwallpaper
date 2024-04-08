@@ -4,7 +4,7 @@ import { DownloadIcon } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
-import { LikeHideButtonGroup } from "./like-hide-button-group";
+import { AttitudeButtonGroup } from "./attitude-button-group";
 
 type Props = {
   params: {
@@ -56,11 +56,9 @@ export default async function Page({ params: { id } }: Props) {
         />
       </div>
       <div className="flex flex-col sm:flex-row justify-between gap-2">
-        <LikeHideButtonGroup
+        <AttitudeButtonGroup
           wallpaperId={wallpaper.id}
-          initialStatus={
-            history?.liked_at ? "like" : history?.hidden_at ? "hide" : "normal"
-          }
+          initialAttitude={history?.attitude ?? null}
         />
         <div>
           <Button className="w-full">
@@ -99,7 +97,7 @@ async function fetchHistory(wallpaperId: string) {
 
   const { data: history } = await supabase
     .from("histories")
-    .select("liked_at, hidden_at, rating")
+    .select("attitude")
     .eq("user_id", userId)
     .eq("wallpaper_id", wallpaperId)
     .maybeSingle();

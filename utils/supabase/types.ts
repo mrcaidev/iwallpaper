@@ -36,33 +36,27 @@ export type Database = {
     Tables: {
       histories: {
         Row: {
-          created_at: string;
-          downloaded_at: string | null;
-          hidden_at: string | null;
+          attitude: Database["public"]["Enums"]["attitude"] | null;
           id: string;
-          liked_at: string | null;
+          is_downloaded: boolean;
           preference: number | null;
           rating: number | null;
           user_id: string;
           wallpaper_id: string;
         };
         Insert: {
-          created_at?: string;
-          downloaded_at?: string | null;
-          hidden_at?: string | null;
+          attitude?: Database["public"]["Enums"]["attitude"] | null;
           id?: string;
-          liked_at?: string | null;
+          is_downloaded?: boolean;
           preference?: number | null;
           rating?: number | null;
           user_id: string;
           wallpaper_id: string;
         };
         Update: {
-          created_at?: string;
-          downloaded_at?: string | null;
-          hidden_at?: string | null;
+          attitude?: Database["public"]["Enums"]["attitude"] | null;
           id?: string;
-          liked_at?: string | null;
+          is_downloaded?: boolean;
           preference?: number | null;
           rating?: number | null;
           user_id?: string;
@@ -127,7 +121,6 @@ export type Database = {
           id: string;
           most_similar_wallpapers: Json[];
           pathname: string;
-          popularity: number;
           slug: string;
           tags: string[];
           width: number;
@@ -140,7 +133,6 @@ export type Database = {
           id?: string;
           most_similar_wallpapers?: Json[];
           pathname: string;
-          popularity?: number;
           slug: string;
           tags: string[];
           width: number;
@@ -153,7 +145,6 @@ export type Database = {
           id?: string;
           most_similar_wallpapers?: Json[];
           pathname?: string;
-          popularity?: number;
           slug?: string;
           tags?: string[];
           width?: number;
@@ -215,7 +206,7 @@ export type Database = {
       };
     };
     Enums: {
-      [_ in never]: never;
+      attitude: "liked" | "disliked";
     };
     CompositeTypes: {
       frontend_wallpaper: {
@@ -226,7 +217,7 @@ export type Database = {
         width: number | null;
         height: number | null;
         tags: string[] | null;
-        liked_at: string | null;
+        attitude: Database["public"]["Enums"]["attitude"] | null;
       };
     };
   };

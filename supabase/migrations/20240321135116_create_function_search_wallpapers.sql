@@ -38,7 +38,7 @@ SELECT
   wallpapers.width,
   wallpapers.height,
   wallpapers.tags,
-  dedicated_histories.liked_at
+  dedicated_histories.attitude
 FROM full_text
 FULL OUTER JOIN semantic ON full_text.id = semantic.id
 LEFT OUTER JOIN wallpapers ON wallpapers.id = COALESCE(full_text.id, semantic.id)

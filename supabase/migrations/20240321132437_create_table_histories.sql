@@ -1,23 +1,22 @@
+CREATE TYPE ATTITUDE AS ENUM ('liked', 'disliked');
+
 CREATE TABLE histories (
   id UUID DEFAULT GEN_RANDOM_UUID() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users ON DELETE CASCADE,
   wallpaper_id UUID NOT NULL REFERENCES wallpapers ON DELETE CASCADE,
-  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  liked_at TIMESTAMPTZ,
-  hidden_at TIMESTAMPTZ,
-  downloaded_at TIMESTAMPTZ,
-  rating SMALLINT CHECK (rating BETWEEN 0 AND 5),
+  attitude ATTITUDE,
+  rating SMALLINT CHECK (rating BETWEEN 1 AND 5),
+  is_downloaded BOOLEAN DEFAULT FALSE NOT NULL,
   preference SMALLINT GENERATED ALWAYS AS (
     CASE
       WHEN rating IS NOT NULL THEN rating
-      WHEN hidden_at IS NOT NULL THEN 0
-      WHEN downloaded_at IS NOT NULL THEN 5
-      WHEN liked_at IS NOT NULL THEN 4
+      WHEN attitude = 'disliked' THEN 1
+      WHEN is_downloaded = TRUE THEN 5
+      WHEN attitude = 'liked' THEN 4
       ELSE NULL
     END
   ) STORED,
-  UNIQUE (user_id, wallpaper_id),
-  CHECK (liked_at IS NULL OR hidden_at IS NULL)
+  UNIQUE (user_id, wallpaper_id)
 );
 
 ALTER TABLE histories ENABLE ROW LEVEL SECURITY;
