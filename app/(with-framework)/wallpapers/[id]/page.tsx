@@ -1,7 +1,8 @@
 import { Button } from "components/ui/button";
 import { Skeleton } from "components/ui/skeleton";
-import { DownloadIcon, EyeOffIcon } from "lucide-react";
+import { DownloadIcon, EyeOffIcon, HeartIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { capitalize } from "utils/case";
 import { createServerSupabaseClient } from "utils/supabase/server";
 import { LikeButton } from "./like-button";
@@ -26,15 +27,14 @@ export async function generateMetadata({ params: { id } }: Props) {
 }
 
 export default async function Page({ params: { id } }: Props) {
-  const wallpaper = await fetchWallpaper(id);
+  const [wallpaper, { userId, history }] = await Promise.all([
+    fetchWallpaper(id),
+    fetchHistory(id),
+  ]);
 
   if (!wallpaper) {
     return null;
   }
-
-  const supabase = createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const userId = user?.id ?? null;
 
   return (
     <div className="p-4 lg:p-6">
@@ -58,7 +58,19 @@ export default async function Page({ params: { id } }: Props) {
       </div>
       <div className="flex flex-col sm:flex-row justify-between gap-2">
         <form className="grid grid-cols-2 gap-2">
-          <LikeButton userId={userId} wallpaperId={wallpaper.id} />
+          {userId ? (
+            <LikeButton
+              wallpaperId={wallpaper.id}
+              initialIsLiked={history?.liked_at !== null}
+            />
+          ) : (
+            <Button variant="outline" asChild>
+              <Link href="/sign-in">
+                <HeartIcon size={16} className="mr-2" />
+                Like
+              </Link>
+            </Button>
+          )}
           <Button variant="outline">
             <EyeOffIcon size={16} className="mr-2" />
             Hide
@@ -78,15 +90,33 @@ export default async function Page({ params: { id } }: Props) {
 async function fetchWallpaper(id: string) {
   const supabase = createServerSupabaseClient();
 
-  const { data: wallpaper, error } = await supabase
+  const { data: wallpaper } = await supabase
     .from("wallpapers")
     .select("id, slug, pathname, description, width, height, tags")
     .eq("id", id)
     .single();
 
-  if (error) {
-    return null;
+  return wallpaper;
+}
+
+async function fetchHistory(wallpaperId: string) {
+  const supabase = createServerSupabaseClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const userId = user?.id ?? null;
+
+  if (!userId) {
+    return { userId: null, history: null };
   }
 
-  return wallpaper;
+  const { data: history } = await supabase
+    .from("histories")
+    .select("liked_at, hidden_at, rating")
+    .eq("user_id", userId)
+    .eq("wallpaper_id", wallpaperId)
+    .maybeSingle();
+
+  return { userId, history };
 }
