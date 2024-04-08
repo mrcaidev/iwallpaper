@@ -80,6 +80,13 @@ export type Database = {
             foreignKeyName: "histories_wallpaper_id_fkey";
             columns: ["wallpaper_id"];
             isOneToOne: false;
+            referencedRelation: "popularities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "histories_wallpaper_id_fkey";
+            columns: ["wallpaper_id"];
+            isOneToOne: false;
             referencedRelation: "wallpapers";
             referencedColumns: ["id"];
           },
@@ -155,7 +162,21 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      popularities: {
+        Row: {
+          id: string | null;
+          popularity: number | null;
+        };
+        Insert: {
+          id?: string | null;
+          popularity?: never;
+        };
+        Update: {
+          id?: string | null;
+          popularity?: never;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       calculate_wallpaper_similarity: {

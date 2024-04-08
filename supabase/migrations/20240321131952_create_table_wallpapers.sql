@@ -16,7 +16,6 @@ CREATE TABLE wallpapers (
   tags TEXT[] NOT NULL,
   fts TSVECTOR GENERATED ALWAYS AS (tags_to_fts(tags)) STORED NOT NULL,
   embedding VECTOR(384) NOT NULL,
-  popularity INTEGER DEFAULT 0 NOT NULL,
   most_similar_wallpapers JSONB[] DEFAULT '{}' NOT NULL
 );
 

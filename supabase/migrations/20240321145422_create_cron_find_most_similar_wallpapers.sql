@@ -17,13 +17,13 @@ BEGIN
 
   first_popularity = (
     SELECT popularity
-    FROM wallpapers
+    FROM popularities
     WHERE id = first_id
   );
 
   second_popularity = (
     SELECT popularity
-    FROM wallpapers
+    FROM popularities
     WHERE id = second_id
   );
 
@@ -33,7 +33,7 @@ BEGIN
       SELECT COUNT(*)
       FROM histories
       WHERE (wallpaper_id = first_id OR wallpaper_id = second_id)
-        AND is_positive = TRUE
+        AND preference >= 3
       GROUP BY user_id
       HAVING COUNT(*) = 2
     );
