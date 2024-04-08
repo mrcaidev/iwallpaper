@@ -5,7 +5,7 @@ SECURITY DEFINER SET search_path = public, extensions, pg_temp
 AS $$
 BEGIN
   IF TG_OP = 'INSERT' THEN
-    INSERT INTO profiles VALUES (
+    INSERT INTO profiles (id, nickname, avatar_url) VALUES (
       NEW.id,
       NEW.raw_user_meta_data->>'nickname',
       NEW.raw_user_meta_data->>'avatar_url'
