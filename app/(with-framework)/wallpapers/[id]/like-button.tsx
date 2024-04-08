@@ -11,40 +11,31 @@ import { createBrowserSupabaseClient } from "utils/supabase/browser";
 import { react } from "./actions";
 
 type Props = {
+  userId: string | null;
   wallpaperId: string;
 };
 
-export function LikeButton({ wallpaperId }: Props) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export function LikeButton({ userId, wallpaperId }: Props) {
   const [isLiked, setIsLiked] = useState(false);
   const { pending } = useFormStatus();
   const { toast } = useToast();
 
   useEffect(() => {
     async function fetchLikedAt(wallpaperId: string) {
-      const supabase = createBrowserSupabaseClient();
-
-      const {
-        data: { session },
-        error: authError,
-      } = await supabase.auth.getSession();
-
-      if (authError || !session) {
-        setIsAuthenticated(false);
+      if (!userId) {
         return;
       }
 
-      setIsAuthenticated(true);
+      const supabase = createBrowserSupabaseClient();
 
-      const { data, error: selectError } = await supabase
+      const { data, error } = await supabase
         .from("histories")
         .select("liked_at")
-        .eq("user_id", session.user.id)
+        .eq("user_id", userId)
         .eq("wallpaper_id", wallpaperId)
         .maybeSingle();
 
-      if (selectError || !data) {
-        setIsLiked(false);
+      if (error || !data) {
         return;
       }
 
@@ -52,9 +43,9 @@ export function LikeButton({ wallpaperId }: Props) {
     }
 
     fetchLikedAt(wallpaperId);
-  }, [wallpaperId]);
+  }, [userId, wallpaperId]);
 
-  if (!isAuthenticated) {
+  if (!userId) {
     return (
       <Button variant="outline" asChild>
         <Link href="/sign-in">

@@ -32,6 +32,10 @@ export default async function Page({ params: { id } }: Props) {
     return null;
   }
 
+  const supabase = createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const userId = user?.id ?? null;
+
   return (
     <div className="p-4 lg:p-6">
       <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
@@ -54,7 +58,7 @@ export default async function Page({ params: { id } }: Props) {
       </div>
       <div className="flex flex-col sm:flex-row justify-between gap-2">
         <form className="grid grid-cols-2 gap-2">
-          <LikeButton wallpaperId={wallpaper.id} />
+          <LikeButton userId={userId} wallpaperId={wallpaper.id} />
           <Button variant="outline">
             <EyeOffIcon size={16} className="mr-2" />
             Hide
