@@ -3,7 +3,6 @@ import { Skeleton } from "components/ui/skeleton";
 import { DownloadIcon } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { capitalize } from "utils/case";
 import { createServerSupabaseClient } from "utils/supabase/server";
 import { LikeHideButtonGroup } from "./like-hide-button-group";
 
@@ -21,7 +20,7 @@ export async function generateMetadata({ params: { id } }: Props) {
   }
 
   return {
-    title: capitalize(wallpaper.description),
+    title: wallpaper.description,
     description: wallpaper.tags.join(", "),
   };
 }
@@ -39,7 +38,7 @@ export default async function Page({ params: { id } }: Props) {
   return (
     <div className="p-4 lg:p-6">
       <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
-        Wallpaper details
+        {wallpaper.description}
       </h1>
       <div className="relative max-w-[1000px] mx-auto mb-3 lg:mb-4">
         <Skeleton
