@@ -17,7 +17,6 @@ WITH full_text_ranks AS (
   FROM wallpapers
   WHERE fts @@ websearch_to_tsquery('english', query)
   ORDER BY rank ASC
-  LIMIT LEAST(take, 30) + skip
 ),
 semantic_ranks AS (
   SELECT id, ROW_NUMBER() OVER (
@@ -25,7 +24,6 @@ semantic_ranks AS (
   ) AS rank
   FROM wallpapers
   ORDER BY rank ASC
-  LIMIT LEAST(take, 30) + skip
 ),
 personal_histories AS (
   SELECT *
