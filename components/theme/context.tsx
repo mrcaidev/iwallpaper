@@ -6,7 +6,6 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
-import { setLocalStorage } from "utils/storage";
 
 type Theme = "light" | "dark";
 
@@ -49,4 +48,12 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
 export function useTheme() {
   return useContext(ThemeContext);
+}
+
+function setLocalStorage(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    return;
+  }
 }
