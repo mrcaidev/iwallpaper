@@ -1,7 +1,8 @@
 CREATE FUNCTION search_wallpapers(
   query TEXT,
   query_embedding VECTOR(384),
-  quantity INTEGER,
+  limit INTEGER = 30,
+  offset INTEGER = 0,
   full_text_weight FLOAT = 1.0,
   semantic_weight FLOAT = 1.0,
   rrf_k INTEGER = 1
@@ -15,7 +16,7 @@ WITH full_text AS (
   ) AS rank
   FROM wallpapers
   ORDER BY rank ASC
-  LIMIT LEAST(quantity, 100)
+  LIMIT LEAST(limit, 100) + offset
 ),
 semantic AS (
   SELECT id, ROW_NUMBER() OVER (
@@ -23,7 +24,7 @@ semantic AS (
   ) AS rank
   FROM wallpapers
   ORDER BY rank ASC
-  LIMIT LEAST(quantity, 100)
+  LIMIT LEAST(limit, 100) + offset
 ),
 dedicated_histories AS (
   SELECT *
@@ -47,5 +48,6 @@ ORDER BY
   COALESCE(1.0 / (rrf_k + full_text.rank), 0.0) * full_text_weight +
   COALESCE(1.0 / (rrf_k + semantic.rank), 0.0) * semantic_weight
   DESC
-LIMIT LEAST(quantity, 100)
+LIMIT LEAST(limit, 100)
+OFFSET offset
 $$;
