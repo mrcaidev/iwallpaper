@@ -13,7 +13,8 @@ router = APIRouter(prefix="/search")
 @router.get("/")
 def hybrid_search_wallpapers(
     query: Annotated[str, Query(min_length=1, max_length=50)],
-    quantity: Annotated[int, Query(ge=1, le=100)] = 30,
+    take: Annotated[int, Query(ge=1, le=30)] = 30,
+    skip: Annotated[int, Query(ge=0)] = 0,
 ):
     query_embedding = create_embedding(query)
 
@@ -23,7 +24,8 @@ def hybrid_search_wallpapers(
             {
                 "query": query,
                 "query_embedding": query_embedding,
-                "quantity": quantity,
+                "take": take,
+                "skip": skip,
             },
         )
         .execute()
