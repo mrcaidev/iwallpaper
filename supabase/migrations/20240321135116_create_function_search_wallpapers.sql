@@ -16,7 +16,7 @@ WITH full_text AS (
   ) AS rank
   FROM wallpapers
   ORDER BY rank ASC
-  LIMIT LEAST(limit, 100) + offset
+  LIMIT LEAST(limit, 30) + offset
 ),
 semantic AS (
   SELECT id, ROW_NUMBER() OVER (
@@ -24,7 +24,7 @@ semantic AS (
   ) AS rank
   FROM wallpapers
   ORDER BY rank ASC
-  LIMIT LEAST(limit, 100) + offset
+  LIMIT LEAST(limit, 30) + offset
 ),
 dedicated_histories AS (
   SELECT *
@@ -48,6 +48,6 @@ ORDER BY
   COALESCE(1.0 / (rrf_k + full_text.rank), 0.0) * full_text_weight +
   COALESCE(1.0 / (rrf_k + semantic.rank), 0.0) * semantic_weight
   DESC
-LIMIT LEAST(limit, 100)
+LIMIT LEAST(limit, 30)
 OFFSET offset
 $$;
