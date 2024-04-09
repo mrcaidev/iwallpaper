@@ -7,7 +7,16 @@ CREATE FUNCTION search_wallpapers(
   semantic_weight FLOAT = 1.0,
   rrf_k INTEGER = 1
 )
-RETURNS SETOF frontend_wallpaper
+RETURNS TABLE (
+  id UUID,
+  slug TEXT,
+  pathname TEXT,
+  description TEXT,
+  width INTEGER,
+  height INTEGER,
+  tags TEXT[],
+  attitude ATTITUDE
+)
 LANGUAGE sql
 AS $$
 WITH full_text_ranks AS (

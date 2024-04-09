@@ -177,7 +177,15 @@ export type Database = {
         Args: {
           quantity: number;
         };
-        Returns: Database["public"]["CompositeTypes"]["frontend_wallpaper"][];
+        Returns: {
+          id: string;
+          slug: string;
+          pathname: string;
+          description: string;
+          width: number;
+          height: number;
+          tags: string[];
+        }[];
       };
       search_wallpapers: {
         Args: {
@@ -189,7 +197,16 @@ export type Database = {
           semantic_weight?: number;
           rrf_k?: number;
         };
-        Returns: Database["public"]["CompositeTypes"]["frontend_wallpaper"][];
+        Returns: {
+          id: string;
+          slug: string;
+          pathname: string;
+          description: string;
+          width: number;
+          height: number;
+          tags: string[];
+          attitude: Database["public"]["Enums"]["attitude"];
+        }[];
       };
       tags_to_fts: {
         Args: {
@@ -202,16 +219,7 @@ export type Database = {
       attitude: "liked" | "disliked";
     };
     CompositeTypes: {
-      frontend_wallpaper: {
-        id: string | null;
-        slug: string | null;
-        pathname: string | null;
-        description: string | null;
-        width: number | null;
-        height: number | null;
-        tags: string[] | null;
-        attitude: Database["public"]["Enums"]["attitude"] | null;
-      };
+      [_ in never]: never;
     };
   };
   storage: {

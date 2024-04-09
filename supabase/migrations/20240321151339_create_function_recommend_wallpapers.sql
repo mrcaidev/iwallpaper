@@ -1,5 +1,13 @@
 CREATE FUNCTION recommend_wallpapers(quantity INTEGER)
-RETURNS SETOF frontend_wallpaper
+RETURNS TABLE (
+  id UUID,
+  slug TEXT,
+  pathname TEXT,
+  description TEXT,
+  width INTEGER,
+  height INTEGER,
+  tags TEXT[]
+)
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -48,8 +56,7 @@ BEGIN
       description,
       width,
       height,
-      tags,
-      NULL AS attitude
+      tags
     FROM wallpapers
     WHERE id = ANY(recommended_ids)
   );
