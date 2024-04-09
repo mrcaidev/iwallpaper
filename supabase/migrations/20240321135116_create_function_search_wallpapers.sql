@@ -15,6 +15,7 @@ WITH full_text_ranks AS (
     ORDER BY TS_RANK_CD(fts, websearch_to_tsquery('english', query)) DESC
   ) AS rank
   FROM wallpapers
+  WHERE fts @@ websearch_to_tsquery('english', query)
   ORDER BY rank ASC
   LIMIT LEAST(take, 30) + skip
 ),
