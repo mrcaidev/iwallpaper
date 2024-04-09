@@ -1,10 +1,9 @@
-import { Button } from "components/ui/button";
 import { Skeleton } from "components/ui/skeleton";
-import { DownloadIcon } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
 import { AttitudeButtonGroup } from "./attitude-button-group";
+import { DownloadButton } from "./download-button";
 
 type Props = {
   params: {
@@ -61,10 +60,10 @@ export default async function WallpaperPage({ params: { id } }: Props) {
           initialAttitude={history?.attitude ?? null}
         />
         <div>
-          <Button className="w-full">
-            <DownloadIcon size={16} className="mr-2" />
-            Download
-          </Button>
+          <DownloadButton
+            wallpaperId={wallpaper.id}
+            pathname={wallpaper.pathname}
+          />
         </div>
       </div>
     </div>
