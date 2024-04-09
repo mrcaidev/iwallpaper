@@ -10,7 +10,7 @@ CREATE FUNCTION search_wallpapers(
 RETURNS SETOF frontend_wallpaper
 LANGUAGE sql
 AS $$
-WITH full_text AS (
+WITH full_text_ranks AS (
   SELECT id, ROW_NUMBER() OVER (
     ORDER BY TS_RANK_CD(fts, websearch_to_tsquery('english', query)) DESC
   ) AS rank
@@ -18,7 +18,7 @@ WITH full_text AS (
   ORDER BY rank ASC
   LIMIT LEAST(limit, 30) + offset
 ),
-semantic AS (
+semantic_ranks AS (
   SELECT id, ROW_NUMBER() OVER (
     ORDER BY embedding <#> query_embedding ASC
   ) AS rank
@@ -26,7 +26,7 @@ semantic AS (
   ORDER BY rank ASC
   LIMIT LEAST(limit, 30) + offset
 ),
-dedicated_histories AS (
+personal_histories AS (
   SELECT *
   FROM histories
   WHERE user_id = auth.uid()
@@ -39,14 +39,14 @@ SELECT
   wallpapers.width,
   wallpapers.height,
   wallpapers.tags,
-  dedicated_histories.attitude
-FROM full_text
-FULL OUTER JOIN semantic ON full_text.id = semantic.id
-LEFT OUTER JOIN wallpapers ON wallpapers.id = COALESCE(full_text.id, semantic.id)
-LEFT OUTER JOIN dedicated_histories ON wallpapers.id = dedicated_histories.wallpaper_id
+  personal_histories.attitude
+FROM full_text_ranks
+FULL OUTER JOIN semantic_ranks ON full_text_ranks.id = semantic_ranks.id
+LEFT OUTER JOIN wallpapers ON COALESCE(full_text_ranks.id, semantic_ranks.id) = wallpapers.id
+LEFT OUTER JOIN personal_histories ON wallpapers.id = personal_histories.wallpaper_id
 ORDER BY
-  COALESCE(1.0 / (rrf_k + full_text.rank), 0.0) * full_text_weight +
-  COALESCE(1.0 / (rrf_k + semantic.rank), 0.0) * semantic_weight
+  COALESCE(1.0 / (rrf_k + full_text_ranks.rank), 0.0) * full_text_weight +
+  COALESCE(1.0 / (rrf_k + semantic_ranks.rank), 0.0) * semantic_weight
   DESC
 LIMIT LEAST(limit, 30)
 OFFSET offset
