@@ -1,37 +1,45 @@
-import { embed } from "api/utils/embed";
-import { generateErrorResponse } from "api/utils/error-handling";
 import { NextResponse, type NextRequest } from "next/server";
-import { supabaseServer } from "supabase/server";
+import { createServerSupabaseClient } from "utils/supabase/server";
 import { z } from "zod";
+import { embed } from "../utils/embed";
+import { generateErrorResponse } from "../utils/error-handling";
 
 const searchParamsSchema = z.object({
   query: z
     .string({
-      required_error: "缺少必要参数 query",
-      invalid_type_error: "query 必须为字符串",
+      required_error: "Missing search params `query`",
+      invalid_type_error: "`query` must be a string",
     })
-    .min(1, "query 最少为 1 个字符")
-    .max(50, "query 最多为 50 个字符"),
-  quantity: z.coerce
-    .number({ invalid_type_error: "quantity 必须为整数" })
-    .int("quantity 必须为整数")
-    .min(1, "quantity 最少为 1")
-    .max(100, "quantity 最多为 100")
+    .min(1, "`query` must be at least 1 character long")
+    .max(50, "`query` must be at most 50 characters long"),
+  take: z.coerce
+    .number({ invalid_type_error: "`take` must be a number" })
+    .int("`take` must be an integer")
+    .min(1, "`take` must be at least 1")
+    .max(30, "`take` must be at most 30")
     .default(30),
+  skip: z.coerce
+    .number({ invalid_type_error: "`skip` must be a number" })
+    .int("`skip` must be an integer")
+    .min(0, "`skip` must be at least 1")
+    .default(0),
 });
 
 export async function GET(request: NextRequest) {
   try {
+    const supabase = createServerSupabaseClient();
+
     const searchParams = Object.fromEntries(request.nextUrl.searchParams);
-    const { query, quantity } =
+    const { query, take, skip } =
       await searchParamsSchema.parseAsync(searchParams);
 
     const embedding = await embed(query);
 
-    const { data, error } = await supabaseServer.rpc("search_wallpapers", {
+    const { data, error } = await supabase.rpc("search_wallpapers", {
       query,
       query_embedding: embedding,
-      quantity,
+      take,
+      skip,
     });
 
     if (error) {
