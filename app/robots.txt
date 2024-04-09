@@ -1,3 +1,4 @@
 User-Agent: *
-Allow: /
-Disallow: /user/
+Disallow: /
+Allow: /wallpapers/
+Allow: /users/
