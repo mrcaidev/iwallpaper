@@ -158,14 +158,6 @@ export type Database = {
           id: string | null;
           popularity: number | null;
         };
-        Insert: {
-          id?: string | null;
-          popularity?: never;
-        };
-        Update: {
-          id?: string | null;
-          popularity?: never;
-        };
         Relationships: [];
       };
     };
@@ -191,7 +183,8 @@ export type Database = {
         Args: {
           query: string;
           query_embedding: number[];
-          quantity: number;
+          take?: number;
+          skip?: number;
           full_text_weight?: number;
           semantic_weight?: number;
           rrf_k?: number;
