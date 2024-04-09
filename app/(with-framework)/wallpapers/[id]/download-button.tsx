@@ -27,7 +27,7 @@ const statusRepresentation = {
   ),
   [DownloadStatus.Pending]: (
     <>
-      <LoaderIcon size={16} className="mr-2" />
+      <LoaderIcon size={16} className="mr-2 animate-spin" />
       Downloading...
     </>
   ),
