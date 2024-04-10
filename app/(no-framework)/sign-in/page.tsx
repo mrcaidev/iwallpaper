@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "utils/supabase/server";
 import background from "./background.webp";
 import { SignInForm } from "./form";
 
@@ -12,16 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function SignInPage() {
-  const supabase = createServerSupabaseClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    redirect("/");
-  }
-
   return (
     <div className="grid lg:grid-cols-2 h-full">
       <div className="place-self-center space-y-6 w-[360px] py-12">
