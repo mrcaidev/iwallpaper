@@ -8,7 +8,7 @@ type Props = {
 };
 
 export function WallpaperThumbnail({
-  wallpaper: { id, pathname, description, width, height, liked_at },
+  wallpaper: { id, pathname, description, width, height },
 }: Props) {
   return (
     <div className="relative">

@@ -1,7 +1,7 @@
 "use client";
 
-import { WallpaperThumbnail } from "components/wallpaper/thumbnail";
 import type { Wallpaper } from "utils/types";
+import { WallpaperThumbnail } from "./thumbnail";
 import { useMasonry } from "./use-masonry";
 
 type Props = {

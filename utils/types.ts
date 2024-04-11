@@ -1,3 +1,5 @@
+import type { Database } from "./supabase/types";
+
 export type Wallpaper = {
   id: string;
   slug: string;
@@ -6,5 +8,5 @@ export type Wallpaper = {
   width: number;
   height: number;
   tags: string[];
-  liked_at: string | null;
+  attitude: Database["public"]["Enums"]["attitude"];
 };
