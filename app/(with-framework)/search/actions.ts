@@ -1,3 +1,5 @@
+"use server";
+
 import type { Wallpaper } from "utils/types";
 
 type Options = {
