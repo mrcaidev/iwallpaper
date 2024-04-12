@@ -29,6 +29,9 @@ dependencies:
   '@radix-ui/react-toast':
     specifier: ^1.1.5
     version: 1.1.5(@types/react-dom@18.2.24)(@types/react@18.2.74)(react-dom@18.2.0)(react@18.2.0)
+  '@smastrom/react-rating':
+    specifier: ^1.5.0
+    version: 1.5.0(react-dom@18.2.0)(react@18.2.0)
   '@supabase/ssr':
     specifier: ^0.1.0
     version: 0.1.0(@supabase/supabase-js@2.42.0)
@@ -1254,6 +1257,16 @@ packages:
   /@rushstack/eslint-patch@1.10.1:
     resolution: {integrity: sha512-S3Kq8e7LqxkA9s7HKLqXGTGck1uwis5vAXan3FnU5yw1Ec5hsSGnq4s/UCaSqABPOnOTg7zASLyst7+ohgWexg==}
     dev: true
+
+  /@smastrom/react-rating@1.5.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-7vg3NRgO0tpvEunq8BEWA8qckNSd7x3dVGqaNEfLs3Ow4ibU2EEXJtnd7Yl44xOujWIzXM5Bk2VZm2DVm065Qw==}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@supabase/auth-js@2.63.0:
     resolution: {integrity: sha512-yIgcHnlgv24GxHtVGUhwGqAFDyJkPIC/xjx7HostN08A8yCy8HIfl4JEkTKyBqD1v1L05jNEJOUke4Lf4O1+Qg==}

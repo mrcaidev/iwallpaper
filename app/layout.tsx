@@ -1,3 +1,4 @@
+import "@smastrom/react-rating/style.css";
 import { ThemeProvider } from "components/theme/context";
 import { ThemeInitializer } from "components/theme/initializer";
 import { Toaster } from "components/ui/toaster";

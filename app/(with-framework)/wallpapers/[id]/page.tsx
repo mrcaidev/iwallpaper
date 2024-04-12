@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
 import { AttitudeButtonGroup } from "./attitude-button-group";
 import { DownloadButton } from "./download-button";
+import { Rating } from "./rating";
 
 type Props = {
   params: {
@@ -59,6 +60,10 @@ export default async function WallpaperPage({ params: { id } }: Props) {
           wallpaperId={wallpaper.id}
           initialAttitude={history?.attitude ?? null}
         />
+        <Rating
+          wallpaperId={wallpaper.id}
+          initialRating={history?.rating ?? null}
+        />
         <div>
           <DownloadButton
             wallpaperId={wallpaper.id}
@@ -96,7 +101,7 @@ async function fetchHistory(wallpaperId: string) {
 
   const { data: history } = await supabase
     .from("histories")
-    .select("attitude")
+    .select("attitude, rating")
     .eq("user_id", userId)
     .eq("wallpaper_id", wallpaperId)
     .maybeSingle();
