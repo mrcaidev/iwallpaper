@@ -1,10 +1,6 @@
-import { Skeleton } from "components/ui/skeleton";
-import Image from "next/image";
+import { WallpaperDetail } from "components/wallpaper";
 import { notFound } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
-import { AttitudeButtonGroup } from "./attitude-button-group";
-import { DownloadButton } from "./download-button";
-import { Rating } from "./rating";
 
 type Props = {
   params: {
@@ -40,37 +36,7 @@ export default async function WallpaperPage({ params: { id } }: Props) {
       <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
         {wallpaper.description}
       </h1>
-      <div className="relative max-w-[1000px] mx-auto mb-3 lg:mb-4">
-        <Skeleton
-          className="absolute top-0 left-0 w-full -z-10"
-          style={{ aspectRatio: wallpaper.width / wallpaper.height }}
-        />
-        <Image
-          src={`https://images.unsplash.com/${wallpaper.pathname}?w=1080`}
-          width={wallpaper.width}
-          height={wallpaper.height}
-          alt={wallpaper.description}
-          priority
-          unoptimized
-          className="object-contain"
-        />
-      </div>
-      <div className="flex flex-col sm:flex-row justify-between gap-2">
-        <AttitudeButtonGroup
-          wallpaperId={wallpaper.id}
-          initialAttitude={history?.attitude ?? null}
-        />
-        <Rating
-          wallpaperId={wallpaper.id}
-          initialRating={history?.rating ?? null}
-        />
-        <div>
-          <DownloadButton
-            wallpaperId={wallpaper.id}
-            pathname={wallpaper.pathname}
-          />
-        </div>
-      </div>
+      <WallpaperDetail wallpaper={{ ...wallpaper, ...history }} />
     </div>
   );
 }

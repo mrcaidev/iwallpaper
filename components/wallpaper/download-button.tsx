@@ -9,7 +9,7 @@ import {
   RotateCcwIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { react } from "./actions";
+import { updateIsDownloaded } from "./actions";
 
 enum DownloadStatus {
   Idle,
@@ -54,13 +54,13 @@ export function DownloadButton({ wallpaperId, pathname }: Props) {
   const [status, setStatus] = useState(DownloadStatus.Idle);
   const { toast } = useToast();
 
-  const handleClick = async () => {
+  const download = async () => {
     setStatus(DownloadStatus.Pending);
 
-    const reactError = await react(wallpaperId, { type: "download" });
+    const updateError = await updateIsDownloaded(wallpaperId);
 
-    if (reactError) {
-      toast({ variant: "destructive", description: reactError });
+    if (updateError) {
+      toast({ variant: "destructive", description: updateError });
       setStatus(DownloadStatus.Error);
       return;
     }
@@ -79,7 +79,7 @@ export function DownloadButton({ wallpaperId, pathname }: Props) {
   return (
     <Button
       variant={status === DownloadStatus.Error ? "destructive" : "default"}
-      onClick={handleClick}
+      onClick={download}
       disabled={status === DownloadStatus.Pending}
       className="w-full"
     >

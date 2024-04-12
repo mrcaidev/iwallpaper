@@ -1,7 +1,7 @@
 "use client";
 
+import { WallpaperThumbnail } from "components/wallpaper";
 import type { Wallpaper } from "utils/types";
-import { WallpaperThumbnail } from "./thumbnail";
 import { useMasonry } from "./use-masonry";
 
 type Props = {
@@ -16,7 +16,7 @@ export function Masonry({ wallpapers }: Props) {
       {masonry.map((wallpapers, index) => (
         <div key={index} className="flex flex-col gap-4">
           {wallpapers.map((wallpaper) => (
-            <WallpaperThumbnail key={wallpaper.slug} wallpaper={wallpaper} />
+            <WallpaperThumbnail key={wallpaper.id} wallpaper={wallpaper} />
           ))}
         </div>
       ))}

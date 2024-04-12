@@ -3,42 +3,39 @@
 import { Rating as LibraryRating } from "@smastrom/react-rating";
 import { useToast } from "components/ui/use-toast";
 import { useState } from "react";
-import { react } from "./actions";
+import type { Database } from "utils/supabase/types";
+import { updateRating } from "./actions";
 
 type Props = {
   wallpaperId: string;
-  initialRating: number | null;
+  initialRating: Database["public"]["Tables"]["histories"]["Row"]["rating"];
 };
 
 export function Rating({ wallpaperId, initialRating }: Props) {
   const [rating, setRating] = useState(initialRating ?? 0);
-  const [isReadonly, setIsReadonly] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
 
-  const action = async (nextRating: number) => {
-    const previousRating = rating;
+  const rate = async (nextRating: number) => {
+    setIsPending(true);
 
-    setRating(nextRating);
-    setIsReadonly(true);
-
-    const error = await react(wallpaperId, {
-      type: "rating",
-      payload: nextRating,
-    });
+    const error = await updateRating(wallpaperId, nextRating);
 
     if (error) {
       toast({ variant: "destructive", description: error });
-      setRating(previousRating);
+      setIsPending(false);
+      return;
     }
 
-    setIsReadonly(false);
+    setRating(nextRating);
+    setIsPending(false);
   };
 
   return (
     <LibraryRating
       value={rating}
-      onChange={action}
-      readOnly={isReadonly}
+      onChange={rate}
+      readOnly={isPending}
       className="max-w-48 mx-auto"
     />
   );
