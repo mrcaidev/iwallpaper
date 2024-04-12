@@ -17,7 +17,8 @@
       "animal",
       "polar bear"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   },
   {
     "id": "94d3f5fd-a690-4c95-aab9-9d72fd72f788",
@@ -48,7 +49,8 @@
       "chair",
       "chaise"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   },
   {
     "id": "5606727c-0c78-4871-aff7-7031c11c6421",
@@ -69,7 +71,8 @@
       "scenery",
       "bridge"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   },
   {
     "id": "eec7c988-4e75-4c9d-b4c0-7fd70fe887f6",
@@ -100,7 +103,8 @@
       "photo",
       "monarch"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   },
   {
     "id": "c1ca2b8c-647a-4fce-b24d-791d93341b40",
@@ -122,7 +126,8 @@
       "astronomy",
       "outer space"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   },
   {
     "id": "8e8e4633-cc77-48e4-b6f9-2f6ca1beb43c",
@@ -153,7 +158,8 @@
       "tropical",
       "building"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   },
   {
     "id": "1e53936b-9a84-44ac-8315-e64cf8ab6cea",
@@ -184,7 +190,8 @@
       "wilderness",
       "rock"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   },
   {
     "id": "a9ef397f-4ce4-4eb3-a75d-d2a0b06ee368",
@@ -203,7 +210,8 @@
       "eiffel tower",
       "landmark"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   },
   {
     "id": "58d13a31-ec5f-487c-8b0e-bea9f675cf76",
@@ -232,7 +240,8 @@
       "full moon",
       "weather"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   },
   {
     "id": "8e331885-d864-44ca-aede-ac2e065576e8",
@@ -254,6 +263,7 @@
       "sky",
       "snow"
     ],
-    "liked_at": null
+    "attitude": null,
+    "rating": null
   }
 ]
