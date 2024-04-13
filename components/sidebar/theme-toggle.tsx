@@ -1,11 +1,8 @@
 "use client";
 
-import { useTheme } from "components/theme/context";
 import { MoonIcon, SunIcon } from "lucide-react";
 
 export function ThemeToggle() {
-  const { toggleTheme } = useTheme();
-
   return (
     <button
       type="button"
@@ -17,4 +14,20 @@ export function ThemeToggle() {
       Toggle theme
     </button>
   );
+}
+
+function toggleTheme() {
+  const isCurrentDark = document.documentElement.classList.contains("dark");
+  const nextTheme = isCurrentDark ? "light" : "dark";
+
+  document.documentElement.classList.toggle("dark");
+  setLocalStorage("theme", nextTheme);
+}
+
+function setLocalStorage(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    return;
+  }
 }
