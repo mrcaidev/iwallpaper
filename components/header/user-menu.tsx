@@ -19,8 +19,8 @@ import {
   UserIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
+import { signOut } from "./actions";
 
 export async function UserMenu() {
   const supabase = createServerSupabaseClient();
@@ -97,22 +97,12 @@ export async function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <form action={signOut}>
-            <button type="submit" className="flex items-center">
-              <LogOutIcon size={16} className="mr-2" />
-              Sign out
-            </button>
-          </form>
+          <button type="button" onClick={signOut} className="flex items-center">
+            <LogOutIcon size={16} className="mr-2" />
+            Sign out
+          </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
-
-async function signOut() {
-  "use server";
-
-  const supabase = createServerSupabaseClient();
-  await supabase.auth.signOut();
-  redirect("/sign-in");
 }
