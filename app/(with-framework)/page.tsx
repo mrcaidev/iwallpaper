@@ -1,5 +1,5 @@
-import { Masonry } from "components/masonry";
 import type { Metadata } from "next";
+import { HomePageMasonry } from "./masonry";
 import mockWallpapers from "./mock-wallpapers.json";
 
 export const metadata: Metadata = {
@@ -12,7 +12,7 @@ export default function HomePage() {
       <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
         Recommended for you
       </h1>
-      <Masonry wallpapers={mockWallpapers} />
+      <HomePageMasonry initialWallpapers={mockWallpapers} />
     </div>
   );
 }

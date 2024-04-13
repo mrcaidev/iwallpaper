@@ -3,11 +3,11 @@
 import { createServerSupabaseClient } from "utils/supabase/server";
 
 type Options = {
-  take?: number;
-  skip?: number;
+  take: number;
+  skip: number;
 };
 
-export async function fetchFavorites({ take = 30, skip = 0 }: Options) {
+export async function fetchFavorites({ take, skip }: Options) {
   const supabase = createServerSupabaseClient();
 
   const {

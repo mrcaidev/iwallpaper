@@ -3,14 +3,11 @@
 import type { Wallpaper } from "utils/types";
 
 type Options = {
-  take?: number;
-  skip?: number;
+  take: number;
+  skip: number;
 };
 
-export async function search(
-  query: string,
-  { take = 30, skip = 0 }: Options = {},
-) {
+export async function search(query: string, { take, skip }: Options) {
   const url = new URL("http://localhost:8000/search");
   url.searchParams.append("query", query);
   url.searchParams.append("take", take.toString());

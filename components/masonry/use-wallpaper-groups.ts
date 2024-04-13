@@ -2,11 +2,11 @@ import { useMemo } from "react";
 import type { Wallpaper } from "utils/types";
 import { useColumnNumber } from "./use-column-number";
 
-export function useMasonry(wallpapers: Wallpaper[]) {
+export function useWallpaperGroups(wallpapers: Wallpaper[]) {
   const columnNumber = useColumnNumber();
 
-  const masonry = useMemo(() => {
-    const masonry = Array.from(
+  const wallpaperGroups = useMemo(() => {
+    const groups = Array.from(
       { length: columnNumber },
       () => [] as Wallpaper[],
     );
@@ -16,12 +16,12 @@ export function useMasonry(wallpapers: Wallpaper[]) {
     for (const wallpaper of wallpapers) {
       const { width, height } = wallpaper;
       const lowestIndex = columnHeights.indexOf(Math.min(...columnHeights));
-      masonry[lowestIndex]!.push(wallpaper);
+      groups[lowestIndex]!.push(wallpaper);
       columnHeights[lowestIndex] += height / width;
     }
 
-    return masonry;
+    return groups;
   }, [wallpapers, columnNumber]);
 
-  return masonry;
+  return wallpaperGroups;
 }

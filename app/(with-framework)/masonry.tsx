@@ -2,18 +2,16 @@
 
 import { Masonry } from "components/masonry";
 import type { Wallpaper } from "utils/types";
-import { search } from "./actions";
 
 type Props = {
-  query: string;
   initialWallpapers: Wallpaper[];
 };
 
-export function SearchPageMasonry({ query, initialWallpapers }: Props) {
+export function HomePageMasonry({ initialWallpapers }: Props) {
   return (
     <Masonry
       initialWallpapers={initialWallpapers}
-      fetchWallpapers={search.bind(null, query)}
+      fetchWallpapers={async () => []}
     />
   );
 }
