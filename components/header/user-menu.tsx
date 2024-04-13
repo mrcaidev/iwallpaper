@@ -97,10 +97,12 @@ export async function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <button type="button" onClick={signOut} className="flex items-center">
-            <LogOutIcon size={16} className="mr-2" />
-            Sign out
-          </button>
+          <form action={signOut}>
+            <button type="submit" className="flex items-center">
+              <LogOutIcon size={16} className="mr-2" />
+              Sign out
+            </button>
+          </form>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
