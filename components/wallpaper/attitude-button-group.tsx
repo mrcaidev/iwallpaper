@@ -54,6 +54,7 @@ export function DetailAttitudeButtonGroup({
   return (
     <div className="shrink-0 grid grid-cols-2 gap-2">
       <Button
+        type="button"
         variant="outline"
         onClick={() => like(wallpaperId)}
         disabled={isPending}
@@ -65,6 +66,7 @@ export function DetailAttitudeButtonGroup({
         {attitude === "liked" ? "Liked" : "Like"}
       </Button>
       <Button
+        type="button"
         variant="outline"
         onClick={() => dislike(wallpaperId)}
         disabled={isPending}
@@ -86,9 +88,10 @@ export function ThumbnailAttitudeButtonGroup({
   const { attitude, isPending, like, dislike } = useAttitude(initialAttitude);
 
   return (
-    <div className="flex gap-1">
+    <div className="space-x-1">
       <Button
-        variant="secondary"
+        type="button"
+        variant="outline"
         size="icon"
         onClick={() => like(wallpaperId)}
         disabled={isPending}
@@ -102,7 +105,8 @@ export function ThumbnailAttitudeButtonGroup({
         </span>
       </Button>
       <Button
-        variant="secondary"
+        type="button"
+        variant="outline"
         size="icon"
         onClick={() => dislike(wallpaperId)}
         disabled={isPending}

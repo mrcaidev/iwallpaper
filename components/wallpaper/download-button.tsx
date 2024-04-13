@@ -78,6 +78,7 @@ export function DownloadButton({ wallpaperId, pathname }: Props) {
 
   return (
     <Button
+      type="button"
       variant={status === DownloadStatus.Error ? "destructive" : "default"}
       onClick={download}
       disabled={status === DownloadStatus.Pending}

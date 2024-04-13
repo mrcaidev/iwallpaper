@@ -27,19 +27,23 @@ export function WallpaperDetail({ wallpaper }: Props) {
           className="object-contain"
         />
       </div>
-      <div className="flex flex-col sm:flex-row justify-between gap-2">
+      <div className="flex flex-col sm:flex-row justify-between gap-3">
         <DetailAttitudeButtonGroup
           wallpaperId={wallpaper.id}
           initialAttitude={wallpaper.attitude ?? null}
         />
-        <Rating
-          wallpaperId={wallpaper.id}
-          initialRating={wallpaper.rating ?? null}
-        />
-        <DownloadButton
-          wallpaperId={wallpaper.id}
-          pathname={wallpaper.pathname}
-        />
+        <div>
+          <Rating
+            wallpaperId={wallpaper.id}
+            initialRating={wallpaper.rating ?? null}
+          />
+        </div>
+        <div>
+          <DownloadButton
+            wallpaperId={wallpaper.id}
+            pathname={wallpaper.pathname}
+          />
+        </div>
       </div>
     </div>
   );

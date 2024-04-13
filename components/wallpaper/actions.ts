@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
 import type { Database } from "utils/supabase/types";
 
-async function react(
+async function updateHistory(
   wallpaperId: string,
   upsertContent: Database["public"]["Tables"]["histories"]["Update"],
 ) {
@@ -39,16 +39,16 @@ export async function updateAttitude(
   wallpaperId: string,
   attitude: Database["public"]["Tables"]["histories"]["Row"]["attitude"],
 ) {
-  return await react(wallpaperId, { attitude });
+  return await updateHistory(wallpaperId, { attitude });
 }
 
 export async function updateIsDownloaded(wallpaperId: string) {
-  return await react(wallpaperId, { is_downloaded: true });
+  return await updateHistory(wallpaperId, { is_downloaded: true });
 }
 
 export async function updateRating(
   wallpaperId: string,
   rating: Database["public"]["Tables"]["histories"]["Row"]["rating"],
 ) {
-  return await react(wallpaperId, { rating });
+  return await updateHistory(wallpaperId, { rating });
 }
