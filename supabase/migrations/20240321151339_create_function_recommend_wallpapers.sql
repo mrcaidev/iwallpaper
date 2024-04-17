@@ -1,7 +1,6 @@
 CREATE FUNCTION recommend_wallpapers(quantity INTEGER)
 RETURNS TABLE (
   id UUID,
-  slug TEXT,
   pathname TEXT,
   description TEXT,
   width INTEGER,
@@ -51,7 +50,6 @@ BEGIN
   RETURN QUERY (
     SELECT
       id,
-      slug,
       pathname,
       description,
       width,

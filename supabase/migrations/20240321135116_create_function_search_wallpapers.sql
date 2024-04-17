@@ -9,7 +9,6 @@ CREATE FUNCTION search_wallpapers(
 )
 RETURNS TABLE (
   id UUID,
-  slug TEXT,
   pathname TEXT,
   description TEXT,
   width INTEGER,
@@ -41,7 +40,6 @@ personal_histories AS (
 )
 SELECT
   wallpapers.id,
-  wallpapers.slug,
   wallpapers.pathname,
   wallpapers.description,
   wallpapers.width,

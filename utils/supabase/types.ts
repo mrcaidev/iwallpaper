@@ -121,7 +121,6 @@ export type Database = {
           id: string;
           most_similar_wallpapers: Json[];
           pathname: string;
-          slug: string;
           tags: string[];
           width: number;
         };
@@ -133,7 +132,6 @@ export type Database = {
           id?: string;
           most_similar_wallpapers?: Json[];
           pathname: string;
-          slug: string;
           tags: string[];
           width: number;
         };
@@ -145,7 +143,6 @@ export type Database = {
           id?: string;
           most_similar_wallpapers?: Json[];
           pathname?: string;
-          slug?: string;
           tags?: string[];
           width?: number;
         };
@@ -179,7 +176,6 @@ export type Database = {
         };
         Returns: {
           id: string;
-          slug: string;
           pathname: string;
           description: string;
           width: number;
@@ -199,7 +195,6 @@ export type Database = {
         };
         Returns: {
           id: string;
-          slug: string;
           pathname: string;
           description: string;
           width: number;
