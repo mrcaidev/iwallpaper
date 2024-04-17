@@ -5,7 +5,8 @@ RETURNS TABLE (
   description TEXT,
   width INTEGER,
   height INTEGER,
-  tags TEXT[]
+  tags TEXT[],
+  attitude ATTITUDE
 )
 LANGUAGE plpgsql
 AS $$
@@ -54,7 +55,8 @@ BEGIN
       description,
       width,
       height,
-      tags
+      tags,
+      NULL AS attitude
     FROM wallpapers
     WHERE id = ANY(recommended_ids)
   );
