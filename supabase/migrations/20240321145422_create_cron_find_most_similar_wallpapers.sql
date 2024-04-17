@@ -15,17 +15,17 @@ BEGIN
   ) * 0.1;
   popularity_threshold = GREATEST(popularity_threshold, 10);
 
-  first_popularity = (
+  first_popularity = COALESCE((
     SELECT popularity
     FROM popularities
     WHERE id = first_id
-  );
+  ), 0);
 
-  second_popularity = (
+  second_popularity = COALESCE((
     SELECT popularity
     FROM popularities
     WHERE id = second_id
-  );
+  ), 0);
 
   IF first_popularity >= popularity_threshold AND second_popularity >= popularity_threshold
   THEN
