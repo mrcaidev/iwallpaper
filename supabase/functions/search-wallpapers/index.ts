@@ -16,8 +16,8 @@ const searchParamsSchema = z.object({
   skip: z.coerce.number().int().min(0).default(0),
 });
 
-Deno.serve(async (req) => {
-  const searchParams = Object.fromEntries(new URL(req.url).searchParams);
+Deno.serve(async (request) => {
+  const searchParams = Object.fromEntries(new URL(request.url).searchParams);
   const parseResult = await searchParamsSchema.safeParseAsync(searchParams);
 
   if (!parseResult.success) {
