@@ -20,6 +20,6 @@ CREATE TABLE histories (
 );
 
 ALTER TABLE histories ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can select all histories." ON histories FOR SELECT USING (TRUE);
+CREATE POLICY "Users can select their own history." ON histories FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert their own history." ON histories FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update their own history." ON histories FOR UPDATE USING (auth.uid() = user_id);
