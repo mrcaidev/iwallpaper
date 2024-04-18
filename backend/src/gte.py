@@ -8,25 +8,17 @@ from .env import GTE_MODEL_NAME, GTE_MODEL_PATH
 def create_gte_model():
     if GTE_MODEL_PATH and os.path.exists(GTE_MODEL_PATH):
         print("Found GTE model in local directory.")
-        gte_model = SentenceTransformer(GTE_MODEL_PATH)
+        model = SentenceTransformer(GTE_MODEL_PATH)
         print("Loaded local GTE model.")
-        return gte_model
+        return model
 
     if GTE_MODEL_NAME:
         print("Downloading GTE model from Hugging Face.")
-        gte_model = SentenceTransformer(GTE_MODEL_NAME)
+        model = SentenceTransformer(GTE_MODEL_NAME)
         print("Loaded remote GTE model.")
-        return gte_model
+        return model
 
-    raise Exception("GTE model not found.")
+    raise Exception("GTE model name or path not found.")
 
 
 gte_model = create_gte_model()
-
-
-def create_embedding(sentences: str | list[str]):
-    return gte_model.encode(
-        sentences,
-        normalize_embeddings=True,
-        show_progress_bar=False,
-    ).tolist()

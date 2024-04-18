@@ -6,6 +6,8 @@
 /next-env.d.ts
 
 backend/**/__pycache__
+backend/.venv
+backend/data
 backend/models
 backend/*.log
 

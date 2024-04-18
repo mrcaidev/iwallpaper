@@ -1,14 +1,11 @@
 [tool.poetry]
-name = "iwallpaper"
-version = "0.0.0"
-description = "Wallpaper exploring platform."
-authors = ["Yuwang Cai <mrcaidev@gmail.com>"]
 package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
 aiodns = "^3.2.0"
 aiohttp = "^3.9.5"
+pandas = "^2.2.2"
 python-dotenv = "^1.0.1"
 sentence-transformers = "^2.7.0"
 supabase = "^2.4.3"

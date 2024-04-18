@@ -4,7 +4,7 @@ import urllib.parse
 from aiohttp import ClientSession, TCPConnector
 from postgrest.types import CountMethod
 
-from .embedding import create_embedding
+from .gte import gte_model
 from .supabase import supabase_client
 
 
@@ -68,7 +68,7 @@ async def scrape_unsplash(quantity: int):
 
 def create_embeddings(wallpapers: list[dict]):
     sentences = [" ".join(wallpaper["tags"]) for wallpaper in wallpapers]
-    embeddings = create_embedding(sentences)
+    embeddings = gte_model.encode(sentences, normalize_embeddings=True).tolist()
     print(f"Created {len(embeddings)} embeddings.")
     return embeddings
 

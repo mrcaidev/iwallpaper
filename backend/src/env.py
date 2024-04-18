@@ -2,17 +2,7 @@ import os
 
 import dotenv
 
-
-def load_environment_variables():
-    success = dotenv.load_dotenv()
-
-    if success:
-        print("Loaded environment variables.")
-    else:
-        print("Environment variables not found.")
-
-
-load_environment_variables()
+dotenv.load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
