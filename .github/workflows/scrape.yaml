@@ -30,3 +30,7 @@ jobs:
         run: |
           cd backend
           poetry run python -m src.scraper 30
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GTE_MODEL_NAME: Supabase/gte-small

@@ -1,8 +1,20 @@
+import os
+
 import dotenv
 
-env = dotenv.dotenv_values(verbose=True)
 
-SUPABASE_URL = env.get("SUPABASE_URL")
-SUPABASE_SERVICE_ROLE_KEY = env.get("SUPABASE_SERVICE_ROLE_KEY")
-GTE_MODEL_NAME = env.get("GTE_MODEL_NAME")
-GTE_MODEL_PATH = env.get("GTE_MODEL_PATH")
+def load_environment_variables():
+    success = dotenv.load_dotenv()
+
+    if success:
+        print("Loaded environment variables.")
+    else:
+        print("Environment variables not found.")
+
+
+load_environment_variables()
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+GTE_MODEL_NAME = os.getenv("GTE_MODEL_NAME")
+GTE_MODEL_PATH = os.getenv("GTE_MODEL_PATH")
