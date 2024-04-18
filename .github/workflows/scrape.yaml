@@ -1,4 +1,4 @@
-name: Scrape new wallpapers
+name: Scrape wallpapers
 
 on:
   schedule:
@@ -12,24 +12,24 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          sparse-checkout: "backend"
+          sparse-checkout: backend
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "poetry"
+          cache: poetry
 
       - name: Install Poetry
         run: pipx install poetry
 
       - name: Install dependencies
         run: poetry install
+        working-directory: backend
 
       - name: Run scraper script
-        run: |
-          cd backend
-          poetry run python -m src.scraper 30
+        run: poetry run python -m src.scraper 30
+        working-directory: backend
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
