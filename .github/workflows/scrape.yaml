@@ -1,15 +1,32 @@
 name: Scrape new wallpapers
+
 on:
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
     steps:
-      - name: Call the scraper API
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: "backend"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "poetry"
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run scraper script
         run: |
-          curl https://iwallpaper.mrcai.dev/api/scrape \
-            --request POST \
-            --header 'Authorization: Bearer ${{ secrets.SCRAPER_ACCESS_TOKEN }}' \
-            --json '{"quantity": 30}'
+          cd backend
+          poetry run python -m src.scraper 30
