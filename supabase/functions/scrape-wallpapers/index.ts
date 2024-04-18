@@ -1,5 +1,3 @@
-/// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
-
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { scrapeUnsplash } from "./unsplash.ts";

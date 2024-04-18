@@ -1,3 +1,4 @@
+import { generateEmbedding } from "../_shared/generate-embedding.ts";
 import { rateLimit } from "./rate-limit.ts";
 
 const fetchUnsplash = rateLimit(fetch, 50);
@@ -62,13 +63,20 @@ type WallpaperJson = {
 async function scrapeWallpaper(url: string) {
   const response = await fetchUnsplash(url);
   const json: WallpaperJson = await response.json();
+
+  const pathname = new URL(json.urls.raw).pathname;
+  const description = json.description ?? json.alt_description ?? "";
+  const tags = json.tags.map(({ title }) => title);
+  const embedding = await generateEmbedding(tags.join(" "));
+
   return {
     slug: json.slug,
-    pathname: new URL(json.urls.raw).pathname,
-    description: json.description ?? json.alt_description ?? "",
+    pathname,
+    description,
     width: json.width,
     height: json.height,
-    tags: json.tags.map(({ title }) => title),
+    tags,
+    embedding,
   };
 }
 
