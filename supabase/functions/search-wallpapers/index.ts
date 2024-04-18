@@ -1,11 +1,14 @@
+/// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
+
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { generateEmbedding } from "../_shared/generate-embedding.ts";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_ANON_KEY")!,
 );
+
+const model = new Supabase.ai.Session("gte-small");
 
 const searchParamsSchema = z.object({
   query: z.string().min(1).max(50),
@@ -26,7 +29,10 @@ Deno.serve(async (request) => {
 
   const { query, take, skip } = parseResult.data;
 
-  const query_embedding = await generateEmbedding(query);
+  const query_embedding = await model.run(query, {
+    mean_pool: true,
+    normalize: true,
+  });
 
   const { data, error } = await supabase.rpc("search_wallpapers", {
     query,
