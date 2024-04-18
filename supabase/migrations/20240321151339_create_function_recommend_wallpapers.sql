@@ -43,10 +43,12 @@ BEGIN
     LIMIT quantity
   );
 
-  INSERT INTO histories (user_id, wallpaper_id)
-  SELECT auth.uid(), id
-  FROM UNNEST(recommended_ids) AS t(id)
-  ON CONFLICT DO NOTHING;
+  IF auth.uid() IS NOT NULL THEN
+    INSERT INTO histories (user_id, wallpaper_id)
+    SELECT auth.uid(), id
+    FROM UNNEST(recommended_ids) AS t(id)
+    ON CONFLICT DO NOTHING;
+  END IF;
 
   RETURN QUERY (
     SELECT
