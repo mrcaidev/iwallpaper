@@ -31,7 +31,7 @@ Deno.serve(async (request) => {
     .eq("id", id);
 
   if (error) {
-    return new Response(error.message);
+    return new Response(error.message, { status: 500 });
   }
 
   return new Response("ok");
