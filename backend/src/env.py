@@ -1,23 +1,8 @@
-import logging
-import os
-
 import dotenv
 
-logger = logging.getLogger(__name__)
+env = dotenv.dotenv_values(verbose=True)
 
-
-def load_environment_variables():
-    success = dotenv.load_dotenv(verbose=True)
-
-    if success:
-        logger.info("Loaded environment variables.")
-    else:
-        logger.warning("No environment variable found.")
-
-
-load_environment_variables()
-
-SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
-GTE_MODEL_NAME = os.getenv("GTE_MODEL_NAME", "all-MiniLM-L6-v2")
-GTE_MODEL_PATH = os.getenv("GTE_MODEL_PATH", "")
+SUPABASE_URL = env.get("SUPABASE_URL")
+SUPABASE_SERVICE_ROLE_KEY = env.get("SUPABASE_SERVICE_ROLE_KEY")
+GTE_MODEL_NAME = env.get("GTE_MODEL_NAME")
+GTE_MODEL_PATH = env.get("GTE_MODEL_PATH")

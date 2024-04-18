@@ -1,24 +1,24 @@
-import logging
 import os
 
 from sentence_transformers import SentenceTransformer
 
 from .env import GTE_MODEL_NAME, GTE_MODEL_PATH
 
-logger = logging.getLogger(__name__)
-
 
 def create_gte_model():
-    if os.path.exists(GTE_MODEL_PATH):
-        logger.debug("Found GTE model in local directory.")
+    if GTE_MODEL_PATH and os.path.exists(GTE_MODEL_PATH):
+        print("Found GTE model in local directory.")
         gte_model = SentenceTransformer(GTE_MODEL_PATH)
-        logger.info("Loaded local GTE model.")
+        print("Loaded local GTE model.")
         return gte_model
 
-    logger.debug("Downloading GTE model from Hugging Face.")
-    gte_model = SentenceTransformer(GTE_MODEL_NAME)
-    logger.info("Loaded remote GTE model.")
-    return gte_model
+    if GTE_MODEL_NAME:
+        print("Downloading GTE model from Hugging Face.")
+        gte_model = SentenceTransformer(GTE_MODEL_NAME)
+        print("Loaded remote GTE model.")
+        return gte_model
+
+    raise Exception("GTE model not found.")
 
 
 gte_model = create_gte_model()

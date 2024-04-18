@@ -1,15 +1,17 @@
-import logging
-
 import supabase
 
 from .env import SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL
 
-logger = logging.getLogger(__name__)
-
 
 def create_supabase_client():
+    if not SUPABASE_URL:
+        raise Exception("SUPABASE_URL not found.")
+
+    if not SUPABASE_SERVICE_ROLE_KEY:
+        raise Exception("SUPABASE_SERVICE_ROLE_KEY not found.")
+
     client = supabase.create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
-    logger.info("Connected to Supabase.")
+    print("Connected to Supabase.")
     return client
 
 
