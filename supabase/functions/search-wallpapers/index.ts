@@ -42,7 +42,7 @@ Deno.serve(async (request) => {
   });
 
   if (error) {
-    return Response.json({ message: error }, { status: 500 });
+    return Response.json({ message: error.message }, { status: 500 });
   }
 
   return Response.json(data);
