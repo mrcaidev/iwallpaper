@@ -8,6 +8,7 @@ $$;
 
 CREATE TABLE wallpapers (
   id UUID DEFAULT GEN_RANDOM_UUID() PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
   pathname TEXT NOT NULL,
   description TEXT NOT NULL,
   width INTEGER NOT NULL,
