@@ -10,22 +10,12 @@ type Options = {
 export async function fetchFavorites({ take, skip }: Options) {
   const supabase = createServerSupabaseClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    // Unauthenticated users would have already been redirected using middleware.
-    // So it's safe to return anything here,
-    // as logically this code should never be reached.
-    return [];
-  }
-
   const { data, error: selectError } = await supabase
-    .from("wallpapers")
-    .select("id, slug, pathname, description, width, height, tags")
-    .eq("histories.user_id", user.id)
-    .eq("histories.attitude", "liked")
+    .from("histories")
+    .select(
+      "attitude, wallpapers (id, pathname, description, width, height, tags)",
+    )
+    .eq("attitude", "liked")
     .range(skip, skip + take - 1);
 
   if (selectError) {
@@ -33,8 +23,8 @@ export async function fetchFavorites({ take, skip }: Options) {
   }
 
   const favorites = data.map((favorite) => ({
-    ...favorite,
-    attitude: "liked" as const,
+    attitude: favorite.attitude,
+    ...favorite.wallpapers,
   }));
 
   return favorites;

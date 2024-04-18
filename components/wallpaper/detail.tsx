@@ -10,6 +10,9 @@ type Props = {
 };
 
 export function WallpaperDetail({ wallpaper }: Props) {
+  const imgSrc = new URL(wallpaper.pathname, "https://images.unsplash.com");
+  imgSrc.searchParams.set("w", "1080");
+
   return (
     <div>
       <div className="relative max-w-[1000px] mx-auto mb-3 lg:mb-4">
@@ -18,7 +21,7 @@ export function WallpaperDetail({ wallpaper }: Props) {
           style={{ aspectRatio: wallpaper.width / wallpaper.height }}
         />
         <Image
-          src={`https://images.unsplash.com/${wallpaper.pathname}?w=1080`}
+          src={imgSrc.toString()}
           width={wallpaper.width}
           height={wallpaper.height}
           alt={wallpaper.description}

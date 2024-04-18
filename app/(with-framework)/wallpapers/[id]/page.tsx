@@ -46,7 +46,7 @@ async function fetchWallpaper(id: string) {
 
   const { data: wallpaper } = await supabase
     .from("wallpapers")
-    .select("id, slug, pathname, description, width, height, tags")
+    .select("id, pathname, description, width, height, tags")
     .eq("id", id)
     .maybeSingle();
 
@@ -56,19 +56,9 @@ async function fetchWallpaper(id: string) {
 async function fetchHistory(wallpaperId: string) {
   const supabase = createServerSupabaseClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const userId = user?.id ?? null;
-
-  if (!userId) {
-    return null;
-  }
-
   const { data: history } = await supabase
     .from("histories")
     .select("attitude, rating")
-    .eq("user_id", userId)
     .eq("wallpaper_id", wallpaperId)
     .maybeSingle();
 

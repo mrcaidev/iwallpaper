@@ -9,6 +9,9 @@ type Props = {
 };
 
 export function WallpaperThumbnail({ wallpaper }: Props) {
+  const imgSrc = new URL(wallpaper.pathname, "https://images.unsplash.com");
+  imgSrc.searchParams.set("w", "400");
+
   return (
     <div className="group relative">
       <Skeleton
@@ -16,7 +19,7 @@ export function WallpaperThumbnail({ wallpaper }: Props) {
         style={{ aspectRatio: wallpaper.width / wallpaper.height }}
       />
       <Image
-        src={`https://images.unsplash.com/${wallpaper.pathname}?w=400`}
+        src={imgSrc.toString()}
         width={wallpaper.width}
         height={wallpaper.height}
         alt={wallpaper.description}
