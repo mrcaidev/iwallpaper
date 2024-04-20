@@ -66,13 +66,18 @@ def semantic_search(
     embedding_database: pd.DataFrame,
     query: str,
     top_k: int | None = None,
+    similarity_threshold: float = 0.85,
 ):
     normalized_query = normalize_text(query)
     query_embedding = gte_model.encode(normalized_query, normalize_embeddings=True)
 
     similarities: pd.Series = embedding_database @ query_embedding
 
-    ranking = similarities.sort_values(ascending=False).index.tolist()
+    ranking = (
+        similarities[similarities > similarity_threshold]
+        .sort_values(ascending=False)
+        .index.tolist()
+    )
     return ranking[:top_k] if top_k else ranking
 
 
