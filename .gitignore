@@ -9,6 +9,7 @@ backend/**/__pycache__
 backend/.venv
 backend/data
 backend/models
+backend/outputs
 backend/*.log
 
 supabase/.branches

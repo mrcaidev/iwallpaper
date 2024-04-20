@@ -1,13 +1,18 @@
+import os
 import time
 from collections import defaultdict
+from enum import Enum
 from functools import wraps
-from typing import Literal
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.model_selection import train_test_split
+
+sns.set_theme()
 
 
 def timeit(fn):
@@ -22,6 +27,15 @@ def timeit(fn):
     return wrapper
 
 
+def save_figure(filename: str):
+    OUTPUT_DIRNAME = "outputs"
+
+    if not os.path.exists(OUTPUT_DIRNAME):
+        os.makedirs(OUTPUT_DIRNAME)
+
+    plt.savefig(os.path.join(OUTPUT_DIRNAME, filename))
+
+
 def build_user_item_matrix(full_set: pd.DataFrame, partial_set: pd.DataFrame):
     index = full_set["userId"].unique()
     columns = full_set["movieId"].unique()
@@ -33,27 +47,31 @@ def build_user_item_matrix(full_set: pd.DataFrame, partial_set: pd.DataFrame):
     return matrix.to_numpy()
 
 
+class SimilarityMeasure(Enum):
+    PURE_COSINE = "Pure Cosine"
+    CORRELATION = "Correlation"
+    ADJUSTED_COSINE = "Adjusted Cosine"
+
+
 def build_similarity_matrix(
     user_item_matrix: np.ndarray,
-    method: (
-        Literal["pure_cosine"] | Literal["correlation"] | Literal["adjusted_cosine"]
-    ) = "pure_cosine",
+    measure: SimilarityMeasure = SimilarityMeasure.PURE_COSINE,
 ):
-    if method == "pure_cosine":
+    if measure == SimilarityMeasure.PURE_COSINE:
         similarity_matrix = cosine_similarity(user_item_matrix.T)
 
-    elif method == "correlation":
+    elif measure == SimilarityMeasure.CORRELATION:
         item_means = user_item_matrix.mean(axis=0).reshape(1, -1)
         centered_user_item_matrix = user_item_matrix - item_means
         similarity_matrix = cosine_similarity(centered_user_item_matrix.T)
 
-    elif method == "adjusted_cosine":
+    elif measure == SimilarityMeasure.ADJUSTED_COSINE:
         user_means = user_item_matrix.mean(axis=1).reshape(-1, 1)
         centered_user_item_matrix = user_item_matrix - user_means
         similarity_matrix = cosine_similarity(centered_user_item_matrix.T)
 
     else:
-        raise Exception(f"Unknown similarity computation measure: {method}")
+        raise Exception(f"Unknown similarity computation measure: {measure}")
 
     np.fill_diagonal(similarity_matrix, 0)
     return similarity_matrix
@@ -64,7 +82,7 @@ def find_k_most_similar_items(similarity_matrix: np.ndarray, item: int, k: int):
 
 
 @timeit
-def recommend_by_weighted_sum(
+def traditional_recommend(
     user: int,
     user_item_matrix: np.ndarray,
     similarity_matrix: np.ndarray,
@@ -99,7 +117,7 @@ def recommend_by_weighted_sum(
     return predictions
 
 
-def predict_by_weighted_sum(
+def traditional_predict(
     user_item_matrix: np.ndarray,
     similarity_matrix: np.ndarray,
     k_most_similar: int = 20,
@@ -135,7 +153,7 @@ def predict_by_weighted_sum(
 
 
 @timeit
-def recommend_by_optimization(
+def optimized_recommend(
     user: int,
     user_item_matrix: np.ndarray,
     similarity_matrix: np.ndarray,
@@ -165,7 +183,7 @@ def recommend_by_optimization(
     return predictions
 
 
-def predict_by_optimization(
+def optimized_predict(
     user_item_matrix: np.ndarray,
     similarity_matrix: np.ndarray,
     k_most_similar: int = 20,
@@ -201,45 +219,214 @@ def evaluate_mae(actual_matrix: np.ndarray, prediction_matrix: np.ndarray):
     return mae
 
 
-if __name__ == "__main__":
-    dataset = pd.read_csv("data/ml-latest-small/ratings.csv")
-    train_set, test_set = train_test_split(dataset, test_size=0.2, random_state=42)
+def compare_mae_under_different_train_test_ratio(dataset: pd.DataFrame):
+    test_sizes = [0.1, 0.2, 0.3, 0.4, 0.5]
 
+    traditional_maes = []
+    optimized_maes = []
+
+    for test_size in test_sizes:
+        train_set, test_set = train_test_split(
+            dataset, test_size=test_size, random_state=42
+        )
+
+        train_user_item_matrix = build_user_item_matrix(dataset, train_set)
+        test_user_item_matrix = build_user_item_matrix(dataset, test_set)
+        similarity_matrix = build_similarity_matrix(
+            train_user_item_matrix,
+            measure=SimilarityMeasure.ADJUSTED_COSINE,
+        )
+
+        traditional_prediction_matrix = traditional_predict(
+            train_user_item_matrix,
+            similarity_matrix,
+            k_most_similar=50,
+        )
+        traditional_mae = evaluate_mae(
+            test_user_item_matrix,
+            traditional_prediction_matrix,
+        )
+        traditional_maes.append(traditional_mae)
+
+        optimized_prediction_matrix = optimized_predict(
+            train_user_item_matrix,
+            similarity_matrix,
+            k_most_similar=50,
+        )
+        optimized_mae = evaluate_mae(
+            test_user_item_matrix,
+            optimized_prediction_matrix,
+        )
+        optimized_maes.append(optimized_mae)
+
+    data = pd.DataFrame(
+        {
+            "Traditional": traditional_maes,
+            "Optimized": optimized_maes,
+        },
+        index=[f"{1 - test_size}/{test_size}" for test_size in test_sizes],
+    )
+    plt.figure()
+    sns.lineplot(data=data, markers=True, dashes=False)
+    plt.xlabel("Train/test ratio")
+    plt.ylabel("MAE")
+    plt.title("Sensitivity of train/test ratio")
+    save_figure("sensitivity_of_train_test_ratio.png")
+
+
+def compare_mae_under_different_similarity_measure(dataset: pd.DataFrame):
+    train_set, test_set = train_test_split(dataset, test_size=0.2, random_state=42)
     train_user_item_matrix = build_user_item_matrix(dataset, train_set)
     test_user_item_matrix = build_user_item_matrix(dataset, test_set)
 
+    traditional_maes = []
+    optimized_maes = []
+
+    for similarity_measure in SimilarityMeasure:
+        similarity_matrix = build_similarity_matrix(
+            train_user_item_matrix,
+            measure=similarity_measure,
+        )
+
+        traditional_prediction_matrix = traditional_predict(
+            train_user_item_matrix,
+            similarity_matrix,
+            k_most_similar=50,
+        )
+        traditional_mae = evaluate_mae(
+            test_user_item_matrix,
+            traditional_prediction_matrix,
+        )
+        traditional_maes.append(traditional_mae)
+
+        optimized_prediction_matrix = optimized_predict(
+            train_user_item_matrix,
+            similarity_matrix,
+            k_most_similar=50,
+        )
+        optimized_mae = evaluate_mae(
+            test_user_item_matrix,
+            optimized_prediction_matrix,
+        )
+        optimized_maes.append(optimized_mae)
+
+    data = pd.DataFrame(
+        {
+            "Measure": [measure.value for measure in SimilarityMeasure],
+            "Traditional": traditional_maes,
+            "Optimized": optimized_maes,
+        },
+    ).melt(id_vars="Measure", var_name="Method", value_name="MAE")
+    plt.figure()
+    sns.barplot(data=data, x="Measure", y="MAE", hue="Method")
+    plt.xlabel("Similarity measure")
+    plt.ylabel("MAE")
+    plt.title("Performance of different similarity measures")
+    save_figure("performance_of_different_similarity_measures.png")
+
+
+def compare_mae_under_different_neighborhood_size(dataset: pd.DataFrame):
+    train_set, test_set = train_test_split(dataset, test_size=0.2, random_state=42)
+    train_user_item_matrix = build_user_item_matrix(dataset, train_set)
+    test_user_item_matrix = build_user_item_matrix(dataset, test_set)
     similarity_matrix = build_similarity_matrix(
         train_user_item_matrix,
-        method="adjusted_cosine",
+        measure=SimilarityMeasure.ADJUSTED_COSINE,
     )
 
-    prediction_matrix = predict_by_weighted_sum(
+    neighborhood_sizes = [20, 40, 60, 80, 100]
+
+    traditional_maes = []
+    optimized_maes = []
+
+    for neighborhood_size in neighborhood_sizes:
+        traditional_prediction_matrix = traditional_predict(
+            train_user_item_matrix,
+            similarity_matrix,
+            k_most_similar=neighborhood_size,
+        )
+        traditional_mae = evaluate_mae(
+            test_user_item_matrix,
+            traditional_prediction_matrix,
+        )
+        traditional_maes.append(traditional_mae)
+
+        optimized_prediction_matrix = optimized_predict(
+            train_user_item_matrix,
+            similarity_matrix,
+            k_most_similar=neighborhood_size,
+        )
+        optimized_mae = evaluate_mae(
+            test_user_item_matrix,
+            optimized_prediction_matrix,
+        )
+        optimized_maes.append(optimized_mae)
+
+    data = pd.DataFrame(
+        {
+            "Traditional": traditional_maes,
+            "Optimized": optimized_maes,
+        },
+        index=neighborhood_sizes,
+    )
+    plt.figure()
+    sns.lineplot(data=data, markers=True, dashes=False)
+    plt.xlabel("Neighborhood size")
+    plt.ylabel("MAE")
+    plt.title("Sensitivity of neighborhood size")
+    save_figure("sensitivity_of_neighborhood_size.png")
+
+
+def compare_time_under_different_neighborhood_size(dataset: pd.DataFrame):
+    train_set, _ = train_test_split(dataset, test_size=0.2, random_state=42)
+    train_user_item_matrix = build_user_item_matrix(dataset, train_set)
+    similarity_matrix = build_similarity_matrix(
         train_user_item_matrix,
-        similarity_matrix,
-        k_most_similar=50,
+        measure=SimilarityMeasure.ADJUSTED_COSINE,
     )
 
-    mae = evaluate_mae(test_user_item_matrix, prediction_matrix)
-    print(f"predict_by_weighted_sum MAE: {mae}.")
+    neighborhood_sizes = [20, 40, 60, 80, 100]
 
-    prediction_matrix = predict_by_optimization(
-        train_user_item_matrix,
-        similarity_matrix,
-        k_most_similar=50,
-    )
+    traditional_times = []
+    optimized_times = []
 
-    mae = evaluate_mae(test_user_item_matrix, prediction_matrix)
-    print(f"predict_by_optimization MAE: {mae}.")
+    for neighborhood_size in neighborhood_sizes:
+        traditional_time = -time.time()
+        traditional_recommend(
+            1,
+            train_user_item_matrix,
+            similarity_matrix,
+            k_most_similar=neighborhood_size,
+        )
+        traditional_time += time.time()
+        traditional_times.append(traditional_time)
 
-    recommend_by_weighted_sum(
-        1,
-        train_user_item_matrix,
-        similarity_matrix,
-        k_most_similar=50,
+        optimized_time = -time.time()
+        optimized_recommend(
+            1,
+            train_user_item_matrix,
+            similarity_matrix,
+            k_most_similar=neighborhood_size,
+        )
+        optimized_time += time.time()
+        optimized_times.append(optimized_time)
+
+    data = pd.DataFrame(
+        {
+            "Traditional": traditional_times,
+            "Optimized": optimized_times,
+        },
+        index=neighborhood_sizes,
     )
-    recommend_by_optimization(
-        1,
-        train_user_item_matrix,
-        similarity_matrix,
-        k_most_similar=50,
-    )
+    plt.figure()
+    sns.lineplot(data=data, markers=True, dashes=False)
+    plt.yscale("log")
+    plt.xlabel("Neighborhood size")
+    plt.ylabel("Time (s)")
+    plt.title("Comparison of recommendation time")
+    save_figure("comparison_of_recommendation_time.png")
+
+
+if __name__ == "__main__":
+    dataset = pd.read_csv("data/ml-latest-small/ratings.csv")
+    compare_time_under_different_neighborhood_size(dataset)
