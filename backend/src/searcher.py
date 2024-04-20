@@ -37,10 +37,11 @@ def build_inverted_index(dataset: pd.DataFrame):
 
 def keyword_search(inverted_index: dict[str, list[int]], query: str, top_k: int = 20):
     normalized_query = normalize_text(query)
+    query_words = set(normalized_query.split())
 
     scoreboard = defaultdict(float)
 
-    for word in normalized_query.split():
+    for word in query_words:
         word_indices = inverted_index.get(word, [])
         word_weight = 1 / len(word_indices) if word_indices else 0
 
@@ -58,7 +59,8 @@ def build_embedding_database(dataset: pd.DataFrame):
 
 
 def semantic_search(embedding_database: pd.DataFrame, query: str, top_k: int = 20):
-    query_embedding = gte_model.encode(query, normalize_embeddings=True)
+    normalized_query = normalize_text(query)
+    query_embedding = gte_model.encode(normalized_query, normalize_embeddings=True)
 
     similarities: pd.Series = embedding_database @ query_embedding
 
