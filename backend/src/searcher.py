@@ -66,6 +66,31 @@ def semantic_search(embedding_database: pd.DataFrame, query: str, top_k: int = 2
     return indices[:top_k]
 
 
+def reciprocal_rank_fusion(
+    rankings: list[list[int]],
+    ranking_weights: list[float] | None = None,
+    smoothing_factor: int = 1,
+    top_k: int = 20,
+):
+    if not ranking_weights:
+        ranking_weights = [1.0] * len(rankings)
+
+    assert len(rankings) == len(ranking_weights)
+
+    reciprocal_ranking = defaultdict(float)
+
+    for ranking_index, ranking in enumerate(rankings):
+        ranking_weight = ranking_weights[ranking_index]
+        for rank, id in enumerate(ranking):
+            reciprocal_ranking[id] += ranking_weight / (smoothing_factor + rank + 1)
+
+    indices = sorted(
+        reciprocal_ranking.keys(),
+        key=lambda index: (-reciprocal_ranking[index], index),
+    )
+    return indices[:top_k]
+
+
 if __name__ == "__main__":
     dataset = load_dataset("data/ml-latest-small/movies.csv")
 
@@ -76,3 +101,11 @@ if __name__ == "__main__":
     embedding_database = build_embedding_database(dataset)
     semantic_indices = semantic_search(embedding_database, "toy story")
     print(f"Semantic search result: {semantic_indices}")
+
+    rrf_indices = reciprocal_rank_fusion(
+        [
+            keyword_indices,
+            semantic_indices,
+        ]
+    )
+    print(f"RRF search result: {rrf_indices}")
