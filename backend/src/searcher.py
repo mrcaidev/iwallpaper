@@ -35,7 +35,11 @@ def build_inverted_index(dataset: pd.DataFrame):
     return inverted_index
 
 
-def keyword_search(inverted_index: dict[str, list[int]], query: str, top_k: int = 20):
+def keyword_search(
+    inverted_index: dict[str, list[int]],
+    query: str,
+    top_k: int | None = None,
+):
     normalized_query = normalize_text(query)
     query_words = set(normalized_query.split())
 
@@ -49,7 +53,7 @@ def keyword_search(inverted_index: dict[str, list[int]], query: str, top_k: int 
             scoreboard[id] += word_weight
 
     ranking = sorted(scoreboard.keys(), key=lambda id: (-scoreboard[id], id))
-    return ranking[:top_k]
+    return ranking[:top_k] if top_k else ranking
 
 
 def build_embedding_database(dataset: pd.DataFrame):
@@ -58,21 +62,25 @@ def build_embedding_database(dataset: pd.DataFrame):
     return pd.DataFrame(matrix, index=dataset.index)
 
 
-def semantic_search(embedding_database: pd.DataFrame, query: str, top_k: int = 20):
+def semantic_search(
+    embedding_database: pd.DataFrame,
+    query: str,
+    top_k: int | None = None,
+):
     normalized_query = normalize_text(query)
     query_embedding = gte_model.encode(normalized_query, normalize_embeddings=True)
 
     similarities: pd.Series = embedding_database @ query_embedding
 
     ranking = similarities.sort_values(ascending=False).index.tolist()
-    return ranking[:top_k]
+    return ranking[:top_k] if top_k else ranking
 
 
 def reciprocal_rank_fusion(
     *rankings: list[int],
     ranking_weights: list[float] | None = None,
     smoothing_factor: int = 1,
-    top_k: int = 20,
+    top_k: int | None = None,
 ):
     if not ranking_weights:
         ranking_weights = [1.0] * len(rankings)
@@ -87,19 +95,19 @@ def reciprocal_rank_fusion(
             scoreboard[id] += ranking_weight / (smoothing_factor + rank + 1)
 
     ranking = sorted(scoreboard.keys(), key=lambda id: (-scoreboard[id], id))
-    return ranking[:top_k]
+    return ranking[:top_k] if top_k else ranking
 
 
 if __name__ == "__main__":
     dataset = load_dataset("data/ml-latest-small/movies.csv")
 
     inverted_index = build_inverted_index(dataset)
-    keyword_result = keyword_search(inverted_index, "toy story")
-    print(f"Keyword search result: {keyword_result}")
+    keyword_ranking = keyword_search(inverted_index, "toy story", top_k=10)
+    print(f"Keyword search result: {keyword_ranking}")
 
     embedding_database = build_embedding_database(dataset)
-    semantic_result = semantic_search(embedding_database, "toy story")
-    print(f"Semantic search result: {semantic_result}")
+    semantic_ranking = semantic_search(embedding_database, "toy story", top_k=10)
+    print(f"Semantic search result: {semantic_ranking}")
 
-    rrf_result = reciprocal_rank_fusion(keyword_result, semantic_result)
-    print(f"RRF search result: {rrf_result}")
+    rrf_ranking = reciprocal_rank_fusion(keyword_ranking, semantic_ranking, top_k=10)
+    print(f"RRF search result: {rrf_ranking}")
