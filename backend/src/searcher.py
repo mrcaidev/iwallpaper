@@ -103,16 +103,127 @@ def reciprocal_rank_fusion(
     return ranking[:top_k] if top_k else ranking
 
 
+def is_query_matched(query: str, target: str):
+    query_words = set(query.split())
+    return any(query_word in target for query_word in query_words)
+
+
+def search_test(
+    dataset: pd.DataFrame,
+    inverted_index: dict[str, list[int]],
+    embedding_database: pd.DataFrame,
+    query: str,
+    top_k: int = 20,
+):
+    keyword_ranking = keyword_search(inverted_index, query)
+    semantic_ranking = semantic_search(
+        embedding_database,
+        query,
+        similarity_threshold=0.83,
+    )
+    rrf_ranking = reciprocal_rank_fusion(keyword_ranking, semantic_ranking)
+
+    possible_correct_num = len(set().union(keyword_ranking, semantic_ranking))
+    expected_correct_num = min(top_k, possible_correct_num)
+
+    keyword_ranking = keyword_ranking[:top_k]
+    semantic_ranking = semantic_ranking[:top_k]
+    rrf_ranking = rrf_ranking[:top_k]
+
+    keyword_given_num = len(keyword_ranking)
+    semantic_given_num = len(semantic_ranking)
+    rrf_given_num = len(rrf_ranking)
+
+    normalized_query = normalize_text(query)
+    keyword_correct_num = list(
+        is_query_matched(normalized_query, str(dataset.loc[id, "content"]))
+        for id in keyword_ranking
+    ).count(True)
+    semantic_correct_num = list(
+        is_query_matched(normalized_query, str(dataset.loc[id, "content"]))
+        for id in semantic_ranking
+    ).count(True)
+    rrf_correct_num = list(
+        is_query_matched(normalized_query, str(dataset.loc[id, "content"]))
+        for id in rrf_ranking
+    ).count(True)
+
+    return pd.Series(
+        {
+            "POS": possible_correct_num,
+            "EXP": expected_correct_num,
+            "KS_COR": keyword_correct_num,
+            "KS_GVN": keyword_given_num,
+            "SS_COR": semantic_correct_num,
+            "SS_GVN": semantic_given_num,
+            "HS_COR": rrf_correct_num,
+            "HS_GVN": rrf_given_num,
+        },
+        dtype=int,
+        name=query,
+    )
+
+
+def generate_report(outcome: pd.DataFrame):
+    outcome.loc["TOTAL"] = outcome.sum()
+
+    keyword_precision = outcome.loc["TOTAL", "KS_COR"] / outcome.loc["TOTAL", "KS_GVN"]
+    keyword_recall = outcome.loc["TOTAL", "KS_COR"] / outcome.loc["TOTAL", "EXP"]
+    keyword_f1 = (
+        2 * keyword_precision * keyword_recall / (keyword_precision + keyword_recall)
+    )
+
+    semantic_precision = outcome.loc["TOTAL", "SS_COR"] / outcome.loc["TOTAL", "SS_GVN"]
+    semantic_recall = outcome.loc["TOTAL", "SS_COR"] / outcome.loc["TOTAL", "EXP"]
+    semantic_f1 = (
+        2
+        * semantic_precision
+        * semantic_recall
+        / (semantic_precision + semantic_recall)
+    )
+
+    rrf_precision = outcome.loc["TOTAL", "HS_COR"] / outcome.loc["TOTAL", "HS_GVN"]
+    rrf_recall = outcome.loc["TOTAL", "HS_COR"] / outcome.loc["TOTAL", "EXP"]
+    rrf_f1 = 2 * rrf_precision * rrf_recall / (rrf_precision + rrf_recall)
+
+    print(outcome)
+    print()
+    print(f"Keyword Search Precision: {keyword_precision:.2f}")
+    print(f"Keyword Search Recall: {keyword_recall:.2f}")
+    print(f"Keyword Search F1: {keyword_f1:.2f}")
+    print()
+    print(f"Semantic Search Precision: {semantic_precision:.2f}")
+    print(f"Semantic Search Recall: {semantic_recall:.2f}")
+    print(f"Semantic Search F1: {semantic_f1:.2f}")
+    print()
+    print(f"Hybrid Search Precision: {rrf_precision:.2f}")
+    print(f"Hybrid Search Recall: {rrf_recall:.2f}")
+    print(f"Hybrid Search F1: {rrf_f1:.2f}")
+
+
 if __name__ == "__main__":
     dataset = load_dataset("data/ml-latest-small/movies.csv")
-
     inverted_index = build_inverted_index(dataset)
-    keyword_ranking = keyword_search(inverted_index, "toy story", top_k=10)
-    print(f"Keyword search result: {keyword_ranking}")
-
     embedding_database = build_embedding_database(dataset)
-    semantic_ranking = semantic_search(embedding_database, "toy story", top_k=10)
-    print(f"Semantic search result: {semantic_ranking}")
 
-    rrf_ranking = reciprocal_rank_fusion(keyword_ranking, semantic_ranking, top_k=10)
-    print(f"RRF search result: {rrf_ranking}")
+    queries = [
+        "toy",
+        "father",
+        "america",
+        "casino",
+        "castle",
+        "money",
+        "star",
+        "antonia",
+        "twilight",
+        "sugar",
+    ]
+
+    test_outcome = pd.concat(
+        [
+            search_test(dataset, inverted_index, embedding_database, query, top_k=30)
+            for query in queries
+        ],
+        axis=1,
+    ).T
+    generate_report(test_outcome)
