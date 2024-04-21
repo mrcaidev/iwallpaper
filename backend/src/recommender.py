@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from matplotlib.axes import Axes
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.model_selection import train_test_split
@@ -418,12 +419,15 @@ def compare_time_under_different_neighborhood_size(dataset: pd.DataFrame):
         },
         index=neighborhood_sizes,
     )
-    plt.figure()
-    sns.lineplot(data=data, markers=True, dashes=False)
-    plt.yscale("log")
-    plt.xlabel("Neighborhood size")
-    plt.ylabel("Time (s)")
-    plt.title("Comparison of recommendation time")
+    _, (ax_left, ax_right) = plt.subplots(1, 2, figsize=(12, 6))
+    sns.lineplot(data=data, markers=True, dashes=False, ax=ax_left)
+    ax_left.set_xlabel("Neighborhood size")
+    ax_left.set_ylabel("Time in linear scale (s)")
+    sns.lineplot(data=data, markers=True, dashes=False, ax=ax_right)
+    ax_right.set_yscale("log")
+    ax_right.set_xlabel("Neighborhood size")
+    ax_right.set_ylabel("Time in log scale (s)")
+    plt.suptitle("Comparison of recommendation time")
     save_figure("comparison_of_recommendation_time.png")
 
 
