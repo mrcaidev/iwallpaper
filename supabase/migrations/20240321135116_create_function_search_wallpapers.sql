@@ -3,6 +3,7 @@ CREATE FUNCTION search_wallpapers(
   query_embedding VECTOR(384),
   take INTEGER = 30,
   skip INTEGER = 0,
+  similarity_threshold FLOAT = 0.8,
   keyword_weight FLOAT = 1.0,
   semantic_weight FLOAT = 1.0,
   rrf_k INTEGER = 1
@@ -31,6 +32,7 @@ semantic_ranking AS (
     ORDER BY embedding <#> query_embedding ASC
   ) AS rank
   FROM wallpapers
+  WHERE -(embedding <#> query_embedding) >= similarity_threshold
   ORDER BY rank ASC
 ),
 personal_histories AS (
