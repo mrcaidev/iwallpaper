@@ -1,4 +1,4 @@
-CREATE FUNCTION recommend_wallpapers(quantity INTEGER)
+CREATE FUNCTION recommend_wallpapers(take INTEGER)
 RETURNS TABLE (
   id UUID,
   pathname TEXT,
@@ -31,15 +31,15 @@ BEGIN
         )
         ORDER BY preference * (candidates->>'similarity')::FLOAT DESC
       ) AS rank_subquery
-      LIMIT quantity
+      LIMIT take
     )
     UNION ALL
     (
       SELECT id
       FROM wallpapers
-      TABLESAMPLE SYSTEM_ROWS(quantity)
+      TABLESAMPLE SYSTEM_ROWS(take)
     )
-    LIMIT quantity
+    LIMIT take
   );
 
   IF auth.uid() IS NOT NULL THEN

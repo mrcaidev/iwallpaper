@@ -29,14 +29,14 @@ Deno.serve(async (request) => {
 
   const { query, take, skip } = parseResult.data;
 
-  const query_embedding = await model.run(query, {
+  const queryEmbedding = await model.run(query, {
     mean_pool: true,
     normalize: true,
   });
 
   const { data, error } = await supabase.rpc("search_wallpapers", {
     query,
-    query_embedding,
+    query_embedding: queryEmbedding,
     take,
     skip,
   });
