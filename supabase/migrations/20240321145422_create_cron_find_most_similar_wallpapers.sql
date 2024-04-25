@@ -1,56 +1,48 @@
+CREATE FUNCTION should_use_embedding(first_id UUID, second_id UUID)
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER SET search_path = public, extensions, pg_temp
+AS $$
+  SELECT COUNT(*) < GREATEST(3, 0.1 * (SELECT COUNT(*) FROM auth.users))
+  FROM (
+    SELECT COUNT(*)
+    FROM histories
+    WHERE wallpaper_id IN (first_id, second_id)
+      AND preference IS NOT NULL
+    GROUP BY user_id
+    HAVING COUNT(*) = 2
+  ) AS subquery
+$$;
+
+CREATE FUNCTION vectorize_wallpaper_histories(target_id UUID)
+RETURNS VECTOR
+LANGUAGE sql
+SECURITY DEFINER SET search_path = public, extensions, pg_temp
+AS $$
+  SELECT ARRAY_AGG(COALESCE(histories.preference, 0))::VECTOR
+  FROM auth.users
+  LEFT OUTER JOIN histories
+    ON histories.user_id = auth.users.id
+    AND histories.wallpaper_id = target_id;
+$$;
+
 CREATE FUNCTION calculate_wallpaper_similarity(first_id UUID, second_id UUID)
 RETURNS FLOAT
 LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public, extensions, pg_temp
 AS $$
-DECLARE
-  popularity_threshold INTEGER;
-  first_popularity INTEGER;
-  second_popularity INTEGER;
-  both_popularity INTEGER;
 BEGIN
-  popularity_threshold = (
-    SELECT COUNT(*)
-    FROM auth.users
-  ) * 0.1;
-  popularity_threshold = GREATEST(popularity_threshold, 10);
-
-  first_popularity = COALESCE((
-    SELECT popularity
-    FROM popularities
-    WHERE id = first_id
-  ), 0);
-
-  second_popularity = COALESCE((
-    SELECT popularity
-    FROM popularities
-    WHERE id = second_id
-  ), 0);
-
-  IF first_popularity >= popularity_threshold AND second_popularity >= popularity_threshold
-  THEN
-    both_popularity = (
-      SELECT COUNT(*)
-      FROM histories
-      WHERE (wallpaper_id = first_id OR wallpaper_id = second_id)
-        AND preference >= 3
-      GROUP BY user_id
-      HAVING COUNT(*) = 2
-    );
-    RETURN both_popularity / SQRT(first_popularity * second_popularity);
-  ELSE
+  IF should_use_embedding(first_id, second_id) THEN
     RETURN -(
-      (
-        SELECT embedding
-        FROM wallpapers
-        WHERE id = first_id
-      )
+      (SELECT embedding FROM wallpapers WHERE id = first_id)
       <#>
-      (
-        SELECT embedding
-        FROM wallpapers
-        WHERE id = second_id
-      )
+      (SELECT embedding FROM wallpapers WHERE id = second_id)
+    );
+  ELSE
+    RETURN (
+      vectorize_wallpaper_histories(first_id)
+      <=>
+      vectorize_wallpaper_histories(second_id)
     );
   END IF;
 END;
