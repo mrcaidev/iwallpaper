@@ -20,9 +20,9 @@ export default async function SignInPage() {
           </p>
         </div>
         <SignInForm />
-        <div className="text-sm text-center">
+        <div className="text-sm text-muted-foreground text-center">
           Don&apos;t have an account?&nbsp;
-          <Link href="/sign-up" className="underline">
+          <Link href="/sign-up" className="underline hover:text-foreground">
             Sign up
           </Link>
         </div>

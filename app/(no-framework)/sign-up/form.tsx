@@ -1,27 +1,40 @@
 "use client";
 
+import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
 import { useToast } from "components/ui/use-toast";
-import { useEffect } from "react";
-import { useFormState } from "react-dom";
+import { LoaderIcon } from "lucide-react";
+import { useState, type FormEventHandler } from "react";
 import { signUp } from "./actions";
-import { SignUpButton } from "./button";
 
 export function SignUpForm() {
-  const [error, action] = useFormState(signUp, "");
+  const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (!error) {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    setIsPending(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email")!.toString();
+    const password = formData.get("password")!.toString();
+    const confirmPassword = formData.get("confirm-password")!.toString();
+
+    if (password !== confirmPassword) {
+      toast({ variant: "destructive", description: "Passwords do not match" });
+      setIsPending(false);
       return;
     }
-    const { dismiss } = toast({ variant: "destructive", description: error });
-    return dismiss;
-  }, [error, toast]);
+
+    const { error } = await signUp(email, password);
+
+    toast({ variant: "destructive", description: error });
+    setIsPending(false);
+  };
 
   return (
-    <form action={action} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -45,18 +58,21 @@ export function SignUpForm() {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="confirmation">Confirm password</Label>
+        <Label htmlFor="confirm-password">Confirm password</Label>
         <Input
           type="password"
-          name="confirmation"
+          name="confirm-password"
           required
           minLength={8}
           maxLength={20}
           placeholder="Type your password again"
-          id="confirmation"
+          id="confirm-password"
         />
       </div>
-      <SignUpButton />
+      <Button type="submit" disabled={isPending} className="w-full">
+        {isPending && <LoaderIcon size={16} className="mr-2 animate-spin" />}
+        {isPending ? "Signing up..." : "Sign up"}
+      </Button>
     </form>
   );
 }

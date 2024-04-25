@@ -4,16 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
 
-export async function signUp(_: unknown, formData: FormData) {
+export async function signUp(email: string, password: string) {
   const supabase = createServerSupabaseClient();
-
-  const email = formData.get("email")!.toString();
-  const password = formData.get("password")!.toString();
-  const passwordConfirmation = formData.get("confirmation")!.toString();
-
-  if (password !== passwordConfirmation) {
-    return "Passwords do not match.";
-  }
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -27,7 +19,7 @@ export async function signUp(_: unknown, formData: FormData) {
   });
 
   if (error) {
-    return error.message;
+    return { error: error.message };
   }
 
   revalidatePath("/", "layout");

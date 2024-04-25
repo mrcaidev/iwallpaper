@@ -1,28 +1,34 @@
 "use client";
 
+import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
 import { useToast } from "components/ui/use-toast";
+import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
-import { useFormState } from "react-dom";
+import { useState, type FormEventHandler } from "react";
 import { signIn } from "./actions";
-import { SignInButton } from "./button";
 
 export function SignInForm() {
-  const [error, action] = useFormState(signIn, "");
+  const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (!error) {
-      return;
-    }
-    const { dismiss } = toast({ variant: "destructive", description: error });
-    return dismiss;
-  }, [error, toast]);
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    setIsPending(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email")!.toString();
+    const password = formData.get("password")!.toString();
+
+    const { error } = await signIn(email, password);
+
+    toast({ variant: "destructive", description: error });
+    setIsPending(false);
+  };
 
   return (
-    <form action={action} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -38,7 +44,7 @@ export function SignInForm() {
           <Label htmlFor="password">Password</Label>
           <Link
             href="/forgot-password"
-            className="text-sm text-muted-foreground underline"
+            className="text-sm text-muted-foreground hover:text-foreground underline"
           >
             Forgot your password?
           </Link>
@@ -52,7 +58,10 @@ export function SignInForm() {
           id="password"
         />
       </div>
-      <SignInButton />
+      <Button type="submit" disabled={isPending} className="w-full">
+        {isPending && <LoaderIcon size={16} className="mr-2 animate-spin" />}
+        {isPending ? "Signing in..." : "Sign in"}
+      </Button>
     </form>
   );
 }
