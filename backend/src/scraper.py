@@ -43,17 +43,19 @@ async def scrape_wallpaper(session: ClientSession, slug: str):
     }
 
 
-async def scrape_unsplash(quantity: int):
+async def scrape_unsplash(quantity: int, offset: int):
     async with ClientSession(
         base_url="https://unsplash.com",
         connector=TCPConnector(limit=10),
     ) as session:
         per_page = calculate_per_page(quantity)
+        page_offset = offset // per_page
         page_total = quantity // per_page
         print(f"Paginated into {page_total} pages, {per_page} per page.")
 
         awaitable_slugs_list = [
-            scrape_page(session, page, per_page) for page in range(1, page_total + 1)
+            scrape_page(session, page, per_page)
+            for page in range(page_offset + 1, page_total + page_offset + 1)
         ]
         slugs_list = await asyncio.gather(*awaitable_slugs_list)
         slugs = [slug for slugs in slugs_list for slug in slugs]
@@ -95,8 +97,8 @@ def upsert_wallpapers(wallpapers: list[dict]):
     print(f"Upserted {count} wallpapers.")
 
 
-async def main(quantity: int):
-    wallpapers = await scrape_unsplash(quantity)
+async def main(quantity: int, offset: int):
+    wallpapers = await scrape_unsplash(quantity, offset)
     embeddings = create_embeddings(wallpapers)
     wallpapers = zip_wallpapers_embeddings(wallpapers, embeddings)
     upsert_wallpapers(wallpapers)
@@ -106,4 +108,5 @@ if __name__ == "__main__":
     import sys
 
     quantity = 10 if len(sys.argv) < 2 else int(sys.argv[1])
-    asyncio.run(main(quantity))
+    offset = 0 if len(sys.argv) < 3 else int(sys.argv[2])
+    asyncio.run(main(quantity, offset))
