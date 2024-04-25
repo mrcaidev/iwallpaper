@@ -10,41 +10,44 @@ import {
 } from "components/ui/dropdown-menu";
 import {
   GithubIcon,
+  HeartIcon,
   LifeBuoyIcon,
   LogInIcon,
-  LogOutIcon,
   PlusIcon,
   SettingsIcon,
   UserCircleIcon,
-  UserIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { createServerSupabaseClient } from "utils/supabase/server";
-import { signOut } from "./actions";
+import { SignOutForm } from "./sign-out-form";
+import { ThemeToggle } from "./theme-toggle";
 
 export async function UserMenu() {
   const supabase = createServerSupabaseClient();
 
   const {
     data: { user },
-    error,
   } = await supabase.auth.getUser();
 
-  if (error || !user) {
+  if (!user) {
     return (
-      <div className="space-x-3">
-        <Button variant="outline" asChild>
-          <Link href="/sign-in">
-            <LogInIcon size={16} className="mr-1" />
-            Sign in
-          </Link>
-        </Button>
-        <Button asChild className="hidden md:inline-flex">
-          <Link href="/sign-up">
-            <PlusIcon size={16} className="mr-1" />
-            Sign up
-          </Link>
-        </Button>
+      <div className="flex gap-3">
+        <div>
+          <Button variant="outline" asChild>
+            <Link href="/sign-in">
+              <LogInIcon size={16} className="mr-2" />
+              Sign in
+            </Link>
+          </Button>
+        </div>
+        <div className="hidden md:block">
+          <Button asChild>
+            <Link href="/sign-up">
+              <PlusIcon size={16} className="mr-2" />
+              Sign up
+            </Link>
+          </Button>
+        </div>
       </div>
     );
   }
@@ -71,9 +74,9 @@ export async function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href={`/users/${user.id}`}>
-            <UserIcon size={16} className="mr-2" />
-            Profile
+          <Link href="/favorites">
+            <HeartIcon size={16} className="mr-2" />
+            Favorites
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
@@ -97,12 +100,10 @@ export async function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <form action={signOut}>
-            <button type="submit" className="flex items-center">
-              <LogOutIcon size={16} className="mr-2" />
-              Sign out
-            </button>
-          </form>
+          <ThemeToggle />
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <SignOutForm />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

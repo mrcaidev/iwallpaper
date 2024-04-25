@@ -4,13 +4,9 @@ import { MoonIcon, SunIcon } from "lucide-react";
 
 export function ThemeToggle() {
   return (
-    <button
-      type="button"
-      onClick={toggleTheme}
-      className="flex items-center gap-3 w-full px-4 py-3 rounded-lg hover:bg-muted font-medium text-sm text-muted-foreground hover:text-primary transition-colors"
-    >
-      <SunIcon size={16} className="dark:hidden" />
-      <MoonIcon size={16} className="hidden dark:block" />
+    <button type="button" onClick={toggleTheme} className="flex items-center">
+      <SunIcon size={16} className="dark:hidden mr-2" />
+      <MoonIcon size={16} className="hidden dark:block mr-2" />
       Toggle theme
     </button>
   );

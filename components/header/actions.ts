@@ -7,7 +7,13 @@ import { createServerSupabaseClient } from "utils/supabase/server";
 export async function signOut() {
   const supabase = createServerSupabaseClient();
 
-  await supabase.auth.signOut();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    await supabase.auth.signOut();
+  }
 
   revalidatePath("/", "layout");
   redirect("/sign-in");
