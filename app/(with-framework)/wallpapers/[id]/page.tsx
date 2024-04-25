@@ -32,7 +32,7 @@ export default async function WallpaperPage({ params: { id } }: Props) {
   }
 
   return (
-    <div className="p-4 lg:p-6">
+    <div>
       <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
         {wallpaper.description}
       </h1>

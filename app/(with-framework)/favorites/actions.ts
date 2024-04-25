@@ -24,7 +24,7 @@ export async function fetchFavorites({ take, skip }: Options) {
 
   const favorites = data.map((favorite) => ({
     attitude: favorite.attitude,
-    ...favorite.wallpapers,
+    ...favorite.wallpapers!,
   }));
 
   return favorites;
