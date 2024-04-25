@@ -120,21 +120,7 @@ export type Database = {
       };
     };
     Views: {
-      popularities: {
-        Row: {
-          id: string | null;
-          popularity: number | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "histories_wallpaper_id_fkey";
-            columns: ["id"];
-            isOneToOne: false;
-            referencedRelation: "wallpapers";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
+      [_ in never]: never;
     };
     Functions: {
       calculate_wallpaper_similarity: {
@@ -150,7 +136,7 @@ export type Database = {
       };
       recommend_wallpapers: {
         Args: {
-          quantity: number;
+          take: number;
         };
         Returns: {
           id: string;
@@ -167,7 +153,8 @@ export type Database = {
           query_embedding: number[];
           take?: number;
           skip?: number;
-          full_text_weight?: number;
+          similarity_threshold?: number;
+          keyword_weight?: number;
           semantic_weight?: number;
           rrf_k?: number;
         };
@@ -181,11 +168,24 @@ export type Database = {
           attitude: Database["public"]["Enums"]["attitude"];
         }[];
       };
+      should_use_embedding: {
+        Args: {
+          first_id: string;
+          second_id: string;
+        };
+        Returns: boolean;
+      };
       tags_to_fts: {
         Args: {
           tags: string[];
         };
         Returns: unknown;
+      };
+      vectorize_wallpaper_histories: {
+        Args: {
+          target_id: string;
+        };
+        Returns: string;
       };
     };
     Enums: {
