@@ -34,11 +34,6 @@ semantic_ranking AS (
   FROM wallpapers
   WHERE -(embedding <#> query_embedding) >= similarity_threshold
   ORDER BY rank ASC
-),
-personal_histories AS (
-  SELECT *
-  FROM histories
-  WHERE user_id = auth.uid()
 )
 SELECT
   wallpapers.id,
@@ -47,11 +42,11 @@ SELECT
   wallpapers.width,
   wallpapers.height,
   wallpapers.tags,
-  personal_histories.attitude
+  histories.attitude
 FROM keyword_ranking
 FULL OUTER JOIN semantic_ranking ON keyword_ranking.id = semantic_ranking.id
 LEFT OUTER JOIN wallpapers ON COALESCE(keyword_ranking.id, semantic_ranking.id) = wallpapers.id
-LEFT OUTER JOIN personal_histories ON wallpapers.id = personal_histories.wallpaper_id
+LEFT OUTER JOIN histories ON wallpapers.id = histories.wallpaper_id
 ORDER BY
   keyword_weight * COALESCE(1.0 / (rrf_k + keyword_ranking.rank), 0.0) +
   semantic_weight * COALESCE(1.0 / (rrf_k + semantic_ranking.rank), 0.0)
