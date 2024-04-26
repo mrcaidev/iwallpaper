@@ -1,4 +1,4 @@
-import { Header } from "components/header/header";
+import { Header } from "components/header";
 import type { PropsWithChildren } from "react";
 
 export default function WithFrameworkLayout({ children }: PropsWithChildren) {
