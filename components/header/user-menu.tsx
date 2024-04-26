@@ -70,7 +70,7 @@ export async function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
-          {user.user_metadata.nickname ?? "My Account"}
+          {user.user_metadata.nickname ?? user.email}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
@@ -99,10 +99,10 @@ export async function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem>
           <ThemeToggle />
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem>
           <SignOutForm />
         </DropdownMenuItem>
       </DropdownMenuContent>
