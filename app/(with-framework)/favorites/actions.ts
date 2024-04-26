@@ -10,7 +10,7 @@ type Options = {
 export async function fetchFavorites({ take, skip }: Options) {
   const supabase = createServerSupabaseClient();
 
-  const { data, error: selectError } = await supabase
+  const { data, error } = await supabase
     .from("histories")
     .select(
       "attitude, wallpapers (id, pathname, description, width, height, tags)",
@@ -18,7 +18,7 @@ export async function fetchFavorites({ take, skip }: Options) {
     .eq("attitude", "liked")
     .range(skip, skip + take - 1);
 
-  if (selectError) {
+  if (error) {
     return [];
   }
 
