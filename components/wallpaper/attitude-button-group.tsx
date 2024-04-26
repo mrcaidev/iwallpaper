@@ -2,7 +2,6 @@
 
 import { Button } from "components/ui/button";
 import { useToast } from "components/ui/use-toast";
-import { cn } from "components/ui/utils";
 import { ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useState } from "react";
 import type { Database } from "utils/supabase/types";
@@ -45,50 +44,11 @@ function useAttitude(
   return { attitude, isPending, like, dislike };
 }
 
-export function DetailAttitudeButtonGroup({
-  wallpaperId,
-  initialAttitude,
-}: Props) {
+export function AttitudeButtonGroup({ wallpaperId, initialAttitude }: Props) {
   const { attitude, isPending, like, dislike } = useAttitude(initialAttitude);
 
   return (
-    <div className="shrink-0 grid grid-cols-2 gap-2">
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => like(wallpaperId)}
-        disabled={isPending}
-      >
-        <ThumbsUpIcon
-          size={16}
-          className={cn("mr-2", attitude === "liked" && "fill-current")}
-        />
-        {attitude === "liked" ? "Liked" : "Like"}
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => dislike(wallpaperId)}
-        disabled={isPending}
-      >
-        <ThumbsDownIcon
-          size={16}
-          className={cn("mr-2", attitude === "disliked" && "fill-current")}
-        />
-        {attitude === "disliked" ? "Disliked" : "Dislike"}
-      </Button>
-    </div>
-  );
-}
-
-export function ThumbnailAttitudeButtonGroup({
-  wallpaperId,
-  initialAttitude,
-}: Props) {
-  const { attitude, isPending, like, dislike } = useAttitude(initialAttitude);
-
-  return (
-    <div className="space-x-1">
+    <div className="shrink-0 space-x-2">
       <Button
         type="button"
         variant="outline"

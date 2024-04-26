@@ -34,7 +34,7 @@ export default async function WallpaperPage({ params: { id } }: Props) {
   return (
     <div>
       <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
-        {wallpaper.description}
+        Wallpaper detail
       </h1>
       <WallpaperDetail wallpaper={{ ...wallpaper, ...history }} />
     </div>

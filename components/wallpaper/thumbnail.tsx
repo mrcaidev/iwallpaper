@@ -2,7 +2,7 @@ import { Skeleton } from "components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import type { Wallpaper } from "utils/types";
-import { ThumbnailAttitudeButtonGroup } from "./attitude-button-group";
+import { AttitudeButtonGroup } from "./attitude-button-group";
 
 type Props = {
   wallpaper: Wallpaper;
@@ -33,7 +33,7 @@ export function WallpaperThumbnail({ wallpaper }: Props) {
         <span className="sr-only">View details of this wallpaper</span>
       </Link>
       <div className="hidden group-hover:block absolute top-2 right-2">
-        <ThumbnailAttitudeButtonGroup
+        <AttitudeButtonGroup
           wallpaperId={wallpaper.id}
           initialAttitude={wallpaper.attitude ?? null}
         />

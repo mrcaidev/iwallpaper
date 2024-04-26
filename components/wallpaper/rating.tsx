@@ -1,6 +1,6 @@
 "use client";
 
-import { Rating as LibraryRating } from "@smastrom/react-rating";
+import { Rating as LibraryRating, Star } from "@smastrom/react-rating";
 import { useToast } from "components/ui/use-toast";
 import { useState } from "react";
 import type { Database } from "utils/supabase/types";
@@ -36,7 +36,16 @@ export function Rating({ wallpaperId, initialRating }: Props) {
       value={rating}
       onChange={rate}
       readOnly={isPending}
-      className="max-w-48 mx-auto"
+      transition="zoom"
+      itemStyles={{
+        itemShapes: Star,
+        itemStrokeWidth: 2,
+        activeFillColor: "#f8fafc",
+        activeStrokeColor: "#f8fafc",
+        inactiveFillColor: "transparent",
+        inactiveStrokeColor: "#f8fafc",
+      }}
+      className="max-w-36"
     />
   );
 }
