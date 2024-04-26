@@ -5,36 +5,21 @@ import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
 import { useToast } from "components/ui/use-toast";
 import { LoaderIcon } from "lucide-react";
-import { useState, type FormEventHandler } from "react";
+import { useActionState, useEffect } from "react";
 import { signUp } from "./actions";
 
 export function SignUpForm() {
-  const [isPending, setIsPending] = useState(false);
+  const [{ error }, action, isPending] = useActionState(signUp, { error: "" });
   const { toast } = useToast();
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    setIsPending(true);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email")!.toString();
-    const password = formData.get("password")!.toString();
-    const confirmPassword = formData.get("confirm-password")!.toString();
-
-    if (password !== confirmPassword) {
-      toast({ variant: "destructive", description: "Passwords do not match" });
-      setIsPending(false);
-      return;
+  useEffect(() => {
+    if (error) {
+      toast({ variant: "destructive", description: error });
     }
-
-    const { error } = await signUp(email, password);
-
-    toast({ variant: "destructive", description: error });
-    setIsPending(false);
-  };
+  }, [error]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form action={action} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input

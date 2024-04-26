@@ -6,29 +6,21 @@ import { Label } from "components/ui/label";
 import { useToast } from "components/ui/use-toast";
 import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
-import { useState, type FormEventHandler } from "react";
+import { useActionState, useEffect } from "react";
 import { signIn } from "./actions";
 
 export function SignInForm() {
-  const [isPending, setIsPending] = useState(false);
+  const [{ error }, action, isPending] = useActionState(signIn, { error: "" });
   const { toast } = useToast();
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    setIsPending(true);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email")!.toString();
-    const password = formData.get("password")!.toString();
-
-    const { error } = await signIn(email, password);
-
-    toast({ variant: "destructive", description: error });
-    setIsPending(false);
-  };
+  useEffect(() => {
+    if (error) {
+      toast({ variant: "destructive", description: error });
+    }
+  }, [error]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form action={action} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input

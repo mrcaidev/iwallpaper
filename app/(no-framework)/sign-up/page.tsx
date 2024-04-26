@@ -23,7 +23,7 @@ export default async function SignUpPage() {
           className="object-cover"
         />
       </div>
-      <div className="place-self-center space-y-6 w-[360px] py-12">
+      <div className="place-self-center space-y-6 w-[360px]">
         <div className="space-y-2 text-center">
           <h1 className="font-bold text-3xl">Sign up</h1>
           <p className="text-muted-foreground text-balance">
@@ -33,7 +33,7 @@ export default async function SignUpPage() {
         <SignUpForm />
         <div className="text-sm text-muted-foreground text-center">
           Already have an account?&nbsp;
-          <Link href="/sign-in" className="underline hover:text-foreground">
+          <Link href="/sign-in" className="hover:text-foreground underline">
             Sign in
           </Link>
         </div>

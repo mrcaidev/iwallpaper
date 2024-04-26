@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default async function SignInPage() {
   return (
     <div className="grid lg:grid-cols-2 h-full">
-      <div className="place-self-center space-y-6 w-[360px] py-12">
+      <div className="place-self-center space-y-6 w-[360px]">
         <div className="space-y-2 text-center">
           <h1 className="font-bold text-3xl">Sign in</h1>
           <p className="text-muted-foreground text-balance">
@@ -22,7 +22,7 @@ export default async function SignInPage() {
         <SignInForm />
         <div className="text-sm text-muted-foreground text-center">
           Don&apos;t have an account?&nbsp;
-          <Link href="/sign-up" className="underline hover:text-foreground">
+          <Link href="/sign-up" className="hover:text-foreground underline">
             Sign up
           </Link>
         </div>
