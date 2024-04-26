@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { fetchFavorites } from "./actions";
 import { FavoritesPageMasonry } from "./masonry";
+
+export const metadata: Metadata = {
+  title: "Favorites",
+  description: "Your favorite wallpapers",
+};
 
 export default async function FavoritesPage() {
   const initialWallpapers = await fetchFavorites({ take: 30, skip: 0 });

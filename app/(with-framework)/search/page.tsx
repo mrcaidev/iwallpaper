@@ -7,6 +7,13 @@ type Props = {
   };
 };
 
+export function generateMetadata({ searchParams: { query } }: Props) {
+  return {
+    title: `Search results for "${query}"`,
+    description: `Browse beautiful wallpapers about ${query} on iWallpaper`,
+  };
+}
+
 export default async function SearchPage({ searchParams: { query } }: Props) {
   const initialWallpapers = await search(query, { take: 30, skip: 0 });
 
