@@ -14,9 +14,9 @@ DECLARE
 BEGIN
   recommended_ids = ARRAY(
     (
-      SELECT DISTINCT id
+      SELECT DISTINCT recommended_id
       FROM (
-        SELECT (candidates->>'id')::UUID AS id
+        SELECT (candidates->>'id')::UUID AS recommended_id
         FROM (
           SELECT UNNEST(wallpapers.most_similar_wallpapers) AS candidates, histories.preference
           FROM histories
@@ -35,7 +35,7 @@ BEGIN
     )
     UNION ALL
     (
-      SELECT id
+      SELECT wallpapers.id
       FROM wallpapers
       TABLESAMPLE SYSTEM_ROWS(take)
     )
@@ -44,21 +44,21 @@ BEGIN
 
   IF auth.uid() IS NOT NULL THEN
     INSERT INTO histories (user_id, wallpaper_id)
-    SELECT auth.uid(), id
-    FROM UNNEST(recommended_ids) AS t(id)
+    SELECT auth.uid(), recommended_id
+    FROM UNNEST(recommended_ids) AS t(recommended_id)
     ON CONFLICT DO NOTHING;
   END IF;
 
   RETURN QUERY (
     SELECT
-      id,
-      pathname,
-      description,
-      width,
-      height,
-      tags
+      wallpapers.id,
+      wallpapers.pathname,
+      wallpapers.description,
+      wallpapers.width,
+      wallpapers.height,
+      wallpapers.tags
     FROM wallpapers
-    WHERE id = ANY(recommended_ids)
+    WHERE wallpapers.id = ANY(recommended_ids)
   );
 END;
 $$;
