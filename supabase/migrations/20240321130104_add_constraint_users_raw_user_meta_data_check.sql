@@ -8,16 +8,12 @@ ALTER TABLE auth.users ADD CONSTRAINT users_raw_user_meta_data_check CHECK (
           "minLength": 2,
           "maxLength": 20
         },
-        "avatar_url": {
-          "type": ["string", "null"],
-          "format": "uri"
+        "avatar_path": {
+          "type": ["string", "null"]
         }
       },
       "additionalProperties": false,
-      "required": [
-        "nickname",
-        "avatar_url"
-      ]
+      "required": ["nickname", "avatar_path"]
     }',
     raw_user_meta_data
   )
