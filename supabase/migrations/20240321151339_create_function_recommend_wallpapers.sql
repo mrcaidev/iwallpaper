@@ -21,13 +21,11 @@ BEGIN
           SELECT UNNEST(wallpapers.most_similar_wallpapers) AS candidates, histories.preference
           FROM histories
           LEFT OUTER JOIN wallpapers ON histories.wallpaper_id = wallpapers.id
-          WHERE histories.user_id = auth.uid()
-            AND histories.preference IS NOT NULL
+          WHERE histories.preference IS NOT NULL
         ) AS candidates_subquery
         WHERE (candidates->>'id')::UUID NOT IN (
           SELECT wallpaper_id
           FROM histories
-          WHERE user_id = auth.uid()
         )
         ORDER BY preference * (candidates->>'similarity')::FLOAT DESC
       ) AS rank_subquery
