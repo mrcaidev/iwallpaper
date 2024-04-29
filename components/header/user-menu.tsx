@@ -80,7 +80,7 @@ export async function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/setting">
+          <Link href="/settings">
             <SettingsIcon size={16} className="mr-2" />
             Settings
           </Link>

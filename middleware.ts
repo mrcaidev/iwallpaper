@@ -2,7 +2,7 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "utils/supabase/types";
 
-const authenticatedRegexs = ["^/favorites", "^/setting"];
+const authenticatedRegexs = ["^/favorites", "^/settings"];
 
 const unauthenticatedRegexs = ["^/sign-in", "^/sign-up", "^/forgot-password"];
 

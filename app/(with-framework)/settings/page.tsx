@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Change your settings on iWallpaper",
 };
 
-export default async function SettingPage() {
+export default async function SettingsPage() {
   const supabase = createServerSupabaseClient();
 
   const {
