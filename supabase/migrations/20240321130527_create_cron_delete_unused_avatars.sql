@@ -1,13 +1,14 @@
 CREATE FUNCTION delete_unused_avatars()
 RETURNS VOID
 LANGUAGE sql
-SECURITY DEFINER SET search_path = storage, pg_temp
+SECURITY DEFINER
+SET search_path = storage, pg_temp
 AS $$
-DELETE FROM storage.objects o
-WHERE o.created_at < (
-    SELECT MAX(created_at)
-    FROM storage.objects
-    WHERE owner = o.owner
+DELETE FROM storage.objects AS candidates
+WHERE candidates.created_at < (
+  SELECT MAX(created_at)
+  FROM storage.objects
+  WHERE owner = candidates.owner
 );
 $$;
 

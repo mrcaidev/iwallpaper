@@ -1,7 +1,8 @@
 CREATE FUNCTION should_use_embedding(first_id UUID, second_id UUID)
 RETURNS BOOLEAN
 LANGUAGE sql
-SECURITY DEFINER SET search_path = public, extensions, pg_temp
+SECURITY DEFINER
+SET search_path = public, pg_temp
 AS $$
 SELECT COUNT(*) < GREATEST(3, 0.1 * (SELECT COUNT(*) FROM auth.users))
 FROM (
@@ -17,19 +18,21 @@ $$;
 CREATE FUNCTION vectorize_wallpaper_histories(target_id UUID)
 RETURNS VECTOR
 LANGUAGE sql
-SECURITY DEFINER SET search_path = public, extensions, pg_temp
+SECURITY DEFINER
+SET search_path = public, extensions, pg_temp
 AS $$
 SELECT ARRAY_AGG(COALESCE(histories.preference, 0))::VECTOR
 FROM auth.users
-LEFT OUTER JOIN histories
-  ON histories.user_id = auth.users.id
-  AND histories.wallpaper_id = target_id;
+LEFT OUTER JOIN histories ON (
+  histories.user_id = auth.users.id AND histories.wallpaper_id = target_id
+);
 $$;
 
 CREATE FUNCTION calculate_wallpaper_similarity(first_id UUID, second_id UUID)
 RETURNS FLOAT
 LANGUAGE plpgsql
-SECURITY DEFINER SET search_path = public, extensions, pg_temp
+SECURITY DEFINER
+SET search_path = public, extensions, pg_temp
 AS $$
 BEGIN
   IF should_use_embedding(first_id, second_id) THEN
@@ -48,32 +51,22 @@ BEGIN
 END;
 $$;
 
-CREATE FUNCTION find_most_similar_wallpapers(batch_size INTEGER = 50)
+CREATE FUNCTION update_most_similar_wallpapers(batch_size INTEGER = 50)
 RETURNS VOID
-LANGUAGE plpgsql
+LANGUAGE sql
 SECURITY DEFINER SET search_path = public, extensions, pg_temp
 AS $$
-BEGIN
-  FOR skip IN 0..(SELECT COUNT(*) FROM wallpapers) BY batch_size LOOP
-    UPDATE wallpapers AS targets
-    SET most_similar_wallpapers = (
-      SELECT ARRAY_AGG(ROW_TO_JSON(subquery))
-      FROM (
-        SELECT id, calculate_wallpaper_similarity(id, targets.id) AS similarity
-        FROM wallpapers
-        WHERE id != targets.id
-        ORDER BY similarity DESC
-        LIMIT 10
-      ) AS subquery
-    )
-    WHERE id IN (
-      SELECT id
-      FROM wallpapers
-      LIMIT batch_size
-      OFFSET skip
-    );
-  END LOOP;
-END;
+UPDATE wallpapers AS targets
+SET most_similar_wallpapers = (
+  SELECT ARRAY_AGG(ROW_TO_JSON(subquery))
+  FROM (
+    SELECT id, calculate_wallpaper_similarity(id, targets.id) AS similarity
+    FROM wallpapers
+    WHERE id != targets.id
+    ORDER BY similarity DESC
+    LIMIT 10
+  ) AS subquery
+);
 $$;
 
-SELECT cron.schedule('0 0 * * *', $$SELECT find_most_similar_wallpapers()$$);
+SELECT cron.schedule('0 0 * * *', $$SELECT update_most_similar_wallpapers()$$);

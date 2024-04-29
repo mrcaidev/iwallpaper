@@ -11,7 +11,7 @@ CREATE TABLE histories (
     CASE
       WHEN rating IS NOT NULL THEN rating
       WHEN attitude = 'disliked' THEN 1
-      WHEN is_downloaded = TRUE THEN 5
+      WHEN is_downloaded THEN 5
       WHEN attitude = 'liked' THEN 4
       ELSE NULL
     END
@@ -20,6 +20,18 @@ CREATE TABLE histories (
 );
 
 ALTER TABLE histories ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can select their own history." ON histories FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert their own history." ON histories FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update their own history." ON histories FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can select their own history."
+ON histories
+FOR SELECT
+USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own history."
+ON histories
+FOR INSERT
+WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own history."
+ON histories
+FOR UPDATE
+USING (auth.uid() = user_id);

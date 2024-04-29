@@ -130,7 +130,7 @@ export type Database = {
         };
         Returns: number;
       };
-      find_most_similar_wallpapers: {
+      delete_unused_avatars: {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
       };
@@ -180,6 +180,12 @@ export type Database = {
           tags: string[];
         };
         Returns: unknown;
+      };
+      update_most_similar_wallpapers: {
+        Args: {
+          batch_size?: number;
+        };
+        Returns: undefined;
       };
       vectorize_wallpaper_histories: {
         Args: {

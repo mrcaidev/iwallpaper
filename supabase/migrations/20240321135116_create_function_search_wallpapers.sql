@@ -32,7 +32,7 @@ semantic_ranking AS (
     ORDER BY embedding <#> query_embedding ASC
   ) AS rank
   FROM wallpapers
-  WHERE -(embedding <#> query_embedding) >= similarity_threshold
+  WHERE embedding <#> query_embedding <= -similarity_threshold
   ORDER BY rank ASC
 )
 SELECT

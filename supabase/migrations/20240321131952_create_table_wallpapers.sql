@@ -19,8 +19,15 @@ CREATE TABLE wallpapers (
   most_similar_wallpapers JSONB[] DEFAULT '{}' NOT NULL
 );
 
-CREATE INDEX ON wallpapers USING GIN (fts);
-CREATE INDEX ON wallpapers USING HNSW (embedding vector_ip_ops);
+CREATE INDEX ON wallpapers
+USING GIN (fts);
+
+CREATE INDEX ON wallpapers
+USING HNSW (embedding vector_ip_ops);
 
 ALTER TABLE wallpapers ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can select all wallpapers." ON wallpapers FOR SELECT USING (TRUE);
+
+CREATE POLICY "Users can select all wallpapers."
+ON wallpapers
+FOR SELECT
+USING (TRUE);
