@@ -1,0 +1,81 @@
+"use client";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "components/ui/alert-dialog";
+import { buttonVariants } from "components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "components/ui/card";
+import { useToast } from "components/ui/use-toast";
+import { LoaderIcon, TrashIcon } from "lucide-react";
+import { useActionState, useEffect } from "react";
+import { deleteUser } from "./actions";
+
+export function DeleteUserButton() {
+  const [{ error }, action, isPending] = useActionState(deleteUser, {
+    error: "",
+  });
+
+  const { toast } = useToast();
+  useEffect(() => {
+    if (error) {
+      toast({ variant: "destructive", description: error });
+    }
+  }, [error]);
+
+  return (
+    <Card className="border-destructive">
+      <CardHeader>
+        <CardTitle>Delete your account</CardTitle>
+        <CardDescription>
+          Permanently remove your personal account and all of its contents from
+          the iWallpaper platform. This action is not reversible, so please
+          continue with caution.
+        </CardDescription>
+      </CardHeader>
+      <CardFooter className="py-4 border-t border-destructive">
+        <AlertDialog>
+          <AlertDialogTrigger
+            className={buttonVariants({ variant: "destructive" })}
+          >
+            <TrashIcon size={16} className="mr-2" />
+            Request to delete
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={isPending}
+                onClick={() => action()}
+                className={buttonVariants({ variant: "destructive" })}
+              >
+                {isPending && <LoaderIcon className="mr-2 animate-spin" />}
+                {isPending ? "Deleting..." : "Continue"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </CardFooter>
+    </Card>
+  );
+}

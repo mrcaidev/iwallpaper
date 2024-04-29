@@ -102,7 +102,7 @@ export function AvatarCard({ initialAvatarPath }: Props) {
   };
 
   return (
-    <Card className="px-4 py-2">
+    <Card className="shrink-0 px-8 py-2">
       <CardHeader>
         <CardTitle>Your avatar</CardTitle>
         <CardDescription>Make your profile stand out.</CardDescription>
