@@ -13,17 +13,6 @@ export function ThemeToggle() {
 }
 
 function toggleTheme() {
-  const isCurrentDark = document.documentElement.classList.contains("dark");
-  const nextTheme = isCurrentDark ? "light" : "dark";
-
-  document.documentElement.classList.toggle("dark");
-  setLocalStorage("theme", nextTheme);
-}
-
-function setLocalStorage(key: string, value: string) {
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    return;
-  }
+  const isCurrentDark = document.documentElement.classList.toggle("dark");
+  localStorage.setItem("theme", isCurrentDark ? "dark" : "light");
 }
