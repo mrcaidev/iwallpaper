@@ -51,7 +51,7 @@ export function NicknameCard({ initialNickname }: Props) {
             id="nickname"
           />
         </CardContent>
-        <CardFooter>
+        <CardFooter className="py-4 border-t">
           <Button type="submit" disabled={isPending}>
             {isPending && (
               <LoaderIcon size={16} className="mr-2 animate-spin" />
