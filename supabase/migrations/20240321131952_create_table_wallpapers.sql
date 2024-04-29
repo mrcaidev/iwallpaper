@@ -3,7 +3,7 @@ RETURNS TSVECTOR
 LANGUAGE sql
 IMMUTABLE
 AS $$
-  SELECT TO_TSVECTOR('english', ARRAY_TO_STRING(tags, ' '));
+SELECT TO_TSVECTOR('english', ARRAY_TO_STRING(tags, ' '));
 $$;
 
 CREATE TABLE wallpapers (
