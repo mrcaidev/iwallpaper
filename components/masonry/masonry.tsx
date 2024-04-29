@@ -5,18 +5,18 @@ import { useInfiniteScroll } from "./use-infinite-scroll";
 import { useWallpaperGroups } from "./use-wallpaper-groups";
 
 type Props = {
-  initialWallpapers: Wallpaper[];
-  pageSize?: number;
   fetchWallpapers: (options: {
     take: number;
     skip: number;
   }) => Promise<Wallpaper[]>;
+  initialWallpapers?: Wallpaper[];
+  pageSize?: number;
 };
 
 export function Masonry({
-  initialWallpapers,
-  pageSize = initialWallpapers.length,
   fetchWallpapers,
+  initialWallpapers = [],
+  pageSize = initialWallpapers.length,
 }: Props) {
   const [wallpapers, setWallpapers] = useState(initialWallpapers);
   const wallpaperGroups = useWallpaperGroups(wallpapers);
@@ -24,11 +24,10 @@ export function Masonry({
   const [skip, setSkip] = useState(initialWallpapers.length);
 
   const bottomRef = useRef<HTMLParagraphElement>(null);
-  useInfiniteScroll(bottomRef, () => {
-    fetchWallpapers({ take: pageSize, skip }).then((nextWallpapers) => {
-      setWallpapers([...wallpapers, ...nextWallpapers]);
-      setSkip((skip) => skip + pageSize);
-    });
+  useInfiniteScroll(bottomRef, async () => {
+    const nextWallpapers = await fetchWallpapers({ take: pageSize, skip });
+    setWallpapers([...wallpapers, ...nextWallpapers]);
+    setSkip((skip) => skip + pageSize);
   });
 
   return (
