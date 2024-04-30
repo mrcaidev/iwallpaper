@@ -3,21 +3,15 @@
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
-import { useToast } from "components/ui/use-toast";
+import { useErrorToast } from "hooks/use-error-toast";
 import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
 import { signIn } from "./actions";
 
 export function SignInForm() {
   const [{ error }, action, isPending] = useActionState(signIn, { error: "" });
-  const { toast } = useToast();
-
-  useEffect(() => {
-    if (error) {
-      toast({ variant: "destructive", description: error });
-    }
-  }, [error]);
+  useErrorToast(error);
 
   return (
     <form action={action} className="space-y-4">
