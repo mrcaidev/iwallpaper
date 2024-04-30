@@ -26,8 +26,11 @@ export default async function SignUpPage() {
       </div>
       <div className="grid place-items-center relative">
         <div className="absolute top-12 left-12">
-          <Link href="/" className="flex items-center">
-            <ChevronLeftIcon size={16} className="mr-2" />
+          <Link href="/" className="group flex items-center">
+            <ChevronLeftIcon
+              size={16}
+              className="mr-2 group-hover:-translate-x-1 transition-transform"
+            />
             Home
           </Link>
         </div>
