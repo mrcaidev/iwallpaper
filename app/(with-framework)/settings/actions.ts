@@ -37,10 +37,7 @@ export async function deleteUser() {
     return { error: "User not signed in" };
   }
 
-  const { error: deleteError } = await supabase.auth.admin.deleteUser(
-    user.id,
-    true,
-  );
+  const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
 
   if (deleteError) {
     return { error: deleteError.message };
