@@ -1,51 +1,23 @@
 "use client";
 
 import { Button } from "components/ui/button";
-import { useToast } from "components/ui/use-toast";
+import { useErrorToast } from "hooks/use-error-toast";
 import { ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
-import { useState } from "react";
-import type { Database } from "utils/supabase/types";
-import { updateAttitude } from "./actions";
+import { useActionState } from "react";
+import { upsertAttitude } from "./actions";
 
 type Props = {
   wallpaperId: string;
-  initialAttitude: Database["public"]["Tables"]["histories"]["Row"]["attitude"];
+  initialAttitude: "liked" | "disliked" | null;
 };
 
-function useAttitude(
-  initialAttitude: Database["public"]["Tables"]["histories"]["Row"]["attitude"],
-) {
-  const [attitude, setAttitude] = useState(initialAttitude);
-  const [isPending, setIsPending] = useState(false);
-  const { toast } = useToast();
-
-  const update =
-    (
-      nextAttitude: Database["public"]["Tables"]["histories"]["Row"]["attitude"],
-    ) =>
-    async (wallpaperId: string) => {
-      setIsPending(true);
-
-      const error = await updateAttitude(wallpaperId, nextAttitude);
-
-      if (error) {
-        toast({ variant: "destructive", description: error });
-        setIsPending(false);
-        return;
-      }
-
-      setAttitude(nextAttitude);
-      setIsPending(false);
-    };
-
-  const like = update(attitude === "liked" ? null : "liked");
-  const dislike = update(attitude === "disliked" ? null : "disliked");
-
-  return { attitude, isPending, like, dislike };
-}
-
 export function AttitudeButtonGroup({ wallpaperId, initialAttitude }: Props) {
-  const { attitude, isPending, like, dislike } = useAttitude(initialAttitude);
+  const [{ attitude, error }, dispatch, isPending] = useActionState(
+    upsertAttitude.bind(null, wallpaperId),
+    { attitude: initialAttitude, error: "" },
+  );
+
+  useErrorToast(error);
 
   return (
     <div className="shrink-0 space-x-2">
@@ -53,7 +25,7 @@ export function AttitudeButtonGroup({ wallpaperId, initialAttitude }: Props) {
         type="button"
         variant="outline"
         size="icon"
-        onClick={() => like(wallpaperId)}
+        onClick={() => dispatch("like")}
         disabled={isPending}
       >
         <ThumbsUpIcon
@@ -68,7 +40,7 @@ export function AttitudeButtonGroup({ wallpaperId, initialAttitude }: Props) {
         type="button"
         variant="outline"
         size="icon"
-        onClick={() => dislike(wallpaperId)}
+        onClick={() => dispatch("dislike")}
         disabled={isPending}
       >
         <ThumbsDownIcon

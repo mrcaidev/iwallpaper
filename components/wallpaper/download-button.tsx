@@ -9,7 +9,7 @@ import {
   RotateCcwIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { updateIsDownloaded } from "./actions";
+import { upsertHistory } from "./actions";
 
 enum DownloadStatus {
   Idle,
@@ -57,15 +57,18 @@ export function DownloadButton({ wallpaperId, pathname }: Props) {
   const download = async () => {
     setStatus(DownloadStatus.Pending);
 
-    const updateError = await updateIsDownloaded(wallpaperId);
+    const { error: upsertError } = await upsertHistory({
+      wallpaper_id: wallpaperId,
+      is_downloaded: true,
+    });
 
-    if (updateError) {
-      toast({ variant: "destructive", description: updateError });
+    if (upsertError) {
+      toast({ variant: "destructive", description: upsertError });
       setStatus(DownloadStatus.Error);
       return;
     }
 
-    const downloadError = await downloadImage(pathname);
+    const { error: downloadError } = await downloadImage(pathname);
 
     if (downloadError) {
       toast({ variant: "destructive", description: downloadError });
@@ -90,7 +93,8 @@ export function DownloadButton({ wallpaperId, pathname }: Props) {
 
 async function downloadImage(pathname: string) {
   try {
-    const response = await fetch(`https://images.unsplash.com/${pathname}`);
+    const imageUrl = new URL(pathname, "https://images.unsplash.com");
+    const response = await fetch(imageUrl);
     const blob = await response.blob();
     const href = URL.createObjectURL(blob);
 
@@ -101,11 +105,11 @@ async function downloadImage(pathname: string) {
 
     URL.revokeObjectURL(href);
 
-    return "";
+    return { error: "" };
   } catch (error) {
     if (error instanceof Error) {
-      return error.message;
+      return { error: error.message };
     }
-    return "Download failed due to an unknown error.";
+    return { error: "Download failed due to an unknown error" };
   }
 }
