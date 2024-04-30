@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "components/ui/button";
-import { useErrorToast } from "hooks/use-error-toast";
+import { useErrorToast } from "components/ui/use-toast";
 import { ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useActionState } from "react";
 import { upsertAttitude } from "./actions";

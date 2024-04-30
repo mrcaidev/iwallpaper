@@ -3,7 +3,7 @@
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
-import { useErrorToast } from "hooks/use-error-toast";
+import { useErrorToast } from "components/ui/use-toast";
 import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useActionState } from "react";

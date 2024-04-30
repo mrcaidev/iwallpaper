@@ -1,7 +1,7 @@
 "use client";
 
 import { Rating as LibraryRating, Star } from "@smastrom/react-rating";
-import { useErrorToast } from "hooks/use-error-toast";
+import { useErrorToast } from "components/ui/use-toast";
 import { useActionState } from "react";
 import type { Database } from "utils/supabase/types";
 import { upsertRating } from "./actions";
