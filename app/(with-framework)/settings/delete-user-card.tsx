@@ -19,9 +19,9 @@ import {
   CardHeader,
   CardTitle,
 } from "components/ui/card";
-import { useToast } from "components/ui/use-toast";
+import { useErrorToast } from "components/ui/use-toast";
 import { LoaderIcon, TrashIcon } from "lucide-react";
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
 import { deleteUser } from "./actions";
 
 export function DeleteUserButton() {
@@ -29,12 +29,7 @@ export function DeleteUserButton() {
     error: "",
   });
 
-  const { toast } = useToast();
-  useEffect(() => {
-    if (error) {
-      toast({ variant: "destructive", description: error });
-    }
-  }, [error]);
+  useErrorToast(error);
 
   return (
     <Card className="border-destructive">

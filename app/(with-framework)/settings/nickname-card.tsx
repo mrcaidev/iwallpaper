@@ -10,9 +10,9 @@ import {
   CardTitle,
 } from "components/ui/card";
 import { Input } from "components/ui/input";
-import { useToast } from "components/ui/use-toast";
+import { useErrorToast } from "components/ui/use-toast";
 import { LoaderIcon } from "lucide-react";
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
 import { updateNickname } from "./actions";
 
 type Props = {
@@ -28,12 +28,7 @@ export function NicknameCard({ initialNickname }: Props) {
     },
   );
 
-  const { toast } = useToast();
-  useEffect(() => {
-    if (error) {
-      toast({ variant: "destructive", description: error });
-    }
-  }, [error]);
+  useErrorToast(error);
 
   return (
     <Card>
