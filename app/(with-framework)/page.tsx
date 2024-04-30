@@ -1,3 +1,4 @@
+import { PageTitle } from "components/ui/page-title";
 import type { Metadata } from "next";
 import { fetchRecommendations } from "./actions";
 import { HomePageMasonry } from "./masonry";
@@ -11,9 +12,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
-        Recommended for you
-      </h1>
+      <PageTitle>Recommended for you</PageTitle>
       <HomePageMasonry initialWallpapers={initialWallpapers} />
     </div>
   );

@@ -1,3 +1,4 @@
+import { PageTitle } from "components/ui/page-title";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
@@ -23,9 +24,7 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
-        Settings
-      </h1>
+      <PageTitle>Settings</PageTitle>
       <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-4 md:gap-x-16">
         <AvatarCard initialAvatarPath={user.user_metadata.avatar_path} />
         <div className="grow space-y-4">

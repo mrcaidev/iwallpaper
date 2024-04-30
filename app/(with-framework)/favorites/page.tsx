@@ -1,3 +1,4 @@
+import { PageTitle } from "components/ui/page-title";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchFavorites } from "./actions";
@@ -13,9 +14,7 @@ export default async function FavoritesPage() {
 
   return (
     <div>
-      <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
-        Your favorites
-      </h1>
+      <PageTitle>Your favorites</PageTitle>
       {initialWallpapers.length === 0 ? (
         <div className="flex flex-col justify-center items-center gap-3 min-h-96 text-center">
           <p className="text-muted-foreground text-balance">

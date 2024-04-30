@@ -1,3 +1,4 @@
+import { PageTitle } from "components/ui/page-title";
 import { WallpaperDetail } from "components/wallpaper";
 import { notFound } from "next/navigation";
 import { createServerSupabaseClient } from "utils/supabase/server";
@@ -33,9 +34,7 @@ export default async function WallpaperPage({ params: { id } }: Props) {
 
   return (
     <div>
-      <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
-        Wallpaper detail
-      </h1>
+      <PageTitle>Wallpaper detail</PageTitle>
       <WallpaperDetail wallpaper={{ ...wallpaper, ...history }} />
     </div>
   );

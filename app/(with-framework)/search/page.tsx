@@ -1,3 +1,4 @@
+import { PageTitle } from "components/ui/page-title";
 import Link from "next/link";
 import { search } from "./actions";
 import { SearchPageMasonry } from "./masonry";
@@ -20,9 +21,7 @@ export default async function SearchPage({ searchParams: { query } }: Props) {
 
   return (
     <div>
-      <h1 className="mb-4 lg:mb-6 font-semibold text-lg md:text-2xl">
-        Search results for &quot;{query}&quot;
-      </h1>
+      <PageTitle>Search results for &quot;{query}&quot;</PageTitle>
       {initialWallpapers.length === 0 ? (
         <div className="flex flex-col justify-center items-center gap-3 min-h-96 text-center">
           <p className="text-muted-foreground text-balance">
