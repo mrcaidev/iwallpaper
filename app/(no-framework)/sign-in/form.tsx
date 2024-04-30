@@ -10,11 +10,14 @@ import { useActionState } from "react";
 import { signIn } from "./actions";
 
 export function SignInForm() {
-  const [{ error }, action, isPending] = useActionState(signIn, { error: "" });
+  const [{ error }, dispatch, isPending] = useActionState(signIn, {
+    error: "",
+  });
+
   useErrorToast(error);
 
   return (
-    <form action={action} className="space-y-4">
+    <form action={dispatch} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input

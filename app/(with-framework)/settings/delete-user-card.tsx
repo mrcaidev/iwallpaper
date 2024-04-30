@@ -25,7 +25,7 @@ import { useActionState } from "react";
 import { deleteUser } from "./actions";
 
 export function DeleteUserButton() {
-  const [{ error }, action, isPending] = useActionState(deleteUser, {
+  const [{ error }, dispatch, isPending] = useActionState(deleteUser, {
     error: "",
   });
 
@@ -61,7 +61,7 @@ export function DeleteUserButton() {
               <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 disabled={isPending}
-                onClick={() => action()}
+                onClick={() => dispatch()}
                 className={buttonVariants({ variant: "destructive" })}
               >
                 {isPending && <LoaderIcon className="mr-2 animate-spin" />}

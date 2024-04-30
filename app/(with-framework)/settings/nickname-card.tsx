@@ -20,12 +20,9 @@ type Props = {
 };
 
 export function NicknameCard({ initialNickname }: Props) {
-  const [{ nickname, error }, action, isPending] = useActionState(
+  const [{ nickname, error }, dispatch, isPending] = useActionState(
     updateNickname,
-    {
-      nickname: initialNickname,
-      error: "",
-    },
+    { nickname: initialNickname, error: "" },
   );
 
   useErrorToast(error);
@@ -36,7 +33,7 @@ export function NicknameCard({ initialNickname }: Props) {
         <CardTitle>Nickname</CardTitle>
         <CardDescription>Give yourself a cool name!</CardDescription>
       </CardHeader>
-      <form action={action}>
+      <form action={dispatch}>
         <CardContent>
           <Input
             name="nickname"
