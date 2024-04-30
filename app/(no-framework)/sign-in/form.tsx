@@ -3,6 +3,7 @@
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
+import { PasswordInput } from "components/ui/password-input";
 import { useErrorToast } from "components/ui/use-toast";
 import { LoaderIcon } from "lucide-react";
 import Link from "next/link";
@@ -38,8 +39,7 @@ export function SignInForm() {
             Forgot your password?
           </Link>
         </div>
-        <Input
-          type="password"
+        <PasswordInput
           name="password"
           required
           minLength={8}

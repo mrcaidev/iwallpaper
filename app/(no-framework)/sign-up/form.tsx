@@ -3,6 +3,7 @@
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
+import { PasswordInput } from "components/ui/password-input";
 import { useErrorToast } from "components/ui/use-toast";
 import { LoaderIcon } from "lucide-react";
 import { useActionState } from "react";
@@ -29,8 +30,7 @@ export function SignUpForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input
-          type="password"
+        <PasswordInput
           name="password"
           required
           minLength={8}
@@ -41,8 +41,7 @@ export function SignUpForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="confirm-password">Confirm password</Label>
-        <Input
-          type="password"
+        <PasswordInput
           name="confirm-password"
           required
           minLength={8}
