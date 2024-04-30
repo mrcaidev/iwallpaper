@@ -17,6 +17,18 @@ import { LoaderIcon, UserCircleIcon } from "lucide-react";
 import { useActionState, useEffect, useState, type ChangeEvent } from "react";
 import { createBrowserSupabaseClient } from "utils/supabase/browser";
 
+async function downloadAvatar(path: string) {
+  const supabase = createBrowserSupabaseClient();
+
+  const { data, error } = await supabase.storage.from("avatars").download(path);
+
+  if (error) {
+    return "";
+  }
+
+  return URL.createObjectURL(data);
+}
+
 type UploadAvatarState = {
   avatarPath: string;
   error: string;
@@ -80,29 +92,11 @@ export function AvatarCard({ initialAvatarPath }: Props) {
 
   useErrorToast(error);
 
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
-
+  const [avatarUrl, setAvatarUrl] = useState("");
   useEffect(() => {
-    if (!avatarPath) {
-      return;
+    if (avatarPath) {
+      downloadAvatar(avatarPath).then(setAvatarUrl);
     }
-
-    const buildAvatarUrl = async () => {
-      const supabase = createBrowserSupabaseClient();
-
-      const { data, error } = await supabase.storage
-        .from("avatars")
-        .download(avatarPath);
-
-      if (error) {
-        return;
-      }
-
-      const url = URL.createObjectURL(data);
-      setAvatarUrl(url);
-    };
-
-    buildAvatarUrl();
   }, [avatarPath]);
 
   return (
