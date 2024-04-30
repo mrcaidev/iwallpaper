@@ -11,7 +11,7 @@ import {
 } from "components/ui/card";
 import { Input } from "components/ui/input";
 import { useErrorToast } from "components/ui/use-toast";
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon, SaveIcon } from "lucide-react";
 import { useActionState } from "react";
 import { updateNickname } from "./actions";
 
@@ -38,17 +38,26 @@ export function NicknameCard({ initialNickname }: Props) {
           <Input
             name="nickname"
             defaultValue={nickname}
+            required
+            minLength={2}
+            maxLength={20}
             placeholder="2-20 characters"
-            disabled={isPending}
             id="nickname"
           />
         </CardContent>
         <CardFooter className="py-4 border-t">
           <Button type="submit" disabled={isPending}>
-            {isPending && (
-              <LoaderIcon size={16} className="mr-2 animate-spin" />
+            {isPending ? (
+              <>
+                <LoaderIcon size={16} className="mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <SaveIcon size={16} className="mr-2" />
+                Save
+              </>
             )}
-            {isPending ? "Saving..." : "Save"}
           </Button>
         </CardFooter>
       </form>
