@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar";
 import { buttonVariants } from "components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -102,28 +103,30 @@ export function AvatarCard({ initialAvatarPath }: Props) {
   };
 
   return (
-    <Card className="shrink-0 px-8 py-2">
+    <Card className="shrink-0 px-6 py-2">
       <CardHeader>
         <CardTitle>Your avatar</CardTitle>
         <CardDescription>Make your profile stand out.</CardDescription>
       </CardHeader>
-      <Avatar className="w-48 h-48 mx-auto">
-        <AvatarImage src={avatarUrl} alt="Your avatar" />
-        <AvatarFallback>
-          <div className="bg-muted">
-            <UserCircleIcon size={144} className="text-muted-foreground" />
-          </div>
-        </AvatarFallback>
-      </Avatar>
+      <CardContent>
+        <Avatar className="w-48 h-48 mx-auto">
+          <AvatarImage src={avatarUrl} alt="Your avatar" />
+          <AvatarFallback>
+            <div className="bg-muted">
+              <UserCircleIcon size={144} className="text-muted-foreground" />
+            </div>
+          </AvatarFallback>
+        </Avatar>
+      </CardContent>
       <CardFooter>
         <label
           htmlFor="avatar"
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "w-full mt-6 cursor-pointer",
+            "w-full cursor-pointer",
           )}
         >
-          {isPending && <LoaderIcon size={16} className="mr-2" />}
+          {isPending && <LoaderIcon size={16} className="mr-2 animate-spin" />}
           {isPending ? "Uploading avatar..." : "Change avatar"}
         </label>
         <Input
