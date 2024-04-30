@@ -1,3 +1,4 @@
+import { ChevronLeftIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,19 +13,27 @@ export const metadata: Metadata = {
 export default async function SignInPage() {
   return (
     <div className="grid lg:grid-cols-2 h-full">
-      <div className="place-self-center space-y-6 w-[360px]">
-        <div className="space-y-2 text-center">
-          <h1 className="font-bold text-3xl">Sign in</h1>
-          <p className="text-muted-foreground text-balance">
-            Sign in to enjoy all features of iWallpaper
-          </p>
-        </div>
-        <SignInForm />
-        <div className="text-sm text-muted-foreground text-center">
-          Don&apos;t have an account?&nbsp;
-          <Link href="/sign-up" className="hover:text-foreground underline">
-            Sign up
+      <div className="grid place-items-center relative">
+        <div className="absolute top-12 left-12">
+          <Link href="/" className="flex items-center">
+            <ChevronLeftIcon size={16} className="mr-2" />
+            Home
           </Link>
+        </div>
+        <div className="space-y-6 w-[360px]">
+          <div className="space-y-2 text-center">
+            <h1 className="font-bold text-3xl">Sign in</h1>
+            <p className="text-muted-foreground text-balance">
+              Sign in to enjoy all features of iWallpaper
+            </p>
+          </div>
+          <SignInForm />
+          <div className="text-sm text-muted-foreground text-center">
+            Don&apos;t have an account?&nbsp;
+            <Link href="/sign-up" className="hover:text-foreground underline">
+              Sign up
+            </Link>
+          </div>
         </div>
       </div>
       <div className="hidden lg:block relative bg-muted">
