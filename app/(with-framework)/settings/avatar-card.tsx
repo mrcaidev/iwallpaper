@@ -14,23 +14,11 @@ import { Input } from "components/ui/input";
 import { useErrorToast } from "components/ui/use-toast";
 import { cn } from "components/ui/utils";
 import { LoaderIcon, UserCircleIcon } from "lucide-react";
-import { useActionState, useEffect, useState, type ChangeEvent } from "react";
+import { useActionState, type ChangeEvent } from "react";
 import { createBrowserSupabaseClient } from "utils/supabase/browser";
 
-async function downloadAvatar(path: string) {
-  const supabase = createBrowserSupabaseClient();
-
-  const { data, error } = await supabase.storage.from("avatars").download(path);
-
-  if (error) {
-    return "";
-  }
-
-  return URL.createObjectURL(data);
-}
-
 type UploadAvatarState = {
-  avatarPath: string;
+  avatarUrl: string;
   error: string;
 };
 
@@ -67,37 +55,32 @@ async function uploadAvatar(
     return { ...state, error: uploadError.message };
   }
 
-  const nextAvatarPath = data.path;
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("avatars").getPublicUrl(data.path);
 
   const { error: updateError } = await supabase.auth.updateUser({
-    data: { avatar_path: nextAvatarPath },
+    data: { avatar_url: publicUrl },
   });
 
   if (updateError) {
     return { ...state, error: updateError.message };
   }
 
-  return { ...state, avatarPath: nextAvatarPath, error: "" };
+  return { ...state, avatarUrl: publicUrl, error: "" };
 }
 
 type Props = {
-  initialAvatarPath: string;
+  initialAvatarUrl: string;
 };
 
-export function AvatarCard({ initialAvatarPath }: Props) {
-  const [{ avatarPath, error }, dispatch, isPending] = useActionState(
+export function AvatarCard({ initialAvatarUrl }: Props) {
+  const [{ avatarUrl, error }, dispatch, isPending] = useActionState(
     uploadAvatar,
-    { avatarPath: initialAvatarPath, error: "" },
+    { avatarUrl: initialAvatarUrl, error: "" },
   );
 
   useErrorToast(error);
-
-  const [avatarUrl, setAvatarUrl] = useState("");
-  useEffect(() => {
-    if (avatarPath) {
-      downloadAvatar(avatarPath).then(setAvatarUrl);
-    }
-  }, [avatarPath]);
 
   return (
     <Card className="shrink-0 px-6 py-2">
@@ -109,9 +92,7 @@ export function AvatarCard({ initialAvatarPath }: Props) {
         <Avatar className="w-48 h-48 mx-auto">
           <AvatarImage src={avatarUrl} alt="Your avatar" />
           <AvatarFallback>
-            <div className="bg-muted">
-              <UserCircleIcon size={144} className="text-muted-foreground" />
-            </div>
+            <UserCircleIcon size={144} className="text-muted-foreground" />
           </AvatarFallback>
         </Avatar>
       </CardContent>
