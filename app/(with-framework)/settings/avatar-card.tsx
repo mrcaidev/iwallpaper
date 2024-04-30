@@ -11,21 +11,76 @@ import {
   CardTitle,
 } from "components/ui/card";
 import { Input } from "components/ui/input";
-import { useToast } from "components/ui/use-toast";
+import { useErrorToast } from "components/ui/use-toast";
 import { cn } from "components/ui/utils";
 import { LoaderIcon, UserCircleIcon } from "lucide-react";
-import { useEffect, useState, type ChangeEventHandler } from "react";
+import { useActionState, useEffect, useState, type ChangeEvent } from "react";
 import { createBrowserSupabaseClient } from "utils/supabase/browser";
 
+type UploadAvatarState = {
+  avatarPath: string;
+  error: string;
+};
+
+async function uploadAvatar(
+  state: UploadAvatarState,
+  event: ChangeEvent<HTMLInputElement>,
+) {
+  event.preventDefault();
+
+  const files = event.currentTarget.files;
+
+  if (!files || !files[0]) {
+    return state;
+  }
+
+  const supabase = createBrowserSupabaseClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { ...state, error: "Please sign in first" };
+  }
+
+  const file = files[0];
+  const fileExtension = file.name.split(".").pop();
+
+  const { data, error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(`${user.id}-${Math.random()}.${fileExtension}`, file);
+
+  if (uploadError) {
+    return { ...state, error: uploadError.message };
+  }
+
+  const nextAvatarPath = data.path;
+
+  const { error: updateError } = await supabase.auth.updateUser({
+    data: { avatar_path: nextAvatarPath },
+  });
+
+  if (updateError) {
+    return { ...state, error: updateError.message };
+  }
+
+  return { ...state, avatarPath: nextAvatarPath, error: "" };
+}
+
 type Props = {
-  initialAvatarPath: string | undefined;
+  initialAvatarPath: string;
 };
 
 export function AvatarCard({ initialAvatarPath }: Props) {
-  const [avatarPath, setAvatarPath] = useState(initialAvatarPath);
+  const [{ avatarPath, error }, dispatch, isPending] = useActionState(
+    uploadAvatar,
+    { avatarPath: initialAvatarPath, error: "" },
+  );
+
+  useErrorToast(error);
+
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
-  const [isPending, setIsPending] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     if (!avatarPath) {
@@ -40,7 +95,6 @@ export function AvatarCard({ initialAvatarPath }: Props) {
         .download(avatarPath);
 
       if (error) {
-        toast({ variant: "destructive", description: error.message });
         return;
       }
 
@@ -50,57 +104,6 @@ export function AvatarCard({ initialAvatarPath }: Props) {
 
     buildAvatarUrl();
   }, [avatarPath]);
-
-  const handleChange: ChangeEventHandler<HTMLInputElement> = async (e) => {
-    setIsPending(true);
-
-    const files = e.currentTarget.files;
-
-    if (!files || !files[0]) {
-      setIsPending(false);
-      return;
-    }
-
-    const supabase = createBrowserSupabaseClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      toast({ variant: "destructive", description: "Please sign in first" });
-      setIsPending(false);
-      return;
-    }
-
-    const file = files[0];
-    const fileExtension = file.name.split(".").pop();
-
-    const { data, error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(`${user.id}-${Math.random()}.${fileExtension}`, file);
-
-    if (uploadError) {
-      toast({ variant: "destructive", description: uploadError.message });
-      setIsPending(false);
-      return;
-    }
-
-    const nextAvatarPath = data.path;
-
-    const { error: updateError } = await supabase.auth.updateUser({
-      data: { avatar_path: nextAvatarPath },
-    });
-
-    if (updateError) {
-      toast({ variant: "destructive", description: updateError.message });
-      setIsPending(false);
-      return;
-    }
-
-    setAvatarPath(nextAvatarPath);
-    setIsPending(false);
-  };
 
   return (
     <Card className="shrink-0 px-6 py-2">
@@ -132,7 +135,7 @@ export function AvatarCard({ initialAvatarPath }: Props) {
         <Input
           type="file"
           accept="image/*"
-          onChange={handleChange}
+          onChange={dispatch}
           disabled={isPending}
           id="avatar"
           className="hidden"
