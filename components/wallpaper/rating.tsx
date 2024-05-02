@@ -25,14 +25,7 @@ export function Rating({ wallpaperId, initialRating }: Props) {
       onChange={dispatch}
       readOnly={isPending}
       transition="zoom"
-      itemStyles={{
-        itemShapes: Star,
-        itemStrokeWidth: 2,
-        activeFillColor: "#f8fafc",
-        activeStrokeColor: "#f8fafc",
-        inactiveFillColor: "transparent",
-        inactiveStrokeColor: "#f8fafc",
-      }}
+      itemStyles={{ itemShapes: Star, itemStrokeWidth: 2 }}
       className="max-w-36"
     />
   );

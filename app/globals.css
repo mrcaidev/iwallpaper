@@ -33,6 +33,11 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    --rr--stroke-off-color: hsl(var(--foreground));
+    --rr--stroke-on-color: hsl(var(--foreground));
+    --rr--fill-off-color: transparent;
+    --rr--fill-on-color: hsl(var(--foreground));
   }
 
   .dark {
