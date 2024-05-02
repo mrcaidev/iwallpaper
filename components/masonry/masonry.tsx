@@ -1,5 +1,5 @@
 import { WallpaperThumbnail } from "components/wallpaper";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Wallpaper } from "utils/types";
 import { useInfiniteScroll } from "./use-infinite-scroll";
 import { useWallpaperGroups } from "./use-wallpaper-groups";
@@ -19,6 +19,9 @@ export function Masonry({
   pageSize = initialWallpapers.length,
 }: Props) {
   const [wallpapers, setWallpapers] = useState(initialWallpapers);
+
+  useEffect(() => setWallpapers(initialWallpapers), [initialWallpapers]);
+
   const wallpaperGroups = useWallpaperGroups(wallpapers);
 
   const [skip, setSkip] = useState(initialWallpapers.length);
