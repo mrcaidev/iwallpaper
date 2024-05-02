@@ -22,7 +22,7 @@ Deno.serve(async (request) => {
 
   if (!parseResult.success) {
     return Response.json(
-      { message: parseResult.error.issues[0].message },
+      { error: parseResult.error.issues[0].message },
       { status: 400 },
     );
   }
@@ -42,7 +42,7 @@ Deno.serve(async (request) => {
   });
 
   if (error) {
-    return Response.json({ message: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: 500 });
   }
 
   return Response.json(data);
