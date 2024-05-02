@@ -130,10 +130,6 @@ export type Database = {
         };
         Returns: number;
       };
-      delete_unused_avatars: {
-        Args: Record<PropertyKey, never>;
-        Returns: undefined;
-      };
       recommend_wallpapers: {
         Args: {
           take: number;
