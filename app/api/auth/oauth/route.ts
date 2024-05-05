@@ -2,10 +2,12 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "utils/supabase/server";
 
 export async function GET(request: Request) {
-  const code = new URL(request.url).searchParams.get("code");
+  const url = new URL(request.url);
+  const origin = url.origin;
+  const code = url.searchParams.get("code");
 
   if (!code) {
-    return NextResponse.redirect("/");
+    return NextResponse.redirect(origin + "/");
   }
 
   const supabase = createServerSupabaseClient();
@@ -16,5 +18,5 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message });
   }
 
-  return NextResponse.redirect("/");
+  return NextResponse.redirect(origin + "/");
 }
