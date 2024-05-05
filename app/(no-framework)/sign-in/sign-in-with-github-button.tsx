@@ -12,7 +12,7 @@ async function signInWithGithub(_: unknown) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: "https://iwallpaper.mrcai.dev/api/auth/oauth",
+      redirectTo: window.location.origin + "/api/auth/oauth",
     },
   });
 
