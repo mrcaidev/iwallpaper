@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import background from "./background.webp";
 import { SignInForm } from "./form";
+import { SignInWithGithubButton } from "./sign-in-with-github-button";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -23,15 +24,17 @@ export default async function SignInPage() {
             Home
           </Link>
         </div>
-        <div className="space-y-6 w-[360px]">
-          <div className="space-y-2 text-center">
+        <div className="w-[360px]">
+          <div className="space-y-2 mb-4 text-center">
             <h1 className="font-bold text-3xl">Sign in</h1>
             <p className="text-muted-foreground text-balance">
               Sign in to enjoy all features of iWallpaper
             </p>
           </div>
+          <SignInWithGithubButton />
+          <p className="my-2 text-muted-foreground text-center">or</p>
           <SignInForm />
-          <div className="text-sm text-muted-foreground text-center">
+          <div className="mt-6 text-sm text-muted-foreground text-center">
             Don&apos;t have an account?&nbsp;
             <Link href="/sign-up" className="hover:text-foreground underline">
               Sign up
