@@ -20,12 +20,14 @@ export default async function HomePage({ searchParams: { code } }: Props) {
   if (code) {
     const supabase = createServerSupabaseClient();
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
       console.error("Error exchanging code for session", error);
       return;
     }
+
+    console.log(data);
 
     revalidatePath("/", "layout");
     redirect("/");
