@@ -9,7 +9,12 @@ import { createBrowserSupabaseClient } from "utils/supabase/browser";
 async function signInWithGithub(_: unknown) {
   const supabase = createBrowserSupabaseClient();
 
-  const { error } = await supabase.auth.signInWithOAuth({ provider: "github" });
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "github",
+    options: {
+      redirectTo: "https://iwallpaper.mrcai.dev/api/auth/oauth",
+    },
+  });
 
   if (error) {
     return { error: error.message };
