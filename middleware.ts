@@ -1,12 +1,45 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import {
+  NextResponse,
+  type MiddlewareConfig,
+  type NextMiddleware,
+  type NextRequest,
+} from "next/server";
 import type { Database } from "utils/supabase/types";
 
-const authenticatedRegexs = ["^/favorites", "^/settings"];
+function mustAuthenticate(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
 
-const unauthenticatedRegexs = ["^/sign-in", "^/sign-up", "^/forgot-password"];
+  if (pathname === "/favorites") {
+    return true;
+  }
 
-export async function middleware(request: NextRequest) {
+  if (pathname === "/settings") {
+    return true;
+  }
+
+  return false;
+}
+
+function mustNotAuthenticate(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  if (pathname === "/sign-in") {
+    return true;
+  }
+
+  if (pathname === "/sign-up") {
+    return true;
+  }
+
+  if (pathname === "/forgot-password") {
+    return true;
+  }
+
+  return false;
+}
+
+export const middleware: NextMiddleware = async (request: NextRequest) => {
   let response = NextResponse.next({
     request: { headers: request.headers },
   });
@@ -41,28 +74,22 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAuthenticatedPathname = authenticatedRegexs.some((regex) =>
-    request.nextUrl.pathname.match(regex),
-  );
-  if (isAuthenticatedPathname && !user) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/sign-in";
-    return NextResponse.redirect(redirectUrl);
+  const redirectTo = request.nextUrl.clone();
+
+  if (mustAuthenticate(request) && !user) {
+    redirectTo.pathname = "/sign-in";
+    return NextResponse.redirect(redirectTo);
   }
 
-  const isUnauthenticatedPathname = unauthenticatedRegexs.some((regex) =>
-    request.nextUrl.pathname.match(regex),
-  );
-  if (isUnauthenticatedPathname && user) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/";
-    return NextResponse.redirect(redirectUrl);
+  if (mustNotAuthenticate(request) && user) {
+    redirectTo.pathname = "/";
+    return NextResponse.redirect(redirectTo);
   }
 
   return response;
-}
+};
 
-export const config = {
+export const config: MiddlewareConfig = {
   matcher: [
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
