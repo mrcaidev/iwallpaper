@@ -66,7 +66,8 @@ SET most_similar_wallpapers = (
     ORDER BY similarity DESC
     LIMIT 10
   ) AS subquery
-);
+)
+WHERE most_similar_wallpapers = '{}';
 $$;
 
 SELECT cron.schedule('0 0 * * *', $$SELECT update_most_similar_wallpapers()$$);
