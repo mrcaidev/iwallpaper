@@ -51,7 +51,7 @@ BEGIN
 END;
 $$;
 
-CREATE FUNCTION update_most_similar_wallpapers(batch_size INTEGER = 50)
+CREATE FUNCTION update_most_similar_wallpapers()
 RETURNS VOID
 LANGUAGE sql
 SECURITY DEFINER SET search_path = public, extensions, pg_temp
