@@ -20,19 +20,19 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@smastrom/react-rating": "^1.5.0",
     "@supabase/ssr": "^0.3.0",
-    "@supabase/supabase-js": "^2.42.7",
+    "@supabase/supabase-js": "^2.43.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.376.0",
+    "lucide-react": "^0.378.0",
     "next": "14.3.0-canary.24",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.4"
+    "zod": "^3.23.7"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.12.10",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
@@ -42,7 +42,7 @@
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "shadcn-ui": "^0.8.0",
-    "supabase": "^1.163.6",
+    "supabase": "1.165.0",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5"
   }
