@@ -4,17 +4,25 @@ import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { Label } from "components/ui/label";
 import { PasswordInput } from "components/ui/password-input";
-import { useErrorToast } from "components/ui/use-toast";
+import { useErrorToast, useToast } from "components/ui/use-toast";
 import { LoaderIcon } from "lucide-react";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { signUp } from "./actions";
 
 export function SignUpForm() {
-  const [{ error }, dispatch, isPending] = useActionState(signUp, {
+  const [{ success, error }, dispatch, isPending] = useActionState(signUp, {
+    success: false,
     error: "",
   });
 
   useErrorToast(error);
+
+  const { toast } = useToast();
+  useEffect(() => {
+    if (success) {
+      toast({ description: "Check your email inbox to confirm sign-up." });
+    }
+  }, [success, toast]);
 
   return (
     <form action={dispatch} className="space-y-4">
