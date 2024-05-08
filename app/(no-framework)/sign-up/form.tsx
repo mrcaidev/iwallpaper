@@ -6,29 +6,38 @@ import { Label } from "components/ui/label";
 import { PasswordInput } from "components/ui/password-input";
 import { useErrorToast, useToast } from "components/ui/use-toast";
 import { LoaderIcon } from "lucide-react";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { signUp } from "./actions";
 
 export function SignUpForm() {
-  const [{ success, error }, dispatch, isPending] = useActionState(signUp, {
-    success: false,
-    error: "",
-  });
+  const [{ sentEmailCount, error }, dispatch, isPending] = useActionState(
+    signUp,
+    { sentEmailCount: 0, error: "" },
+  );
+
+  const ref = useRef<HTMLInputElement>(null);
 
   useErrorToast(error);
 
   const { toast } = useToast();
+
   useEffect(() => {
-    if (success) {
-      toast({ description: "Check your email inbox to confirm sign-up." });
+    if (sentEmailCount <= 0) {
+      return;
     }
-  }, [success, toast]);
+
+    toast({
+      title: "Check your inbox",
+      description: `A confirmation email has been sent to ${ref.current?.value ?? "your email address"}. Please check your inbox and follow the link inside to complete the sign-up process.`,
+    });
+  }, [sentEmailCount, toast]);
 
   return (
     <form action={dispatch} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
+          ref={ref}
           type="email"
           name="email"
           required

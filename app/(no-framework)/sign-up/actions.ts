@@ -2,7 +2,12 @@
 
 import { createSupabaseServerClient } from "utils/supabase/server";
 
-export async function signUp(_: unknown, formData: FormData) {
+type SignUpState = {
+  sentEmailCount: number;
+  error: string;
+};
+
+export async function signUp(state: SignUpState, formData: FormData) {
   const supabase = createSupabaseServerClient();
 
   const email = formData.get("email")!.toString();
@@ -10,14 +15,15 @@ export async function signUp(_: unknown, formData: FormData) {
   const confirmPassword = formData.get("confirm-password")!.toString();
 
   if (password !== confirmPassword) {
-    return { success: false, error: "Passwords do not match" };
+    return { ...state, error: "Passwords do not match" };
   }
 
   const { error } = await supabase.auth.signUp({ email, password });
 
   if (error) {
-    return { success: false, error: error.message };
+    return { ...state, error: error.message };
   }
 
-  return { success: true, error: "" };
+  const nextSentEmailCount = state.sentEmailCount + 1;
+  return { ...state, sentEmailCount: nextSentEmailCount, error: "" };
 }
