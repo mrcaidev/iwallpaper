@@ -1,3 +1,4 @@
+import { Separator } from "components/ui/separator";
 import { ChevronLeftIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -32,7 +33,13 @@ export default async function SignInPage() {
             </p>
           </div>
           <SignInWithGithubButton />
-          <p className="my-2 text-muted-foreground text-center">or</p>
+          <div className="relative my-2">
+            <Separator className="absolute left-0 top-1/2 -transform-y-1/2 w-[45%]" />
+            <Separator className="absolute right-0 top-1/2 -transform-y-1/2 w-[45%]" />
+            <p className="bg-background text-sm text-muted-foreground text-center">
+              or
+            </p>
+          </div>
           <SignInForm />
           <div className="mt-6 text-sm text-muted-foreground text-center">
             Don&apos;t have an account?&nbsp;
