@@ -4,10 +4,10 @@ import { Button } from "components/ui/button";
 import { useErrorToast } from "components/ui/use-toast";
 import { GithubIcon } from "lucide-react";
 import { useActionState } from "react";
-import { createBrowserSupabaseClient } from "utils/supabase/browser";
+import { createSupabaseBrowserClient } from "utils/supabase/browser";
 
 async function signInWithGithub(_: unknown) {
-  const supabase = createBrowserSupabaseClient();
+  const supabase = createSupabaseBrowserClient();
 
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",

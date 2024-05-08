@@ -1,6 +1,6 @@
 "use server";
 
-import { createServerSupabaseClient } from "utils/supabase/server";
+import { createSupabaseServerClient } from "utils/supabase/server";
 import type { Wallpaper } from "utils/types";
 
 type Options = {
@@ -8,7 +8,7 @@ type Options = {
 };
 
 export async function fetchRecommendations({ take }: Options) {
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const { data, error } = await supabase.rpc("recommend_wallpapers", { take });
 

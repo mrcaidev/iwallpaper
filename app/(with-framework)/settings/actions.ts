@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "utils/supabase/server";
+import { createSupabaseServerClient } from "utils/supabase/server";
 
 type UpdateNicknameState = {
   nickname: string;
@@ -13,7 +13,7 @@ export async function updateNickname(
   state: UpdateNicknameState,
   formData: FormData,
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const nickname = formData.get("nickname")!.toString();
 
@@ -27,7 +27,7 @@ export async function updateNickname(
 }
 
 export async function deleteUser() {
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const {
     data: { user },

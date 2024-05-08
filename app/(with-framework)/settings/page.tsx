@@ -1,7 +1,7 @@
 import { PageTitle } from "components/ui/page-title";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "utils/supabase/server";
+import { createSupabaseServerClient } from "utils/supabase/server";
 import { AvatarCard } from "./avatar-card";
 import { DeleteUserButton } from "./delete-user-card";
 import { NicknameCard } from "./nickname-card";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const {
     data: { user },

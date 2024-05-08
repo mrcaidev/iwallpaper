@@ -1,6 +1,6 @@
 "use server";
 
-import { createServerSupabaseClient } from "utils/supabase/server";
+import { createSupabaseServerClient } from "utils/supabase/server";
 
 type Options = {
   take: number;
@@ -8,7 +8,7 @@ type Options = {
 };
 
 export async function fetchFavorites({ take, skip }: Options) {
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from("histories")

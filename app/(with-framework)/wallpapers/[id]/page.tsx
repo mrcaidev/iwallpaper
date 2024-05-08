@@ -1,7 +1,7 @@
 import { PageTitle } from "components/ui/page-title";
 import { WallpaperDetail } from "components/wallpaper";
 import { notFound } from "next/navigation";
-import { createServerSupabaseClient } from "utils/supabase/server";
+import { createSupabaseServerClient } from "utils/supabase/server";
 
 type Props = {
   params: {
@@ -41,7 +41,7 @@ export default async function WallpaperPage({ params: { id } }: Props) {
 }
 
 async function fetchWallpaper(id: string) {
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const { data: wallpaper } = await supabase
     .from("wallpapers")
@@ -53,7 +53,7 @@ async function fetchWallpaper(id: string) {
 }
 
 async function fetchHistory(wallpaperId: string) {
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const { data: history } = await supabase
     .from("histories")

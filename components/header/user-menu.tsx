@@ -18,12 +18,12 @@ import {
   UserCircleIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { createServerSupabaseClient } from "utils/supabase/server";
+import { createSupabaseServerClient } from "utils/supabase/server";
 import { SignOutForm } from "./sign-out-form";
 import { ThemeToggle } from "./theme-toggle";
 
 export async function UserMenu() {
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const {
     data: { user },

@@ -15,7 +15,7 @@ import { useErrorToast } from "components/ui/use-toast";
 import { cn } from "components/ui/utils";
 import { LoaderIcon, UserCircleIcon } from "lucide-react";
 import { useActionState, type ChangeEvent } from "react";
-import { createBrowserSupabaseClient } from "utils/supabase/browser";
+import { createSupabaseBrowserClient } from "utils/supabase/browser";
 
 type UploadAvatarState = {
   avatarUrl: string;
@@ -34,7 +34,7 @@ async function uploadAvatar(
     return state;
   }
 
-  const supabase = createBrowserSupabaseClient();
+  const supabase = createSupabaseBrowserClient();
 
   const {
     data: { user },

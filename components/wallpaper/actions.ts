@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "utils/supabase/server";
+import { createSupabaseServerClient } from "utils/supabase/server";
 
 type UpsertHistoryPayload = {
   wallpaper_id: string;
@@ -11,7 +11,7 @@ type UpsertHistoryPayload = {
 };
 
 export async function upsertHistory(payload: UpsertHistoryPayload) {
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const {
     data: { user },

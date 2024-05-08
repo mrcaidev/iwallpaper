@@ -1,6 +1,6 @@
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerSupabaseClient } from "utils/supabase/server";
+import { createSupabaseServerClient } from "utils/supabase/server";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: "Malformed link" }, { status: 400 });
   }
 
-  const supabase = createServerSupabaseClient();
+  const supabase = createSupabaseServerClient();
 
   const { error } = await supabase.auth.verifyOtp({
     type,
