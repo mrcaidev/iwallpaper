@@ -2,16 +2,13 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient } from "utils/supabase/server";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+  const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";
 
-  const redirectTo = request.nextUrl.clone();
-
   if (!code) {
-    redirectTo.pathname = "/auth/error";
-    redirectTo.searchParams.set("error", "Invalid authorization code");
-    return NextResponse.redirect(redirectTo);
+    const message = encodeURIComponent("Invalid authorization code.");
+    return NextResponse.redirect(`${origin}/auth/error?message=${message}`);
   }
 
   const supabase = createSupabaseServerClient();
@@ -19,11 +16,9 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    redirectTo.pathname = "/auth/error";
-    redirectTo.searchParams.set("error", error.message);
-    return NextResponse.redirect(redirectTo);
+    const message = encodeURIComponent(error.message);
+    return NextResponse.redirect(`${origin}/auth/error?message=${message}`);
   }
 
-  redirectTo.pathname = next;
-  return NextResponse.redirect(redirectTo);
+  return NextResponse.redirect(`${origin}${next}`);
 }
