@@ -8,6 +8,13 @@ const config = {
       },
     ],
   },
+  redirects: async () => [
+    {
+      source: "/settings",
+      destination: "/settings/profile",
+      permanent: true,
+    },
+  ],
   experimental: {
     typedRoutes: true,
   },

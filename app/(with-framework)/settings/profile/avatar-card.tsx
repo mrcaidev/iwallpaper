@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar";
-import { buttonVariants } from "components/ui/button";
+import { Button } from "components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,8 +12,7 @@ import {
 } from "components/ui/card";
 import { Input } from "components/ui/input";
 import { useErrorToast } from "components/ui/use-toast";
-import { cn } from "components/ui/utils";
-import { LoaderIcon, UserCircleIcon } from "lucide-react";
+import { LoaderIcon, UploadIcon, UserCircleIcon } from "lucide-react";
 import { useActionState, type ChangeEvent } from "react";
 import { createSupabaseBrowserClient } from "utils/supabase/browser";
 
@@ -83,30 +82,40 @@ export function AvatarCard({ initialAvatarUrl }: Props) {
   useErrorToast(error);
 
   return (
-    <Card className="shrink-0 px-6 py-2">
+    <Card className="relative">
       <CardHeader>
-        <CardTitle>Your avatar</CardTitle>
-        <CardDescription>Make your profile stand out.</CardDescription>
+        <CardTitle>Avatar</CardTitle>
+        <CardDescription>
+          An avatar is optional but strongly recommended.
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Avatar className="w-48 h-48 mx-auto">
+      <CardContent className="absolute right-0 top-5">
+        <Avatar className="w-16 h-16 mx-auto">
           <AvatarImage src={avatarUrl} alt="Your avatar" />
           <AvatarFallback>
-            <UserCircleIcon size={144} className="text-muted-foreground" />
+            <UserCircleIcon size={48} className="text-muted-foreground" />
           </AvatarFallback>
         </Avatar>
       </CardContent>
-      <CardFooter>
-        <label
-          htmlFor="avatar"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "w-full cursor-pointer",
-          )}
-        >
-          {isPending && <LoaderIcon size={16} className="mr-2 animate-spin" />}
-          {isPending ? "Uploading avatar..." : "Change avatar"}
-        </label>
+      <CardFooter className="justify-between py-4 border-t">
+        <p className="text-sm text-muted-foreground">
+          An avatar image should not exceed 1MB.
+        </p>
+        <Button className="cursor-pointer" asChild>
+          <label htmlFor="avatar">
+            {isPending ? (
+              <>
+                <LoaderIcon size={16} className="mr-2 animate-spin" />
+                Uploading avatar...
+              </>
+            ) : (
+              <>
+                <UploadIcon size={16} className="mr-2" />
+                Change avatar
+              </>
+            )}
+          </label>
+        </Button>
         <Input
           type="file"
           accept="image/*"

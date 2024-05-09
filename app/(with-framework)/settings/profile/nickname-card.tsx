@@ -31,7 +31,10 @@ export function NicknameCard({ initialNickname }: Props) {
     <Card>
       <CardHeader>
         <CardTitle>Nickname</CardTitle>
-        <CardDescription>Give yourself a cool name!</CardDescription>
+        <CardDescription>
+          This is how your name will be displayed across the iWallpaper
+          platform.
+        </CardDescription>
       </CardHeader>
       <form action={dispatch}>
         <CardContent>
@@ -45,7 +48,10 @@ export function NicknameCard({ initialNickname }: Props) {
             id="nickname"
           />
         </CardContent>
-        <CardFooter className="py-4 border-t">
+        <CardFooter className="justify-between py-4 border-t">
+          <p className="text-sm text-muted-foreground">
+            The length of a nickname should be between 2 and 20 characters.
+          </p>
           <Button type="submit" disabled={isPending}>
             {isPending ? (
               <>

@@ -24,7 +24,7 @@ import { LoaderIcon, TrashIcon } from "lucide-react";
 import { useActionState } from "react";
 import { deleteUser } from "./actions";
 
-export function DeleteUserButton() {
+export function DeleteUserCard() {
   const [{ error }, dispatch, isPending] = useActionState(deleteUser, {
     error: "",
   });
@@ -41,7 +41,10 @@ export function DeleteUserButton() {
           continue with caution.
         </CardDescription>
       </CardHeader>
-      <CardFooter className="py-4 border-t border-destructive">
+      <CardFooter className="justify-between py-4 border-t border-destructive">
+        <p className="text-sm text-muted-foreground">
+          You will be asked to confirm this request.
+        </p>
         <AlertDialog>
           <AlertDialogTrigger
             className={buttonVariants({ variant: "destructive" })}
