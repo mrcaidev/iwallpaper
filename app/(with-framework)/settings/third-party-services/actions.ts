@@ -5,41 +5,27 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "utils/supabase/server";
 
-type LinkIdentitiesState = {
-  identities: UserIdentity[];
+type LinkIdentityState = {
+  identity: UserIdentity | undefined;
   error: string;
 };
 
-export async function linkIdentities(
-  state: LinkIdentitiesState,
+export async function linkIdentity(
+  state: LinkIdentityState,
   provider: Provider,
 ) {
   const supabase = createSupabaseServerClient();
 
-  const { data, error } = await supabase.auth.getUserIdentities();
-
-  console.log(JSON.stringify(data));
-
-  if (error) {
-    return { ...state, error: error.message };
-  }
-
-  const targetIdentity = data.identities.find(
-    (identity) => identity.provider === provider,
-  );
-
-  if (targetIdentity) {
-    const { error: unlinkError } =
-      await supabase.auth.unlinkIdentity(targetIdentity);
+  if (state.identity) {
+    const { error: unlinkError } = await supabase.auth.unlinkIdentity(
+      state.identity,
+    );
 
     if (unlinkError) {
       return { ...state, error: unlinkError.message };
     }
 
-    const nextIdentities = data.identities.filter(
-      (identity) => identity.provider !== provider,
-    );
-    return { identities: nextIdentities, error: "" };
+    return { identity: undefined, error: "" };
   }
 
   const { data: linkData, error: linkError } = await supabase.auth.linkIdentity(

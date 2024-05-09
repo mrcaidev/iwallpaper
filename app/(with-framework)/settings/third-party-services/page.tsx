@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "utils/supabase/server";
-import { LinkIdentitiesCard } from "./link-identities-card";
+import { IdentityCard } from "./identity-card";
 
 export const metadata: Metadata = {
   title: "Third-party services",
@@ -27,7 +27,12 @@ export default async function SettingsThirdPartyServicesPage() {
 
   return (
     <div className="space-y-4">
-      <LinkIdentitiesCard initialIdentities={data.identities} />
+      <IdentityCard
+        provider="github"
+        initialIdentity={data.identities.find(
+          (identity) => identity.provider === "github",
+        )}
+      />
     </div>
   );
 }
