@@ -44,7 +44,6 @@ export async function linkIdentity(
     return { ...state, error: linkError.message };
   }
 
-  console.log(linkData.url);
   revalidatePath("/", "layout");
   redirect(linkData.url);
 }
