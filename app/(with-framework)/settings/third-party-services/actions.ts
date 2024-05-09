@@ -28,14 +28,11 @@ export async function linkIdentity(
     return { identity: undefined, error: "" };
   }
 
-  const redirectTo = new URL("/auth/callback", process.env.ORIGIN);
-  redirectTo.searchParams.set("next", "/settings/third-party-services");
-
   const { data: linkData, error: linkError } = await supabase.auth.linkIdentity(
     {
       provider,
       options: {
-        redirectTo: redirectTo.toString(),
+        redirectTo: `${process.env.ORIGIN}/auth/callback?next=/settings/third-party-services`,
       },
     },
   );
