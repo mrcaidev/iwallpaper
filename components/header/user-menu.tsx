@@ -68,32 +68,43 @@ export async function UserMenu() {
           <span className="sr-only">Toggle user menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>
-          {user.user_metadata.nickname ?? user.email}
+      <DropdownMenuContent align="end" className="min-w-48">
+        <DropdownMenuLabel className="space-y-1">
+          <p>
+            {user.user_metadata.nickname ??
+              user.user_metadata.full_name ??
+              user.user_metadata.user_name ??
+              "My Account"}
+          </p>
+          <p className="font-normal text-sm text-muted-foreground">
+            {user.email ?? "No available email"}
+          </p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/favorites">
+        <DropdownMenuItem>
+          <Link href="/favorites" className="flex items-center w-full">
             <HeartIcon size={16} className="mr-2" />
             Favorites
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings">
+        <DropdownMenuItem>
+          <Link href="/settings" className="flex items-center w-full">
             <SettingsIcon size={16} className="mr-2" />
             Settings
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/support">
+        <DropdownMenuItem>
+          <Link href="/support" className="flex items-center w-full">
             <LifeBuoyIcon size={16} className="mr-2" />
             Support
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="https://github.com/mrcaidev/iwallpaper">
+        <DropdownMenuItem>
+          <Link
+            href="https://github.com/mrcaidev/iwallpaper"
+            className="flex items-center w-full"
+          >
             <GithubIcon size={16} className="mr-2" />
             Source code
           </Link>

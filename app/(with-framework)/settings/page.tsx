@@ -28,7 +28,14 @@ export default async function SettingsPage() {
       <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-4 md:gap-x-16">
         <AvatarCard initialAvatarUrl={user.user_metadata.avatar_url ?? ""} />
         <div className="grow space-y-4">
-          <NicknameCard initialNickname={user.user_metadata.nickname ?? ""} />
+          <NicknameCard
+            initialNickname={
+              user.user_metadata.nickname ??
+              user.user_metadata.full_name ??
+              user.user_metadata.user_name ??
+              ""
+            }
+          />
           <DeleteUserButton />
         </div>
       </div>
