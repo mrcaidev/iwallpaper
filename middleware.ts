@@ -14,7 +14,7 @@ function mustAuthenticate(request: NextRequest) {
     return true;
   }
 
-  if (pathname === "/settings") {
+  if (pathname.startsWith("/settings")) {
     return true;
   }
 
