@@ -1,5 +1,8 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
   "deno.enable": true,
   "deno.enablePaths": ["supabase/functions"],
   "deno.importMap": "supabase/functions/import_map.json",
